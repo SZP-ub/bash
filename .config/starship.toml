@@ -1,0 +1,70 @@
+# 主提示符格式：两行显示，包含用户名、完整路径、git 信息等
+# format = """
+# [┌─────────────────────>](bold green)
+# [│ ](bold green)$username$directory$git_branch$git_status$rust$package
+# [└─> ](bold green)
+# """
+
+# starship 检查当前目录下文件的超时时间（毫秒）
+scan_timeout = 10
+
+[cmd_duration]
+disabled = true
+
+# 不在提示符和命令输出之间添加空行
+add_newline = true
+
+# 使用自定义配色方案 foo
+palette = "foo"
+
+# 自定义配色方案 foo
+[palettes.foo]
+blue = "21"              # 覆盖已有 blue 颜色
+mustard = "#af8700"      # 新增自定义颜色 mustard
+
+# 命令提示符符号设置
+[character]
+success_symbol = "[  ](bold green)"   # 成功时的符号
+error_symbol = "[  ](bold red)"       # 出错时的符号
+vicmd_symbol = "[  ](bold yellow)"    # vi 普通模式下的符号
+
+# 用户名模块设置
+[username]
+show_always = true                   # 始终显示用户名
+format = "(bold)[  ]($style) "          # 显示格式
+
+# 目录模块设置
+[directory]
+truncation_length = 0                # 0 表示不截断，显示完整路径
+truncate_to_repo = false             # 不截断到 git 仓库根目录
+format = "[$path]($style) "          # 显示格式
+
+# C 语言模块设置
+[c]
+symbol = " "                        # 使用 Nerd Font 图标
+format = "[$symbol($version)]($style) "  # 显示格式
+
+# 自定义 gdb 检测模块
+[custom.gdb]
+command = "pgrep gdb >/dev/null && echo  gdb"  # 检测 gdb 进程并显示图标
+when = "pgrep gdb >/dev/null"                   # 仅当 gdb 进程存在时显示
+format = "[$output]($style) "                   # 显示格式
+style = "bold red"                              # 显示样式
+
+# 自定义 nvim 检测模块
+# [custom.nvim]
+# command = "nvim --version | head -n1"           # 显示 nvim 版本
+# when = "which nvim"                             # 仅当 nvim 存在时显示
+# format = "[$output](bold green) "               # 显示格式
+
+# git 分支模块设置
+[git_branch]
+symbol = " "                                   # 使用 Nerd Font 图标
+format = "[\\[$symbol$branch\\]]($style) "      # 显示格式
+
+[lua]
+disabled = true
+
+# 关闭 package 模块（如不需要可开启）
+[package]
+disabled = true
