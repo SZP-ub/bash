@@ -81,15 +81,15 @@ esac
 if [ -x /usr/bin/dircolors ]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
     alias ls='ls --color=auto'
-    #alias dir='dir --color=auto'
-    #alias vdir='vdir --color=auto'
+    alias dir='dir --color=auto'
+    alias vdir='vdir --color=auto'
     alias grep='grep --color=auto'
     alias fgrep='fgrep --color=auto'
     alias egrep='egrep --color=auto'
 fi
 
 # GCC 彩色警告和错误（如需启用取消注释）
-#export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
 # 更友好的 ls 和 tree 命令（需 exa/eza 安装）
 alias ls='exa --icons'           # 彩色图标 ls
@@ -162,3 +162,6 @@ eval "$(starship init bash)"
 
 # 启用 vi 模式（如需启用取消注释）
 # set -o vi
+
+# 启用 zoxide 替换 cd
+eval "$(zoxide init --cmd cd bash)"
