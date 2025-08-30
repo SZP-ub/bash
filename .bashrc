@@ -3,8 +3,8 @@
 
 # 如果不是交互式 shell，则直接返回
 case $- in
-    *i*) ;;
-      *) return;;
+*i*) ;;
+*) return ;;
 esac
 
 # =======================
@@ -43,11 +43,11 @@ fi
 # 设置命令提示符（PS1）
 # =======================
 case "$TERM" in
-    xterm-color|*-256color) color_prompt=yes;;
+xterm-color | *-256color) color_prompt=yes ;;
 esac
 
 # 如需强制彩色提示符，取消下一行注释
-#force_color_prompt=yes
+force_color_prompt=yes
 
 if [ -n "$force_color_prompt" ]; then
     if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
@@ -66,11 +66,10 @@ unset color_prompt force_color_prompt
 
 # 如果是 xterm，设置窗口标题
 case "$TERM" in
-xterm*|rxvt*)
+xterm* | rxvt*)
     PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
     ;;
-*)
-    ;;
+*) ;;
 esac
 
 # =======================
@@ -92,13 +91,12 @@ fi
 export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
 # 更友好的 ls 和 tree 命令（需 exa/eza 安装）
-alias ls='exa --icons'           # 彩色图标 ls
-alias ll='exa -l --icons'        # 长列表
-alias la='exa -a --icons'        # 显示所有文件
-alias lh='exa -lh --icons'       # 人类可读大小
-alias tree='eza --tree --icons'  # 目录树
-alias cat='cat -n'               # 显示行号
-alias ff='fanyi'                 # 快速翻译
+alias ls='exa --icons'          # 彩色图标 ls
+alias ll='exa -l --icons'       # 长列表
+alias la='exa -a --icons'       # 显示所有文件
+alias lh='exa -lh --icons'      # 人类可读大小
+alias tree='eza --tree --icons' # 目录树
+alias ff='fanyi'                # 快速翻译
 
 # 长时间命令结束后桌面通知
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
@@ -112,18 +110,18 @@ fi
 # 补全功能
 # =======================
 if ! shopt -oq posix; then
-  if [ -f /usr/share/bash-completion/bash_completion ]; then
-    . /usr/share/bash-completion/bash_completion
-  elif [ -f /etc/bash_completion ]; then
-    . /etc/bash_completion
-  fi
+    if [ -f /usr/share/bash-completion/bash_completion ]; then
+        . /usr/share/bash-completion/bash_completion
+    elif [ -f /etc/bash_completion ]; then
+        . /etc/bash_completion
+    fi
 fi
 
 # =======================
 # 编辑器别名
 # =======================
-alias vim='nvim'         # 用 nvim 替代 vim
-alias vimm='nvim -M'     # 只读模式
+alias vim='nvim'     # 用 nvim 替代 vim
+alias vimm='nvim -M' # 只读模式
 
 # 美化 git log（如需启用取消注释）
 alias glg='git log --pretty=format:"%C(auto)提交：%h %d%n作者：%an%n日期：%ar（%ad）%n说明：%s%n" --date="format:%Y-%m-%d"'
@@ -145,8 +143,8 @@ export PATH="$PATH:/home/i/.local/bin"
 
 # nvm（Node 版本管理器）环境变量
 export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # 加载 nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # 加载 nvm 补全
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"                   # 加载 nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" # 加载 nvm 补全
 
 # 输入法环境变量（fcitx）
 export GTK_IM_MODULE=fcitx
@@ -165,3 +163,28 @@ eval "$(starship init bash)"
 
 # 启用 zoxide 替换 cd
 eval "$(zoxide init --cmd cd bash)"
+
+# ==========================
+# batcat增强
+# ==========================
+
+alias cat='batcat --style=numbers'
+
+# fzf 文件浏览时预览内容（高亮）
+alias fzf='fzf --preview "batcat --style=numbers --color=always --line-range :500 {}"'
+
+# tail增强
+# tail() {
+#     # 用法: batlog [行数] [文件名]
+#     local lines="${1:-100}"
+#     local file="${2:-yourfile.log}"
+#     tail -n "$lines" "$file" | batcat --paging=never -l log
+# }
+
+# find + fzf + bat 组合浏览
+# ffb() {
+#     find . -type f | fzf --preview "bat --style=numbers --color=always --line-range :500 {}"
+# }
+
+# 实时高亮日志
+# alias batlogf='tail -f yourfile.log | bat --paging=never -l log'
