@@ -25,7 +25,7 @@ alias vim='nvim'
 alias vimm='nvim -M'
 
 # Git 快捷键
-alias glg='git log --pretty=format:"%C(auto)提交：%h %d%n作者：%an%n日期：%ar（%ad）%n说明：%s%n" --date="format:%Y-%m-%d"'
+alias glg='git --no-pager log --pretty=format:"%C(auto)提交：%h %d%n作者：%an%n日期：%ar（%ad）%n说明：%s%n" --date="format:%Y-%m-%d"'
 alias gin='git init'
 alias gsu='git status'
 alias ga='git add'
@@ -40,7 +40,7 @@ alias gcl='git clone'
 alias grv='git remote -v'
 
 # yadm 快捷键
-alias ylg='yadm log --pretty=format:"%C(auto)提交：%h %d%n作者：%an%n日期：%ar（%ad）%n说明：%s%n" --date="format:%Y-%m-%d"'
+alias ylg='yadm --no-pager log --pretty=format:"%C(auto)提交：%h %d%n作者：%an%n日期：%ar（%ad）%n说明：%s%n" --date="format:%Y-%m-%d"'
 alias yin='yadm init'
 alias ysu='yadm status'
 alias yad='yadm add'
@@ -56,6 +56,7 @@ alias yrv='yadm remote -v'
 
 # pandoc 快捷键
 alias pandocpdf='pandoc --pdf-engine=xelatex -V mainfont="Maple Mono NF Medium Italic" -V monofont="Maple Mono NF Medium Italic" -V CJKmainfont="Maple Mono NF CN Medium" -V CJKmonofont="Maple Mono NF CN Medium"'
+# alias pandocpdf='pandoc --pdf-engine=xelatex -V mainfont="Maple Mono NF Medium Italic" -V monofont="Maple Mono NF Medium Italic" -V CJKmainfont="Maple Mono NF CN Medium" -V CJKmonofont="Maple Mono NF CN Medium" -V japanesefont="Noto Sans CJK JP" -V CJKoptions=AutoFakeBold'
 
 # batcat 增强
 alias cat='batcat --style=numbers'
