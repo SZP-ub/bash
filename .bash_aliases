@@ -63,3 +63,10 @@ alias cat='batcat --style=numbers'
 
 # fzf 文件浏览时预览内容（高亮）
 alias fzf='fzf --preview "batcat --style=numbers --color=always --line-range :500 {}"'
+
+# core生成
+core() {
+    ulimit -c unlimited
+    sudo sysctl -w kernel.core_pattern='%N.core'
+    echo "core文件生成已开启"
+}
