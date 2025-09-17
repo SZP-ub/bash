@@ -1,0 +1,225 @@
+---@diagnostic disable: undefined-global
+
+-- ==================== 行号切换 ====================
+local function ToggleLineNumbers()
+    if vim.wo.relativenumber then
+        vim.wo.relativenumber = false
+    else
+        vim.wo.relativenumber = true
+        vim.wo.number = true
+    end
+end
+vim.keymap.set("n", "<space>aa", ToggleLineNumbers, { silent = true, desc = "切换行号显示" })
+
+-- ==================== 折叠 ====================
+vim.keymap.set(
+    "n",
+    "<space>zf",
+    "?^\\s*$<CR>jV/^\\s*$/-1<CR>zf",
+    { silent = true, desc = "折叠段落（不含末尾空行）" }
+)
+
+-- ==================== buffer切换 ====================
+vim.keymap.set("n", "<space>ww", ":buffers<cr>:buffer ", { noremap = true })
+vim.keymap.set("n", "<space>e", ":tabnew ", { noremap = true })
+vim.keymap.set("n", "<space>vs", ":lefta vs ", { noremap = true })
+vim.keymap.set("n", "<space>w", ":w<cr>", { noremap = true })
+vim.keymap.set("n", "<space>bb", "<C-^>", { noremap = true })
+vim.keymap.set("n", "<Space>vw", ":vnew<CR>", { silent = true })
+vim.keymap.set("n", "<space>nw", ':vnew<CR>:normal! "*p<CR>', { noremap = true })
+vim.keymap.set("n", "<Space>wr", "<C-w>r", { silent = true })
+vim.keymap.set("n", "<Space>wrr", "<C-w>R", { silent = true })
+vim.keymap.set("n", "<space>df", ":diffthis<CR>", { noremap = true })
+
+-- ==================== 智能关闭窗口或缓冲区 ====================
+local function smart_close()
+    local bufname = vim.fn.expand("%:t")
+    if bufname:match("%.exe$") then
+        vim.cmd("bdelete")
+    else
+        vim.cmd("quit")
+    end
+end
+vim.keymap.set("n", "<space>q", smart_close, { silent = true, desc = "智能关闭窗口或缓冲区" })
+
+-- ==================== 水平窗口切换 ====================
+vim.keymap.set("n", "<C-l>", "<C-w>l", { silent = true })
+vim.keymap.set("n", "<C-h>", "<C-w>h", { silent = true })
+vim.keymap.set("i", "<C-l>", "<C-o><C-w>l", { silent = true })
+vim.keymap.set("i", "<C-h>", "<C-o><C-w>h", { silent = true })
+
+-- ==================== 垂直窗口切换 ====================
+vim.keymap.set("n", "<C-j>", "<C-w>j", { silent = true })
+vim.keymap.set("n", "<C-k>", "<C-w>k", { silent = true })
+vim.keymap.set("i", "<C-j>", "<C-o><C-w>j", { silent = true })
+vim.keymap.set("i", "<C-k>", "<C-o><C-w>k", { silent = true })
+
+-- ==================== 高效退出键 ====================
+vim.keymap.set("i", "jf", "<esc>")
+vim.keymap.set("c", "jf", "<c-c>")
+vim.keymap.set("n", "j", "gj")
+vim.keymap.set("n", "k", "gk")
+vim.keymap.set("n", "^", "g^")
+vim.keymap.set("n", "gf", "gF")
+vim.keymap.set("n", "J", "gJ")
+
+-- ==================== ctrl组合键 ====================
+vim.keymap.set("i", "<C-e>", "<Right>", { noremap = true, silent = true })
+
+-- ==================== nvim-tree ====================
+vim.keymap.set('n', '<C-n>', ':NvimTreeToggle<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>t', ':belowright vertical terminal<CR>')
+
+-- ==================== 重命名文件 ====================
+local function RenameInPlace()
+    local oldname = vim.fn.expand('%:t')
+    local dir = vim.fn.expand('%:p:h')
+    local newname = vim.fn.input('Rename to: ', oldname)
+    if newname == "" or newname == oldname then
+        vim.notify("重命名已取消", vim.log.levels.INFO)
+        return
+    end
+    local oldfile = dir .. "/" .. oldname
+    local newfile = dir .. "/" .. newname
+    local ok, err = os.rename(oldfile, newfile)
+    if ok then
+        vim.cmd('edit ' .. vim.fn.fnameescape(newfile))
+        vim.cmd('silent! bwipeout #')
+        vim.notify("重命名成功: " .. newname, vim.log.levels.INFO)
+    else
+        vim.notify("重命名失败! " .. (err or "未知错误"), vim.log.levels.ERROR)
+    end
+end
+vim.keymap.set('n', '<space>rn', RenameInPlace, { desc = "重命名当前文件" })
+
+-- ==================== 重构粘贴复制 ====================
+vim.keymap.set('n', 'p', '""p', { noremap = true })
+vim.keymap.set('v', 'p', '""p', { noremap = true })
+vim.keymap.set('n', 'P', '""P', { noremap = true })
+vim.keymap.set('v', 'P', '""P', { noremap = true })
+vim.keymap.set('n', '<space>p', '"0p', { noremap = true })
+vim.keymap.set('v', '<space>p', '"0p', { noremap = true })
+
+-- ==================== 智能粘贴系统剪贴板内容到下一行 ====================
+vim.keymap.set('n', '<leader>p', function()
+    local plus = vim.fn.getreg('+')
+    local star = vim.fn.getreg('*')
+    local to_paste = {}
+    if plus == star then
+        to_paste = vim.split(plus, '\n', true)
+    else
+        vim.list_extend(to_paste, vim.split(plus, '\n', true))
+        vim.list_extend(to_paste, vim.split(star, '\n', true))
+    end
+    local row = vim.api.nvim_win_get_cursor(0)[1]
+    vim.api.nvim_buf_set_lines(0, row, row, false, to_paste)
+end, { noremap = true, silent = true, desc = "智能粘贴系统剪贴板内容到下一行" })
+
+-- ==================== 复制到系统剪贴板 ====================
+local function copy_to_clipboard()
+    local mode = vim.fn.mode()
+    local lines_copied = 1
+    if mode == 'v' or mode == 'V' or mode == '\22' then
+        vim.cmd('normal! "+y')
+        local start_line = vim.fn.line("v")
+        local end_line = vim.fn.line(".")
+        lines_copied = math.abs(end_line - start_line) + 1
+    else
+        vim.cmd('normal! "+yy')
+    end
+    vim.fn.setreg('*', vim.fn.getreg('+'))
+    local msg = string.format("Copied %d line%s to system clipboard!", lines_copied, lines_copied > 1 and "s" or "")
+    vim.notify(msg, vim.log.levels.INFO)
+    vim.defer_fn(function()
+        vim.notify("", vim.log.levels.INFO)
+        vim.cmd("redraw")
+    end, 1000)
+end
+vim.keymap.set({ 'n', 'v' }, '<leader>y', copy_to_clipboard, { noremap = true, silent = true })
+
+-- ==================== 复制整个文件到剪贴板 ====================
+vim.keymap.set("n", "<space>ac", function()
+    vim.cmd("%y+")
+    vim.cmd("%y*")
+    vim.notify("Copied entire file to clipboard!", vim.log.levels.INFO)
+end, { desc = "复制整个文件到剪贴板（+ 和 *）" })
+
+-- ==================== vimdiff ====================
+vim.keymap.set('n', '<leader>vd', function()
+    local fullpath = vim.fn.expand('%:p')
+    local filename = vim.fn.expand('%:t:r')
+    local ext = vim.fn.expand('%:e')
+    local dir = vim.fn.expand('%:p:h')
+    local diff_file = string.format('%s/%s_diff.%s', dir, filename, ext)
+    vim.cmd('vs ' .. vim.fn.fnameescape(diff_file))
+    local plus = vim.fn.getreg('+')
+    local star = vim.fn.getreg('*')
+    local to_paste = {}
+    if plus == star then
+        to_paste = vim.split(plus, '\n', true)
+    else
+        vim.list_extend(to_paste, vim.split(plus, '\n', true))
+        vim.list_extend(to_paste, vim.split(star, '\n', true))
+    end
+    local bufnr = vim.api.nvim_get_current_buf()
+    local line_count = vim.api.nvim_buf_line_count(bufnr)
+    vim.api.nvim_buf_set_lines(bufnr, 0, line_count, false, {})
+    vim.api.nvim_buf_set_lines(bufnr, 0, 0, false, to_paste)
+    vim.cmd('diffthis')
+    vim.cmd('wincmd p')
+    vim.cmd('diffthis')
+end, { desc = "新建diff buffer并粘贴剪贴板内容进行diff" })
+
+-- ==================== 编译运行 ====================
+local function compile_and_run_c()
+    vim.cmd("write")
+    local src = vim.fn.expand("%:p")
+    local filename = vim.fn.expand("%:t:r")
+    local dir = vim.fn.expand("%:p:h")
+    local ext = vim.fn.expand("%:e")
+    local out = dir .. "/" .. filename .. ".out"
+    local compiler, std_flag
+    if ext == "c" then
+        compiler = "gcc"
+        std_flag = "-std=c17"
+    else
+        compiler = "g++"
+        std_flag = "-std=c++17"
+    end
+    local cmd = string.format('%s -g %s "%s" -o "%s" 2>&1', compiler, std_flag, src, out)
+    local result = vim.fn.systemlist(cmd)
+    if vim.v.shell_error == 0 then
+        vim.cmd("vsplit | terminal " .. out)
+    else
+        local items = {}
+        for _, line in ipairs(result) do
+            local fname, lnum, col, text = string.match(line, '^([^:]+):(%d+):(%d+):%s*(.*)')
+            if fname and lnum and col then
+                table.insert(items, {
+                    filename = fname,
+                    lnum = tonumber(lnum),
+                    col = tonumber(col),
+                    text = text
+                })
+            elseif #line > 0 then
+                table.insert(items, {
+                    filename = src,
+                    lnum = 1,
+                    col = 1,
+                    text = line
+                })
+            end
+        end
+        vim.fn.setqflist({}, ' ', { title = '编译错误', items = items })
+        vim.cmd("vert copen")
+        vim.cmd("vertical resize " .. math.floor(vim.o.columns / 2))
+        vim.notify("编译失败！错误已显示在 quickfix 窗口", vim.log.levels.ERROR)
+    end
+end
+vim.keymap.set('n', '<F1>', compile_and_run_c, { noremap = true, silent = true })
+
+-- ==================== Quickfix 窗口快捷键映射 ====================
+vim.keymap.set('n', '<Space>co', ':belowright copen<CR>', { noremap = true, silent = true, desc = '打开 quickfix 窗口' })
+vim.keymap.set('n', '<Space>cc', ':cclose<CR>', { noremap = true, silent = true, desc = '关闭 quickfix 窗口' })
+vim.keymap.set('n', '<Space>cn', ':cnext<CR>zz', { noremap = true, silent = true, desc = '跳转到下一个 quickfix 项' })
+vim.keymap.set('n', '<Space>cp', ':cprev<CR>zz', { noremap = true, silent = true, desc = '跳转到上一个 quickfix 项' })
