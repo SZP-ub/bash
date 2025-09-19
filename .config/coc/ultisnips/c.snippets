@@ -122,9 +122,8 @@ else if (${1:/* condition */}) {
 }
 endsnippet
 
-post_jump "printf_expand_args(snip)"
-snippet sc "scanf with auto-expand args" wr
-scanf("$1"$2);
+snippet sc 
+scanf("%$1", &$2);
 endsnippet
 
 post_jump "printf_expand_args(snip)"
@@ -562,33 +561,80 @@ snippet null
 endsnippet
 
 snippet anl
-	assert(${1:ptr} != NULL);
+	assert(${1:ptr *} != NULL);
+endsnippet
+
+snippet mset
+	memset(${1:ptr *}, 0, ${2:size} * sizeof(${3:type}));
+endsnippet
+
+snippet mse
+	memset(${1:ptr *}, 0, sizeof(${2:type}));
+endsnippet
+
+snippet mcpy
+	memcpy(${1:ptr *}, ${2:const ptr *}, ${3:size} * sizeof(${4:type}));
+endsnippet
+
+snippet mcp
+	memcpy(${1:ptr *}, ${2:const ptr *}, sizeof(${3:type}));
+endsnippet
+
+snippet mmove
+	memmove(${1:ptr *}, ${2:const ptr *}, ${3:size} * sizeof(${4:type}));
+endsnippet
+
+snippet mmov
+	memmove(${1:ptr *}, ${2:const ptr *},sizeof(${3:type}));
+endsnippet
+
+snippet mcmp
+	memcmp(${1:const ptr *}, ${2:const ptr *}, ${3:size} * sizeof(${4:type}));
+endsnippet
+
+snippet mcm
+	memcmp(${1:const ptr *}, ${2:const ptr *},sizeof(${3:type}));
 endsnippet
 
 ## Dynamic Allocation
-snippet mlcd
-	${1:ptr} = (${2:type}*) malloc(${3:size}, sizeof($2));
+snippet mall
+	${1:ptr *} = (${2:type}*) malloc(${3:size} * sizeof($2));
 endsnippet
 
-snippet clcd
-	${1:ptr} = (${2:type}*) calloc(${3:size}, sizeof($2));
+snippet malli
+	${1:ptr *} = (${2:type}*) malloc(${3:size} * sizeof($2));
+	if ($1 == NULL) {
+		printf("Memory allocation failed\n");
+		return 1;
+	}
 endsnippet
 
-snippet rlcd
-	${1:ptr} = realloc($1, ${2:size} * sizeof(${3:type}));
+snippet call
+	${1:ptr *} = (${2:type}*) calloc(${3:size} * sizeof($2));
 endsnippet
 
-snippet mlc
-	${1:type} ${2:ptr} = ($1*) malloc(sizeof($1));
-	if(!$2) return ${3};
+snippet real
+	${1:ptr *} = realloc($1, ${2:size} * sizeof(${3:type}));
 endsnippet
 
-snippet clc
-	${1:type} ${2:ptr} = ($1*) calloc(${3:size}, sizeof($1));
+snippet mal
+	${1:type} ${2:ptr *} = ($1*) malloc(sizeof($1));
+endsnippet
+
+snippet mali
+	${1:type} ${2:ptr *} = ($1*) malloc(sizeof($1));
+	if ($1 == NULL) {
+		printf("Memory allocation failed\n");
+		return 1;
+	}
+endsnippet
+
+snippet cal
+	${1:type} ${2:ptr *} = ($1*) calloc(${3:size} * sizeof($1));
 endsnippet
 
 snippet fre
-	free(${1:ptr});
+	free(${1:ptr *});
 endsnippet
 
 ##

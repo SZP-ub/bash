@@ -1,5 +1,25 @@
 ---@diagnostic disable: undefined-global
 
+-- ====================dot_to_arrow ==================
+_G.dot_to_arrow = function()
+    local col = vim.fn.col('.') - 2
+    local line = vim.api.nvim_get_current_line()
+    if col >= 0 and line:sub(col + 1, col + 1):match('%w') then
+        return '->'
+    else
+        return '.'
+    end
+end
+
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = { "c", "cpp" },
+    callback = function()
+        vim.api.nvim_buf_set_keymap(
+            0, "i", ".", "v:lua.dot_to_arrow()", { expr = true, noremap = true }
+        )
+    end
+})
+
 -- ==================== 行号切换 ====================
 local function ToggleLineNumbers()
     if vim.wo.relativenumber then

@@ -6,6 +6,7 @@ vim.cmd("filetype indent off")
 vim.g.mapleader = "\\"
 vim.opt.compatible = false
 vim.opt.wrap = true
+vim.opt.swapfile = false
 vim.cmd("syntax enable")
 vim.opt.number = true
 vim.opt.relativenumber = true

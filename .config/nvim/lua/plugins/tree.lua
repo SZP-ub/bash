@@ -37,7 +37,7 @@ return {
         },
         config = function()
             vim.g.tagbar_autofocus = 1
-            vim.g.tagbar_width = 20
+            vim.g.tagbar_width = 30
             vim.g.tagbar_sort = 0
         end
     },

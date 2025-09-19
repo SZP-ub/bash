@@ -19,6 +19,9 @@
 
     "semanticTokens.enable": true,
     "clangd.semanticHighlighting": true,
+    "clangd.triggerCharacters": [".", "->", "::"],
+    "suggest.triggerAfterInsertEnter": true,
+
     "coc.preferences.semanticTokens.highlight": true,
 
     "diagnostic.virtualText": true,
