@@ -120,20 +120,27 @@ vim.keymap.set('v', 'P', '""P', { noremap = true })
 vim.keymap.set('n', '<space>p', '"0p', { noremap = true })
 vim.keymap.set('v', '<space>p', '"0p', { noremap = true })
 
--- ==================== 智能粘贴系统剪贴板内容到下一行 ====================
+-- ==================== 智能粘贴系统剪贴板内容到光标位置 ====================
 vim.keymap.set('n', '<leader>p', function()
     local plus = vim.fn.getreg('+')
     local star = vim.fn.getreg('*')
-    local to_paste = {}
-    if plus == star then
-        to_paste = vim.split(plus, '\n', true)
+    local to_paste = nil
+    if plus ~= '' then
+        to_paste = plus
+    elseif star ~= '' then
+        to_paste = star
     else
-        vim.list_extend(to_paste, vim.split(plus, '\n', true))
-        vim.list_extend(to_paste, vim.split(star, '\n', true))
+        vim.notify("剪贴板为空", vim.log.levels.WARN)
+        return
     end
-    local row = vim.api.nvim_win_get_cursor(0)[1]
-    vim.api.nvim_buf_set_lines(0, row, row, false, to_paste)
-end, { noremap = true, silent = true, desc = "智能粘贴系统剪贴板内容到下一行" })
+    local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+    local line = vim.api.nvim_get_current_line()
+    -- 插入到光标后一位
+    local insert_pos = col + 1
+    local new_line = line:sub(1, insert_pos) .. to_paste .. line:sub(insert_pos + 1)
+    vim.api.nvim_set_current_line(new_line)
+end, { noremap = true, silent = true, desc = "智能粘贴系统剪贴板内容到光标后一位" })
+
 
 -- ==================== 复制到系统剪贴板 ====================
 local function copy_to_clipboard()

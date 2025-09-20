@@ -623,9 +623,9 @@ endsnippet
 
 snippet mali
 	${1:type} ${2:ptr *} = ($1*) malloc(sizeof($1));
-	if ($1 == NULL) {
+	if ($2 == NULL) {
 		printf("Memory allocation failed\n");
-		return 1;
+		return $3;
 	}
 endsnippet
 
@@ -641,8 +641,8 @@ endsnippet
 # TODO section
 snippet todo
 	/*! TODO: ${1:Todo description here}
-	 *  \todo $1
-	 */
+	*  \todo $1
+	*/
 endsnippet
 
 ## Miscellaneous

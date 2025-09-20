@@ -6,10 +6,11 @@ opacity = 1.0                          # 窗口透明度（0.0~1.0，1为不透�
 [font]
 normal = { family = "Maple Mono NF CN SemiBold", style = "SemiBold Italic" }
 bold = { family = "Maple Mono NF CN SemiBold", style = "SemiBold Italic" }
-italic = { family = "Maple Mono NF CN ", style = "Italic" }
+# normal = { family = "Maple Mono NF CN Medium", style = "Medium Italic" }
+# bold = { family = "Maple Mono NF CN Medium", style = "Medium Italic" }
+italic = { family = "Maple Mono NF CN SemiBold", style = "Italic" }
 size = 22.0                            # 字体大小
-features:
-    - liga
+# features = "liga"
 
 # Offset 是每个字符周围的额外空白。offset.y 可以理解为调整行间距，offset.x 可以理解为调整字间距。
 [font.offset]

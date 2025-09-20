@@ -67,6 +67,6 @@ alias fzf='fzf --preview "batcat --style=numbers --color=always --line-range :50
 # core生成
 core() {
     ulimit -c unlimited
-    sudo sysctl -w kernel.core_pattern='%N.core'
+    sudo sysctl -w kernel.core_pattern='%e.core'
     echo "core文件生成已开启"
 }

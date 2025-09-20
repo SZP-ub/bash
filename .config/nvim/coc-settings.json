@@ -18,6 +18,7 @@
     },
 
     "semanticTokens.enable": true,
+    "suggest.minTriggerInputLength": 1,
     "clangd.semanticHighlighting": true,
     "clangd.triggerCharacters": [".", "->", "::"],
     "suggest.triggerAfterInsertEnter": true,

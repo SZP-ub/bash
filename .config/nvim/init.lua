@@ -11,7 +11,7 @@ vim.cmd("syntax enable")
 vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.termguicolors = true
-vim.opt.clipboard = "unnamedplus"
+-- vim.opt.clipboard = "unnamedplus"
 vim.opt.errorbells = false
 vim.opt.visualbell = true
 vim.opt.wildmenu = true
