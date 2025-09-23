@@ -3,7 +3,6 @@
         "clangd": {
             "command": "clangd",
             "args": [
-                // "--enable-config",
                 "--background-index",
                 "--clang-tidy",
                 "--header-insertion=iwyu"
@@ -19,6 +18,9 @@
 
     "semanticTokens.enable": true,
     "suggest.minTriggerInputLength": 1,
+    "snippets.priority": 100,
+    "coc.source.buffer.priority": 100,
+    "coc.source.clangd.priority": 8,
     "clangd.semanticHighlighting": true,
     "clangd.triggerCharacters": [".", "->", "::"],
     "suggest.triggerAfterInsertEnter": true,
@@ -38,7 +40,6 @@
     "coc.preferences.messageLevel": "error",
 
     "suggest.autoTrigger": "always",
-    "suggest.triggerAfterInsertEnter": true,
     "suggest.maxCompleteItemCount": 20,
     "suggest.floatEnable": true,
     "suggest.noselect": false,

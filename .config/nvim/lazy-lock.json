@@ -1,6 +1,8 @@
 {
   "Comment.nvim": { "branch": "master", "commit": "e30b7f2008e52442154b66f7c519bfd2f1e32acb" },
-  "coc.nvim": { "branch": "release", "commit": "91c9cf51b174977bafc0ac9964db9679241b491c" },
+  "coc.nvim": { "branch": "release", "commit": "c46915bad05bf340d6c0032731556808b6ef5104" },
+  "fzf": { "branch": "master", "commit": "9a451722325603f41c59d27c4b14c6c2884921e1" },
+  "fzf.vim": { "branch": "master", "commit": "879db51d0965515cdaef9b7f6bdeb91c65d2829e" },
   "im-select.nvim": { "branch": "master", "commit": "113a6905a1c95d2990269f96abcbad9718209557" },
   "indent-blankline.nvim": { "branch": "master", "commit": "005b56001b2cb30bfa61b7986bc50657816ba4ba" },
   "lazy.nvim": { "branch": "main", "commit": "6c3bda4aca61a13a9c63f1c1d1b16b9d3be90d7a" },

@@ -122,6 +122,12 @@ vim.keymap.set('v', '<space>p', '"0p', { noremap = true })
 
 -- ==================== 智能粘贴系统剪贴板内容到光标位置 ====================
 vim.keymap.set('n', '<leader>p', function()
+    -- 检查 buffer 是否可编辑
+    if not vim.bo.modifiable then
+        vim.notify("当前 buffer 不可编辑", vim.log.levels.WARN)
+        return
+    end
+
     local plus = vim.fn.getreg('+')
     local star = vim.fn.getreg('*')
     local to_paste = nil
@@ -133,14 +139,34 @@ vim.keymap.set('n', '<leader>p', function()
         vim.notify("剪贴板为空", vim.log.levels.WARN)
         return
     end
+
     local row, col = unpack(vim.api.nvim_win_get_cursor(0))
     local line = vim.api.nvim_get_current_line()
-    -- 插入到光标后一位
     local insert_pos = col + 1
-    local new_line = line:sub(1, insert_pos) .. to_paste .. line:sub(insert_pos + 1)
-    vim.api.nvim_set_current_line(new_line)
-end, { noremap = true, silent = true, desc = "智能粘贴系统剪贴板内容到光标后一位" })
 
+    local before = line:sub(1, insert_pos)
+    local after = line:sub(insert_pos + 1)
+
+    local lines = vim.split(to_paste, "\n", true)
+    local n = #lines
+
+    if n == 1 then
+        -- 单行内容，直接插入
+        local new_line = before .. lines[1] .. after
+        vim.api.nvim_set_current_line(new_line)
+    else
+        -- 多行内容，保持原格式
+        local new_lines = {}
+        new_lines[1] = before .. lines[1]
+        for i = 2, n - 1 do
+            table.insert(new_lines, lines[i])
+        end
+        new_lines[#new_lines + 1] = lines[n] .. after
+        vim.api.nvim_buf_set_lines(0, row - 1, row, false, new_lines)
+    end
+
+    vim.notify(string.format("共插入 %d 行", n), vim.log.levels.INFO)
+end, { noremap = true, silent = true, desc = "智能粘贴系统剪贴板内容到光标后一位（保持格式）" })
 
 -- ==================== 复制到系统剪贴板 ====================
 local function copy_to_clipboard()
