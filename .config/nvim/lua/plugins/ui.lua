@@ -2,6 +2,50 @@
 return {
 
     {
+        "Shatur/neovim-session-manager",
+        event = "VeryLazy",
+        config = function()
+            local Path = require("plenary.path")
+            require("session_manager").setup({
+                sessions_dir = Path:new(vim.fn.stdpath("data"), "sessions"),               -- 会话保存目录
+                autoload_mode = require("session_manager.config").AutoloadMode.CurrentDir, -- 自动加载当前目录会话
+                autosave_last_session = false,                                             -- 自动保存最后会话
+                autosave_ignore_not_normal = false,                                        -- 只在正常模式下自动保存
+                autosave_ignore_dirs = {},                                                 -- 可自定义忽略目录
+                autosave_ignore_filetypes = { lua },                                       -- 可自定义忽略文件类型
+                autosave_only_in_session = false,
+            })
+
+            local session_dir = vim.fn.stdpath("data") .. "/sessions"
+            local expire_days = 7
+
+            local function clean_old_sessions()
+                local files = vim.fn.globpath(session_dir, "*", false, true)
+                local now = os.time()
+                for _, file in ipairs(files) do
+                    local stat = vim.loop.fs_stat(file)
+                    if stat and stat.mtime then
+                        local diff_days = (now - stat.mtime.sec) / (60 * 60 * 24)
+                        if diff_days > expire_days then
+                            os.remove(file)
+                        end
+                    end
+                end
+            end
+
+            -- 在 Neovim 启动时自动清理
+            clean_old_sessions()
+
+            -- 推荐快捷键
+            vim.keymap.set("n", "<leader>so", ":SessionManager load_session<CR>", { desc = "加载会话" })
+            vim.keymap.set("n", "<leader>ss", ":SessionManager save_current_session<CR>", { desc = "保存当前会话" })
+            vim.keymap.set("n", "<leader>sd", ":SessionManager delete_session<CR>", { desc = "删除会话" })
+        end,
+        dependencies = { "nvim-lua/plenary.nvim" }
+    },
+
+
+    {
         -- 缩进线
         "lukas-reineke/indent-blankline.nvim",
         event = "VeryLazy",
@@ -40,8 +84,23 @@ return {
                             return ""
                         end,
                     },
-                    lualine_c = { "branch" },
+                    -- lualine_c = { "branch" },
                     -- 右侧：始终显示缓冲区编号和文件名
+
+                    lualine_c = {
+                        "branch",
+                        function()
+                            local ok, nav = pcall(require, "coc-nav")
+                            if ok and nav and type(nav.is_available) == "function" and nav.is_available() then
+                                local status, loc = pcall(nav.get_location)
+                                if status and loc and type(loc) == "string" and loc ~= "" then
+                                    return loc
+                                end
+                            end
+                            return ""
+                        end,
+                    },
+
                     lualine_z = {
                         function()
                             local bufnr = vim.api.nvim_get_current_buf()

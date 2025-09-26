@@ -134,13 +134,12 @@ return {
             -- CocList 相关映射（需定义 keyset 或用 vim.keymap.set 替换）
             local opts_list = { silent = true, nowait = true }
             vim.keymap.set("n", "<leader>ca", ":<C-u>CocList diagnostics<cr>", opts_list) -- 诊断列表
-            vim.keymap.set("n", "<leader>ce", ":<C-u>CocList extensions<cr>", opts_list)  -- 扩展管理
-            vim.keymap.set("n", "<leader>cc", ":<C-u>CocList commands<cr>", opts_list)    -- 命令列表
-            vim.keymap.set("n", "<leader>co", ":<C-u>CocList outline<cr>", opts_list)     -- 文档大纲（如需可取消注释）
-            vim.keymap.set("n", "<leader>cs", ":<C-u>CocList -I symbols<cr>", opts_list)  -- 工作区符号
-            vim.keymap.set("n", "<leader>cj", ":<C-u>CocNext<cr>", opts_list)             -- 下一个 CocList 项
-            vim.keymap.set("n", "<leader>ck", ":<C-u>CocPrev<cr>", opts_list)             -- 上一个 CocList 项
-            vim.keymap.set("n", "<leader>cp", ":<C-u>CocListResume<cr>", opts_list)       -- 恢复 CocList
+            -- vim.keymap.set("n", "<leader>ce", ":<C-u>CocList extensions<cr>", opts_list)  -- 扩展管理
+            -- vim.keymap.set("n", "<leader>cc", ":<C-u>CocList commands<cr>", opts_list)    -- 命令列表
+            -- vim.keymap.set("n", "<leader>co", ":<C-u>CocList outline<cr>", opts_list) -- 文档大纲（如需可取消注释）
+            -- vim.keymap.set("n", "<leader>cj", ":<C-u>CocNext<cr>", opts_list)       -- 下一个 CocList 项
+            -- vim.keymap.set("n", "<leader>ck", ":<C-u>CocPrev<cr>", opts_list)       -- 上一个 CocList 项
+            -- vim.keymap.set("n", "<leader>cp", ":<C-u>CocListResume<cr>", opts_list) -- 恢复 CocList
 
             -- ccls 专用命令和快捷键
             --             local ccls_cmds = {

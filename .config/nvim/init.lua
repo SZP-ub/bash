@@ -25,7 +25,7 @@ vim.opt.incsearch = true
 vim.opt.ignorecase = true
 vim.opt.backspace = { "indent", "eol", "start" }
 vim.opt.updatetime = 100
-vim.opt.scrolloff = 2
+vim.opt.scrolloff = 1
 vim.opt.ttyfast = true
 vim.opt.lazyredraw = true
 vim.opt.synmaxcol = 501
@@ -59,7 +59,26 @@ vim.opt.splitbelow = true
 vim.opt.splitright = true
 
 vim.o.background = "dark"
-vim.cmd("colorscheme peachpuff")
+-- vim.cmd("colorscheme peachpuff")
+vim.cmd("colorscheme slate")
+
+vim.env.FZF_DEFAULT_OPTS = '--layout=reverse'
+
+-- ============= unity test ==================
+vim.g.ultest_deprecation_notice = 0
+vim.g['test#c#runner'] = 'custom_c'
+vim.g['test#custom_c#file_pattern'] = 'test_.*\\.c$'
+vim.g['test#custom_c#command'] = 'cd test && ./test_runner'
+
+-- 自动保存：切换 buffer 或窗口时
+vim.api.nvim_create_autocmd({ "BufLeave", "WinLeave" }, {
+    pattern = "*",
+    callback = function()
+        if vim.bo.modified and vim.bo.buftype == "" then
+            vim.cmd("silent! write")
+        end
+    end,
+})
 
 vim.cmd('packadd termdebug')
 vim.g.termdebug_config = {
