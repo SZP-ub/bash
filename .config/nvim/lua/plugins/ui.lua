@@ -4,6 +4,7 @@ return {
     {
         "Shatur/neovim-session-manager",
         event = "VeryLazy",
+        dependencies = { "nvim-lua/plenary.nvim" },
         config = function()
             local Path = require("plenary.path")
             require("session_manager").setup({
@@ -41,7 +42,6 @@ return {
             vim.keymap.set("n", "<leader>ss", ":SessionManager save_current_session<CR>", { desc = "保存当前会话" })
             vim.keymap.set("n", "<leader>sd", ":SessionManager delete_session<CR>", { desc = "删除会话" })
         end,
-        dependencies = { "nvim-lua/plenary.nvim" }
     },
 
 

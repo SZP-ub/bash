@@ -4,6 +4,7 @@
   "cscope_maps.nvim": { "branch": "main", "commit": "fe750543411db8d1530b5b67f97ae2b6d00fd783" },
   "fzf": { "branch": "master", "commit": "3401c2e0c7c441c2a13c11e958f6b99efc50bd29" },
   "fzf-lua": { "branch": "main", "commit": "2388dcd61731ae158bf7dad2ae0419291837e557" },
+  "fzf.vim": { "branch": "master", "commit": "879db51d0965515cdaef9b7f6bdeb91c65d2829e" },
   "im-select.nvim": { "branch": "master", "commit": "113a6905a1c95d2990269f96abcbad9718209557" },
   "indent-blankline.nvim": { "branch": "master", "commit": "005b56001b2cb30bfa61b7986bc50657816ba4ba" },
   "lazy.nvim": { "branch": "main", "commit": "6c3bda4aca61a13a9c63f1c1d1b16b9d3be90d7a" },
@@ -23,6 +24,6 @@
   "vim-cool": { "branch": "master", "commit": "9ea940c0d537e55de0de4c0298c04b976960fb12" },
   "vim-signature": { "branch": "master", "commit": "6bc3dd1294a22e897f0dcf8dd72b85f350e306bc" },
   "vim-test": { "branch": "master", "commit": "2b0ee6036473c86a2f3e9dedf5beb91c9e84e691" },
-  "vim-ultest": { "branch": "master", "commit": "b06bc8715cbcb4aa0444abfd85fb705b659ba055" },
-  "vimcdoc": { "branch": "master", "commit": "d98de99366c4a6fa5053becb64ea3d2b805770b5" }
+  "vimcdoc": { "branch": "master", "commit": "d98de99366c4a6fa5053becb64ea3d2b805770b5" },
+  "wilder.nvim": { "branch": "master", "commit": "679f348dc90d80ff9ba0e7c470c40a4d038dcecf" }
 }

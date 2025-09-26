@@ -128,8 +128,8 @@ return {
             local opts_float = { noremap = true, silent = true, expr = true, desc = "coc.nvim 悬浮窗优先滚动/移动" }
             vim.api.nvim_set_keymap("n", "<C-d>", [[coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-d>"]], opts_float)
             vim.api.nvim_set_keymap("n", "<C-u>", [[coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-u>"]], opts_float)
-            vim.api.nvim_set_keymap("n", "j", [[coc#float#has_scroll() ? coc#float#scroll(1, 1) : "j"]], opts_float)
-            vim.api.nvim_set_keymap("n", "k", [[coc#float#has_scroll() ? coc#float#scroll(0, 1) : "k"]], opts_float)
+            vim.api.nvim_set_keymap("n", "j", [[coc#float#has_scroll() ? coc#float#scroll(1, 1) : "gj"]], opts_float)
+            vim.api.nvim_set_keymap("n", "k", [[coc#float#has_scroll() ? coc#float#scroll(0, 1) : "gk"]], opts_float)
 
             -- CocList 相关映射（需定义 keyset 或用 vim.keymap.set 替换）
             local opts_list = { silent = true, nowait = true }
@@ -171,5 +171,25 @@ return {
             --
         end
     },
+
+    {
+        "gelguy/wilder.nvim",
+        event = "CmdlineEnter",
+        config = function()
+            -- 启用 wilder
+            vim.cmd([[call wilder#enable_cmdline_enter()]])
+            -- 设置在哪些模式下启用
+            vim.cmd([[call wilder#set_option('modes', ['/', '?', ':'])]])
+            -- 使用弹窗菜单和圆角边框
+            --         vim.cmd([[
+            --   call wilder#set_option('renderer', wilder#popupmenu_renderer(wilder#popupmenu_border_theme({
+            --         \ 'highlights': {
+            --         \   'border': 'Normal',
+            --         \ },
+            --         \ 'border': 'rounded',
+            --         \ })))
+            -- ]])
+        end,
+    }
 
 }

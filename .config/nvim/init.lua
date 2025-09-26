@@ -58,11 +58,13 @@ vim.o.pumblend = 0
 vim.opt.splitbelow = true
 vim.opt.splitright = true
 
-vim.o.background = "dark"
+vim.o.background = "light"
 -- vim.cmd("colorscheme peachpuff")
-vim.cmd("colorscheme slate")
+vim.cmd("colorscheme retrobox")
 
-vim.env.FZF_DEFAULT_OPTS = '--layout=reverse'
+-- ================== fzf.vim环境配置 ================
+vim.env.FZF_DEFAULT_OPTS =
+'--layout=reverse --no-wrap --bind=tab:down,ctrl-n:toggle+down,shift-tab:up,ctrl-p:toggle+up'
 
 -- ============= unity test ==================
 vim.g.ultest_deprecation_notice = 0
