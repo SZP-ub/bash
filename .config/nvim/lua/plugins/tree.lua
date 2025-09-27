@@ -43,7 +43,8 @@ return {
     -- fzf 二进制
     {
         "junegunn/fzf",
-        event = "VeryLazy",
+        lazy = true, -- 只在被其它插件需要时加载
+        -- event = "VeryLazy",
         build = "./install --bin",
     },
 
@@ -85,7 +86,8 @@ return {
 
     {
         "ibhagwan/fzf-lua",
-        event = "VeryLazy",
+        lazy = true,                                                      -- 只在被其它插件需要时加载
+        -- event = "VeryLazy",
         dependencies = { "junegunn/fzf", "nvim-tree/nvim-web-devicons" }, -- 可选，美化图标
         config = function()
             require("fzf-lua").setup({

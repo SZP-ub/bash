@@ -174,21 +174,32 @@ return {
 
     {
         "gelguy/wilder.nvim",
-        event = "CmdlineEnter",
+        build = ":UpdateRemotePlugins", -- 安装后自动注册 remote plugin
+        event = "CmdlineEnter",         -- 只在命令行模式加载
+        dependencies = {
+            "romgrk/fzy-lua-native",
+        },
         config = function()
-            -- 启用 wilder
-            vim.cmd([[call wilder#enable_cmdline_enter()]])
-            -- 设置在哪些模式下启用
-            vim.cmd([[call wilder#set_option('modes', ['/', '?', ':'])]])
-            -- 使用弹窗菜单和圆角边框
-            --         vim.cmd([[
-            --   call wilder#set_option('renderer', wilder#popupmenu_renderer(wilder#popupmenu_border_theme({
-            --         \ 'highlights': {
-            --         \   'border': 'Normal',
-            --         \ },
-            --         \ 'border': 'rounded',
-            --         \ })))
-            -- ]])
+            local wilder = require('wilder')
+            wilder.setup({ modes = { ':', '/', '?' } })
+            wilder.set_option('use_select', true)
+            wilder.set_option('pipeline', {
+                wilder.branch(
+                    wilder.cmdline_pipeline({
+                        fuzzy = 1,
+                        fuzzy_filter = wilder.lua_fzy_filter(),
+                    }),
+                    wilder.search_pipeline()
+                )
+            })
+
+            wilder.set_option('renderer', wilder.popupmenu_renderer(
+                wilder.popupmenu_border_theme({
+                    border = 'rounded',
+                    highlights = { accent = 'WilderAccent' },
+                    highlighter = wilder.basic_highlighter(),
+                })
+            ))
         end,
     }
 

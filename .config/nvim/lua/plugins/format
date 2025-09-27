@@ -1,0 +1,144 @@
+---@diagnostic disable: undefined-global
+return {
+	-- =========================
+	-- 格式化工具自动安装
+	-- =========================
+	{
+		"WhoIsSethDaniel/mason-tool-installer.nvim", -- 自动安装常用格式化工具
+		dependencies = { "williamboman/mason.nvim" },
+		config = function()
+			require("mason-tool-installer").setup({
+				ensure_installed = {
+					"clang-format", -- C/C++
+					"stylua", -- Lua
+					"prettier", -- JSON/Markdown/YAML/HTML/CSS/JS/TS/Markdown
+				},
+				auto_update = false,
+				run_on_start = true,
+			})
+		end,
+	},
+
+	-- =========================
+	-- conform.nvim：保存时自动格式化
+	-- =========================
+	{
+		"stevearc/conform.nvim",
+		config = function()
+			require("conform").setup({
+				formatters_by_ft = {
+					c = { "clang_format" },
+					cpp = { "clang_format" },
+					lua = { "stylua" },
+					json = { "prettier" },
+					markdown = { "prettier" },
+					yaml = { "prettier" },
+					html = { "prettier" },
+					css = { "prettier" },
+					javascript = { "prettier" },
+					typescript = { "prettier" },
+				},
+				format_on_save = {
+					lsp_fallback = true,
+					timeout_ms = 300,
+				},
+			})
+		end,
+	},
+
+	-- =========================
+	-- nvim-lint：保存时自动 lint
+	-- =========================
+	{
+		"mfussenegger/nvim-lint",
+		dependencies = {
+			{
+				"williamboman/mason.nvim",
+				optional = true,
+				opts = {
+					ensure_installed = { "codespell" },
+				},
+				opts_extend = { "ensure_installed" },
+			},
+		},
+		event = "BufWritePost",
+		config = function()
+			vim.api.nvim_create_autocmd({ "BufWritePost" }, {
+				callback = function()
+					require("lint").try_lint()
+					require("lint").try_lint("codespell")
+				end,
+			})
+		end,
+	},
+
+	-- =========================
+	-- Trouble：诊断/quickfix/LSP 列表可视化
+	-- =========================
+	{
+		"folke/trouble.nvim", -- 诊断、LSP、quickfix等信息的可视化展示
+		cmd = "Trouble", -- 懒加载
+		keys = {
+			{
+				"<A-j>",
+				function()
+					vim.diagnostic.jump({ count = 1 })
+				end,
+				mode = { "n" },
+				desc = "跳转到下一个诊断",
+			},
+			{
+				"<A-k>",
+				function()
+					vim.diagnostic.jump({ count = -1 })
+				end,
+				mode = { "n" },
+				desc = "跳转到上一个诊断",
+			},
+			{
+				"<leader>gd",
+				"<CMD>Trouble diagnostics toggle<CR>",
+				desc = "[Trouble] 切换当前 buffer 的诊断面板",
+			},
+			{ "<leader>gs", "<CMD>Trouble symbols toggle focus=false<CR>", desc = "[Trouble] 切换符号面板" },
+			{
+				"<leader>gl",
+				"<CMD>Trouble lsp toggle focus=false win.position=right<CR>",
+				desc = "[Trouble] 切换 LSP 定义/引用等",
+			},
+			{ "<leader>gL", "<CMD>Trouble loclist toggle<CR>", desc = "[Trouble] 位置列表" },
+			{ "<leader>gq", "<CMD>Trouble qflist toggle<CR>", desc = "[Trouble] Quickfix 列表" },
+		},
+		opts = {
+			focus = false,
+			warn_no_results = false,
+			open_no_results = true,
+			preview = {
+				type = "float",
+				relative = "editor",
+				border = "rounded",
+				title = "Preview",
+				title_pos = "center",
+				position = { 0.3, 0.3 },
+				size = { width = 0.6, height = 0.5 },
+				zindex = 200,
+			},
+		},
+		config = function(_, opts)
+			require("trouble").setup(opts)
+			local symbols = require("trouble").statusline({
+				mode = "lsp_document_symbols",
+				groups = {},
+				title = false,
+				filter = { range = true },
+				format = "{kind_icon}{symbol.name:Normal}",
+			})
+			opts = require("lualine").get_config()
+			table.insert(opts.winbar.lualine_b, 1, {
+				symbols.get,
+				cond = symbols.has,
+			})
+			require("lualine").setup(opts)
+		end,
+	},
+}

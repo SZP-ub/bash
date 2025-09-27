@@ -7,7 +7,7 @@ _G.dot_to_arrow = function()
     if col >= 0 and line:sub(col + 1, col + 1):match('%w') then
         return '->'
     else
-        return '.'
+        return '-'
     end
 end
 
@@ -15,7 +15,7 @@ vim.api.nvim_create_autocmd("FileType", {
     pattern = { "c", "cpp" },
     callback = function()
         vim.api.nvim_buf_set_keymap(
-            0, "i", ".", "v:lua.dot_to_arrow()", { expr = true, noremap = true }
+            0, "i", "-", "v:lua.dot_to_arrow()", { expr = true, noremap = true }
         )
     end
 })
@@ -88,7 +88,7 @@ vim.keymap.set("i", "<C-e>", "<Right>", { noremap = true, silent = true })
 
 -- ==================== nvim-tree ====================
 vim.keymap.set('n', '<C-n>', ':NvimTreeToggle<CR>', { noremap = true, silent = true })
-vim.keymap.set('n', '<leader>t', ':belowright vertical terminal<CR>')
+vim.keymap.set('n', '<space>tt', ':belowright vertical terminal<CR>')
 
 -- ==================== 重命名文件 ====================
 local function RenameInPlace()

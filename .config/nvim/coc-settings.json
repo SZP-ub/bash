@@ -16,6 +16,8 @@
         }
     },
 
+    "suggest.ignoreCase": true,
+    "suggest.caseSensitive": false,
     "semanticTokens.enable": true,
     "suggest.minTriggerInputLength": 1,
     "snippets.priority": 100,

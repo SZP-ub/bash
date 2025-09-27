@@ -14,8 +14,6 @@ vim.opt.termguicolors = true
 -- vim.opt.clipboard = "unnamedplus"
 vim.opt.errorbells = false
 vim.opt.visualbell = true
-vim.opt.wildmenu = true
-vim.opt.wildmode = { "list:longest", "full" }
 vim.opt.wildignorecase = true
 vim.opt.cursorline = true
 vim.opt.helplang = "cn"
@@ -61,6 +59,11 @@ vim.opt.splitright = true
 vim.o.background = "light"
 -- vim.cmd("colorscheme peachpuff")
 vim.cmd("colorscheme retrobox")
+
+-- =================== 补全菜单配置 ====================
+vim.o.wildmenu = true
+vim.o.wildmode = "longest:full,full"
+vim.o.wildoptions = "pum"
 
 -- ================== fzf.vim环境配置 ================
 vim.env.FZF_DEFAULT_OPTS =
