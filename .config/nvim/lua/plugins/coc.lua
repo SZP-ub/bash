@@ -56,10 +56,10 @@ return {
             vim.keymap.set("n", "]g", "<Plug>(coc-diagnostic-next)", { silent = true }) -- 下一个诊断
 
             -- 跳转到定义/类型定义/实现/引用
-            vim.keymap.set("n", "gd", "<Plug>(coc-definition)", { silent = true })       -- 跳转到定义
-            vim.keymap.set("n", "grt", "<Plug>(coc-type-definition)", { silent = true }) -- 跳转到类型定义
-            vim.keymap.set("n", "gri", "<Plug>(coc-implementation)", { silent = true })  -- 跳转到实现
-            vim.keymap.set("n", "grr", "<Plug>(coc-references)", { silent = true })      -- 查找引用
+            vim.keymap.set("n", "gd", "<Plug>(coc-definition)", { silent = true })      -- 跳转到定义
+            vim.keymap.set("n", "gy", "<Plug>(coc-type-definition)", { silent = true }) -- 跳转到类型定义
+            vim.keymap.set("n", "gi", "<Plug>(coc-implementation)", { silent = true })  -- 跳转到实现
+            -- vim.keymap.set("n", "gr", "<Plug>(coc-references)", { silent = true })      -- 查找引用
 
             -- K 显示文档
             vim.keymap.set("n", "K", show_doc, { silent = true }) -- 悬浮显示文档

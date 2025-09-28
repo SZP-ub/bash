@@ -71,7 +71,7 @@ return {
             -- 查找 tags（ctags 需先生成）
             vim.keymap.set('n', '<space>ft', ':Tags<CR>', { desc = "fzf: 查找 tags" })
             -- 查找调用关系（用当前光标单词搜索）
-            vim.keymap.set('n', '<space>fc', function()
+            vim.keymap.set('n', 'grr', function()
                 local word = vim.fn.expand('<cword>')
                 -- 让输入框带初始内容
                 vim.fn['fzf#vim#grep'](

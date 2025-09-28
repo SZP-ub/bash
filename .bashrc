@@ -100,3 +100,4 @@ eval "$(starship init bash)"
 eval "$(zoxide init --cmd cd bash)"
 
 . "$HOME/.cargo/env"
+export PATH="$HOME/.local/bin:$PATH"

@@ -75,7 +75,7 @@ vim.g['test#c#runner'] = 'custom_c'
 vim.g['test#custom_c#file_pattern'] = 'test_.*\\.c$'
 vim.g['test#custom_c#command'] = 'cd test && ./test_runner'
 
--- 自动保存：切换 buffer 或窗口时
+-- ============ 自动保存：切换 buffer 或窗口时 ==============
 vim.api.nvim_create_autocmd({ "BufLeave", "WinLeave" }, {
     pattern = "*",
     callback = function()
@@ -85,6 +85,7 @@ vim.api.nvim_create_autocmd({ "BufLeave", "WinLeave" }, {
     end,
 })
 
+-- ====================== termdebug ===================
 vim.cmd('packadd termdebug')
 vim.g.termdebug_config = {
     -- 调试器命令
