@@ -1,3 +1,4 @@
+---@diagnostic disable: undefined-global
 return {
 
     {
@@ -9,16 +10,10 @@ return {
         "ggandor/leap.nvim",
         event = "VeryLazy",
         config = function()
-            require("leap").add_default_mappings({
-
-                function(ch0, ch1, ch2)
-                    return not (
-                        ch1:match('%s') or
-                        ch0:match('%a') and ch1:match('%a') and ch2:match('%a')
-                    )
-                end,
-
-            })
+            require("leap").add_default_mappings()
+            vim.keymap.set('n', 'gS', '<Plug>(leap-backward-cross-window)')
+            require("leap").opts.special_keys.next_target = '<tab>'
         end
     }
+
 }

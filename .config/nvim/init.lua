@@ -99,7 +99,7 @@ vim.g.termdebug_config = {
     -- 禁用弹出菜单
     -- popup = 0,
     -- 禁用窗口工具条
-    winbar = 0,
+    -- winbar = 0,
     -- 设置窗口宽度
     wide = 63,
     -- 使用提示模式
