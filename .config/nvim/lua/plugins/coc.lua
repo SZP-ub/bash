@@ -56,9 +56,9 @@ return {
             vim.keymap.set("n", "]g", "<Plug>(coc-diagnostic-next)", { silent = true }) -- 下一个诊断
 
             -- 跳转到定义/类型定义/实现/引用
-            vim.keymap.set("n", "gd", "<Plug>(coc-definition)", { silent = true })      -- 跳转到定义
-            vim.keymap.set("n", "gy", "<Plug>(coc-type-definition)", { silent = true }) -- 跳转到类型定义
-            vim.keymap.set("n", "gi", "<Plug>(coc-implementation)", { silent = true })  -- 跳转到实现
+            vim.keymap.set("n", "gd", "<Plug>(coc-definition)", { silent = true })       -- 跳转到定义
+            vim.keymap.set("n", "grt", "<Plug>(coc-type-definition)", { silent = true }) -- 跳转到类型定义
+            vim.keymap.set("n", "gi", "<Plug>(coc-implementation)", { silent = true })   -- 跳转到实现
             -- vim.keymap.set("n", "gr", "<Plug>(coc-references)", { silent = true })      -- 查找引用
 
             -- K 显示文档
@@ -101,10 +101,6 @@ return {
                 vim.keymap.set("x", "a" .. obj[1], "<Plug>(coc-" .. obj[2] .. "-a)") -- 外部函数/类
                 vim.keymap.set("o", "a" .. obj[1], "<Plug>(coc-" .. obj[2] .. "-a)")
             end
-
-            -- <C-s> 选择范围
-            vim.keymap.set("n", "<C-s>", "<Plug>(coc-range-select)", { silent = true }) -- 选择范围
-            vim.keymap.set("x", "<C-s>", "<Plug>(coc-range-select)", { silent = true })
 
             -- 保存时自动格式化
             vim.api.nvim_create_autocmd("BufWritePre", {
@@ -201,6 +197,6 @@ return {
                 })
             ))
         end,
-    }
+    },
 
 }

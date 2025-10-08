@@ -122,8 +122,9 @@ else if (${1:/* condition */}) {
 }
 endsnippet
 
-snippet sc 
-scanf("%$1", &$2);
+post_jump "printf_expand_args(snip)"
+snippet sf 
+scanf("%$1"$2);
 endsnippet
 
 post_jump "printf_expand_args(snip)"
@@ -138,8 +139,7 @@ struct ${1:`!p snip.rv = (snip.basename or "name") + "_t"`} {
 endsnippet
 
 snippet fun "function" b
-${1:void} ${2:function_name}($3)
-{
+${1:void} ${2:function_name}($3) {
 	${VISUAL}$0
 }
 endsnippet
@@ -350,81 +350,60 @@ endsnippet
 
 ##
 ## Functions
-# function definition
-snippet fun
-	${1:void} ${2:function_name}(${3})
-	{
-		${4}
-	}
-endsnippet
-
 # function definition with zero parameters
 snippet fun0
-	${1:void} ${2:function_name}()
-	{
+	${1:void} ${2:function_name}() {
 		${3}
 	}
 endsnippet
 
 # function definition with Doxygen documentation
 snippet dfun0
-	${4:void} ${5:function_name}()
-	{
+	${4:void} ${5:function_name}() {
 		${6}
 	}
 endsnippet
 
 # function definition with one parameter
 snippet fun1
-	${1:void} ${2:function_name}(${3:Type} ${4:Parameter})
-	{
+	${1:void} ${2:function_name}(${3:Type} ${4:Parameter}) {
 		${5}
 	}
 endsnippet
 
 # function definition with one parameter with  Doxygen documentation
 snippet dfun1
-	${6:void} ${7:function_name}(${8:Type} ${3:Parameter})
-	{
+	${6:void} ${7:function_name}(${8:Type} ${3:Parameter}) {
 		${9}
 	}
 endsnippet
 
 # function definition with two parameters
 snippet fun2
-	${1:void} ${2:function_name}(${3:Type} ${4:Parameter}, ${5:Type} ${6:Parameter})
-	{
+	${1:void} ${2:function_name}(${3:Type} ${4:Parameter}, ${5:Type} ${6:Parameter}) {
 		${7}
 	}
 endsnippet
 
 # function definition with two parameters with  Doxygen documentation
 snippet dfun2
-	${8:void} ${9:function_name}(${10:Type} ${3:Parameter}, ${11:Type} ${5:Parameter})
-	{
+	${8:void} ${9:function_name}(${10:Type} ${3:Parameter}, ${11:Type} ${5:Parameter}) {
 		${12}
 	}
 endsnippet
 
 # function definition with three parameters
 snippet fun3
-	${1:void} ${2:function_name}(${3:Type} ${4:Parameter}, ${5:Type} ${6:Parameter}, ${7:Type} ${8:Parameter})
-	{
+	${1:void} ${2:function_name}(${3:Type} ${4:Parameter}, ${5:Type} ${6:Parameter}, ${7:Type} ${8:Parameter}) {
 		${9}
 	}
 endsnippet
 
 # function definition with three parameters with  Doxygen documentation
 snippet dfun3
-	${10:void} ${11:function_name}(${12:Type} ${3:Parameter}, ${13:Type} ${5:Parameter}, ${14:Type} ${7:Parameter})
-	{
+	${10:void} ${11:function_name}(${12:Type} ${3:Parameter}, ${13:Type} ${5:Parameter}, ${14:Type} ${7:Parameter}) {
 		${15}
 	}
-endsnippet
-
-# function declaration
-snippet fund
-	${1:void} ${2:function_name}(${3});
 endsnippet
 
 ##
@@ -435,10 +414,10 @@ typedef ${1:int} ${2:MyCustomType};
 endsnippet
 
 # typedef struct
-snippet tys
-    typedef struct ${1:`!p snip.rv = (snip.basename or "name") + "_t"`} { 
-        ${2:Data}
-    } ${1};
+snippet tds
+typedef struct ${1:`!p snip.rv = (snip.basename or "name") + "_t"`} { 
+	${2:Data}
+} ${1};
 endsnippet
 
 # enum
@@ -447,19 +426,24 @@ snippet enum
 endsnippet
 
 # typedef enum
-snippet tye
-	typedef enum {
-		${1:Data} 
-	} ${2:foo};
+snippet tde
+typedef enum {
+	${1:Data} 
+} ${2:foo};
+endsnippet
+
+#  typedef type (*) (type,type)
+snippet tdptr "typedef ptrFunction" 
+typedef ${1:type} (*${2:name})(${3:type});
+endsnippet
+
+# type (*) (type,type)
+snippet fcptr "ptrFunction" 
+${1:type} (*${2:name})(${3:type}) = ${4:Val};
 endsnippet
 
 ##
 ## Input/Output
-# printf
-snippet pr
-	printf("${1:%s}\n"${2});
-endsnippet
-
 # fprintf (again, this isn't as nice as TextMate's version, but it works)
 snippet fpr
 	fprintf(${1:stderr}, "${2:%s}\n"${3});
@@ -556,7 +540,7 @@ snippet asr
 	assert($1);
 endsnippet
 
-snippet null
+snippet nul
 	NULL;
 endsnippet
 
@@ -625,7 +609,7 @@ snippet mali
 	${1:type} ${2:ptr *} = ($1*) malloc(sizeof($1));
 	if ($2 == NULL) {
 		printf("Memory allocation failed\n");
-		return $3;
+		return ${3:-1};
 	}
 endsnippet
 
@@ -637,6 +621,10 @@ snippet fre
 	free(${1:ptr *});
 endsnippet
 
+snippet free
+	free(${1:ptr *});
+	$1 = NULL;
+endsnippet
 ##
 # TODO section
 snippet todo

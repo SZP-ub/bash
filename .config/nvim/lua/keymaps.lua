@@ -40,15 +40,15 @@ vim.keymap.set(
 )
 
 -- ==================== buffer切换 ====================
-vim.keymap.set("n", "<space>ww", ":buffers<cr>:buffer ", { noremap = true })
+vim.keymap.set("n", "<space>bb", ":buffers<cr>:buffer ", { noremap = true })
 vim.keymap.set("n", "<space>e", ":tabnew ", { noremap = true })
 vim.keymap.set("n", "<space>vs", ":lefta vs ", { noremap = true })
 vim.keymap.set("n", "<space>w", ":w<cr>", { noremap = true })
-vim.keymap.set("n", "<space>bb", "<C-^>", { noremap = true })
+vim.keymap.set("n", "<space>bn", "<C-^>", { noremap = true })
 vim.keymap.set("n", "<Space>vw", ":vnew<CR>", { silent = true })
 vim.keymap.set("n", "<space>nw", ':vnew<CR>:normal! "*p<CR>', { noremap = true })
-vim.keymap.set("n", "<Space>wr", "<C-w>r", { silent = true })
-vim.keymap.set("n", "<Space>wrr", "<C-w>R", { silent = true })
+vim.keymap.set("n", "<Space>br", "<C-w>r", { silent = true })
+vim.keymap.set("n", "<Space>brr", "<C-w>R", { silent = true })
 vim.keymap.set("n", "<space>df", ":diffthis<CR>", { noremap = true })
 
 -- ==================== 智能关闭窗口或缓冲区 ====================
@@ -82,6 +82,8 @@ vim.keymap.set("n", "k", "gk", { noremap = true, silent = true })
 vim.keymap.set("n", "^", "g^")
 vim.keymap.set("n", "gf", "gF")
 vim.keymap.set("n", "J", "gJ")
+vim.keymap.set('n', 'H', '^')
+vim.keymap.set('n', 'L', 'g_')
 
 -- ==================== ctrl组合键 ====================
 vim.keymap.set("i", "<C-e>", "<Right>", { noremap = true, silent = true })
@@ -242,7 +244,11 @@ local function compile_and_run_c()
     local cmd = string.format('%s -g %s "%s" -o "%s" 2>&1', compiler, std_flag, src, out)
     local result = vim.fn.systemlist(cmd)
     if vim.v.shell_error == 0 then
-        vim.cmd("vsplit | terminal " .. out)
+        -- 用 terminal 执行可执行文件
+        vim.cmd("vsplit")
+        vim.cmd("terminal " .. out)
+        -- 可选：自动进入终端模式
+        vim.cmd("startinsert")
     else
         local items = {}
         for _, line in ipairs(result) do
@@ -269,6 +275,7 @@ local function compile_and_run_c()
         vim.notify("编译失败！错误已显示在 quickfix 窗口", vim.log.levels.ERROR)
     end
 end
+
 vim.keymap.set('n', '<F1>', compile_and_run_c, { noremap = true, silent = true })
 
 -- ==================== Quickfix 窗口快捷键映射 ====================

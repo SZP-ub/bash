@@ -86,6 +86,20 @@ vim.api.nvim_create_autocmd({ "BufLeave", "WinLeave" }, {
 })
 
 -- ====================== termdebug ===================
+
+vim.api.nvim_set_keymap('t', '<Esc>', [[<C-\><C-n>]], { noremap = true })
+vim.opt.timeout = false
+vim.opt.ttimeout = true
+vim.opt.timeoutlen = 100
+
+vim.api.nvim_create_autocmd("User", {
+    pattern = "TermdebugStartPost",
+    callback = function()
+        vim.cmd("resize 20")
+        vim.cmd("wincmd r")
+    end
+})
+
 vim.cmd('packadd termdebug')
 vim.g.termdebug_config = {
     -- 调试器命令
@@ -99,19 +113,24 @@ vim.g.termdebug_config = {
     -- 禁用弹出菜单
     -- popup = 0,
     -- 禁用窗口工具条
-    -- winbar = 0,
+    winbar = 0,
     -- 设置窗口宽度
-    wide = 63,
+    wide = 163,
     -- 使用提示模式
     -- use_prompt = true,
+
+    -- term = reverse,
+    -- ctermbg = lightblue,
+    -- guibg = lightblue,
+
     -- 显示汇编窗口
     -- disasm_window = true,
     -- 汇编窗口高度
     -- disasm_window_height = 15,
     -- 显示变量窗口
-    -- variables_window = true,
+    variables_window = true,
     -- 变量窗口高度
-    -- variables_window_height = 5,
+    variables_window_height = 9,
     -- 断点符号
     -- sign = '>>',
     -- 断点编号用十进制显示

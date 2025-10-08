@@ -1,20 +1,16 @@
 {
-    "languageserver": {
-        "clangd": {
-            "command": "clangd",
-            "args": [
-                "--background-index",
-                "--clang-tidy",
-                "--header-insertion=iwyu"
-            ],
-            "filetypes": ["c", "cpp", "objc", "objcpp", "cc"],
-            "rootPatterns": [".clangd", "compile_commands.json", ".git/"],
-            "initializationOptions": {
-                "clangdFileStatus": true,
-                "semanticHighlighting": true
-            }
-        }
-    },
+    "clangd.arguments": [
+        "--background-index",
+        "--clang-tidy",
+        "--header-insertion=iwyu",
+        "--completion-style=detailed"
+    ],
+    "clangd.semanticHighlighting": true,
+    "clangd.checkUpdates": true,
+    "clangd.inlayHints.enable": true,
+    "clangd.fallbackFlags": ["-std=c17", "-Wall"],
+    "clangd.disableCompletion": false,
+    "clangd.showFileStatus": true,
 
     "suggest.ignoreCase": true,
     "suggest.caseSensitive": false,
@@ -23,11 +19,8 @@
     "snippets.priority": 100,
     "coc.source.buffer.priority": 100,
     "coc.source.clangd.priority": 8,
-    "clangd.semanticHighlighting": true,
-    "clangd.triggerCharacters": [".", "->", "::"],
+    "hover.enable": true,
     "suggest.triggerAfterInsertEnter": true,
-
-    "coc.preferences.semanticTokens.highlight": true,
 
     "diagnostic.virtualText": true,
     "diagnostic.virtualTextCurrentLineOnly": false,
@@ -35,11 +28,10 @@
     "diagnostic.warningSign": "⚠",
     "diagnostic.infoSign": "ℹ",
     "diagnostic.hintSign": "➤",
-    "diagnostic.displayByAle": false,
     "diagnostic.refreshOnInsertMode": false,
     "diagnostic.checkCurrentLine": true,
 
-    "coc.preferences.messageLevel": "error",
+    "coc.preferences.messageLevel": "warning",
 
     "suggest.autoTrigger": "always",
     "suggest.maxCompleteItemCount": 20,
@@ -51,11 +43,9 @@
     },
 
     "snippets.ultisnips.pythonPrompt": false,
-    "ultisnips.directories": ["~/.config/coc/ultisnips"],
+    "ultisnips.directories": ["$HOME/.config/coc/ultisnips"],
 
-    "markdownlint.config": {
-        "default": true
-    },
+    "markdownlint.config": {},
 
     "prettier.enable": true,
     "prettier.requireConfig": false,
