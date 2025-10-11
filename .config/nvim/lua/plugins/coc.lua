@@ -102,14 +102,6 @@ return {
                 vim.keymap.set("o", "a" .. obj[1], "<Plug>(coc-" .. obj[2] .. "-a)")
             end
 
-            -- 保存时自动格式化
-            vim.api.nvim_create_autocmd("BufWritePre", {
-                pattern = { "*.c", "*.cc", "*.json", "*.cpp", "*.h", "*.hpp", "*.lua", "*.cxx", "*.m", "*.mm" },
-                callback = function()
-                    vim.cmd('CocCommand editor.action.formatDocument') -- 保存时自动格式化
-                end,
-            })
-
             -- :Fold 命令折叠当前 buffer
             vim.api.nvim_create_user_command("Fold", function(opts)
                 vim.fn.CocAction('fold', table.unpack(opts.fargs)) -- 折叠代码

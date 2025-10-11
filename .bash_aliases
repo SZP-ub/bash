@@ -70,3 +70,4 @@ core() {
 
 # gcc 编译
 alias gcc='gcc -g -std=c17'
+alias test='gcc -g -std=c17 /home/i/tools/Unity/src/unity.c'

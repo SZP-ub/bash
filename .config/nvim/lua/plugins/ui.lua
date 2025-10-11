@@ -1,19 +1,36 @@
 ---@diagnostic disable: undefined-global
 return {
 
+    -- <leader>1~9 跳转到第N个窗口
     {
-        "Shatur/neovim-session-manager",
+        "s1n7ax/nvim-window-picker",
+        event = "VeryLazy",
+        config = function()
+            for i = 1, 9 do
+                vim.keymap.set("n", "<leader>" .. i, function()
+                    local wins = vim.api.nvim_tabpage_list_wins(0)
+                    if wins[i] then
+                        vim.api.nvim_set_current_win(wins[i])
+                    end
+                end, { desc = "跳转到窗口 " .. i })
+            end
+        end,
+    },
+
+    -- 会话管理
+    {
+        "shatur/neovim-session-manager",
         event = "VeryLazy",
         dependencies = { "nvim-lua/plenary.nvim" },
         config = function()
-            local Path = require("plenary.path")
+            local path = require("plenary.path")
             require("session_manager").setup({
-                sessions_dir = Path:new(vim.fn.stdpath("data"), "sessions"),               -- 会话保存目录
-                autoload_mode = require("session_manager.config").AutoloadMode.CurrentDir, -- 自动加载当前目录会话
-                autosave_last_session = false,                                             -- 自动保存最后会话
-                autosave_ignore_not_normal = false,                                        -- 只在正常模式下自动保存
-                autosave_ignore_dirs = {},                                                 -- 可自定义忽略目录
-                autosave_ignore_filetypes = { lua },                                       -- 可自定义忽略文件类型
+                sessions_dir = path:new(vim.fn.stdpath("data"), "sessions"),
+                autoload_mode = require("session_manager.config").autoload_mode.CurrentDir,
+                autosave_last_session = false,
+                autosave_ignore_not_normal = false,
+                autosave_ignore_dirs = {},
+                autosave_ignore_filetypes = { "lua" },
                 autosave_only_in_session = false,
             })
 
@@ -34,29 +51,27 @@ return {
                 end
             end
 
-            -- 在 Neovim 启动时自动清理
             clean_old_sessions()
 
-            -- 推荐快捷键
-            vim.keymap.set("n", "<leader>so", ":SessionManager load_session<CR>", { desc = "加载会话" })
-            vim.keymap.set("n", "<leader>ss", ":SessionManager save_current_session<CR>", { desc = "保存当前会话" })
-            vim.keymap.set("n", "<leader>sd", ":SessionManager delete_session<CR>", { desc = "删除会话" })
+            vim.keymap.set("n", "<leader>so", ":SessionManager load_session<cr>", { desc = "加载会话" })
+            vim.keymap.set("n", "<leader>ss", ":SessionManager save_current_session<cr>", { desc = "保存当前会话" })
+            vim.keymap.set("n", "<leader>sd", ":SessionManager delete_session<cr>", { desc = "删除会话" })
         end,
     },
 
-
+    -- 缩进线
     {
-        -- 缩进线
         "lukas-reineke/indent-blankline.nvim",
         event = "VeryLazy",
         config = function()
             require("ibl").setup({
-                indent = { char = "┆" }, -- 设置缩进线样式
-                scope = { enabled = true }, -- 高亮当前代码块缩进
+                indent = { char = "┆" },
+                scope = { enabled = true },
             })
         end,
     },
 
+    -- 状态栏
     {
         "nvim-lualine/lualine.nvim",
         event = "VeryLazy",
@@ -75,7 +90,6 @@ return {
                     disabled_filetypes = {},
                 },
                 sections = {
-                    -- 左侧：仅在活跃窗口显示文件名
                     lualine_b = {
                         function()
                             if vim.fn.win_getid() == vim.fn.win_getid(vim.fn.winnr()) then
@@ -84,9 +98,6 @@ return {
                             return ""
                         end,
                     },
-                    -- lualine_c = { "branch" },
-                    -- 右侧：始终显示缓冲区编号和文件名
-
                     lualine_c = {
                         "branch",
                         function()
@@ -100,7 +111,6 @@ return {
                             return ""
                         end,
                     },
-
                     lualine_z = {
                         function()
                             local bufnr = vim.api.nvim_get_current_buf()
@@ -113,10 +123,13 @@ return {
                 },
                 inactive_sections = {
                     lualine_b = {},
-                    lualine_c = {},
+                    lualine_c = {
+                        function()
+                            return string.format("  %d ", vim.fn.winnr())
+                        end,
+                    },
                     lualine_x = {},
                     lualine_y = {},
-                    -- 右侧：非激活窗口也显示编号和文件名
                     lualine_z = {
                         function()
                             local bufnr = vim.api.nvim_get_current_buf()
@@ -140,9 +153,8 @@ return {
                                 local buflist = vim.fn.tabpagebuflist(i)
                                 local bufnr = buflist[winnr]
                                 local name = vim.fn.bufname(bufnr)
-                                name = name ~= "" and vim.fn.fnamemodify(name, ":t") or "[No Name]"
+                                name = name ~= "" and vim.fn.fnamemodify(name, ":t") or "[no name]"
 
-                                -- 检查该 tab 是否有未保存的 buffer
                                 local modified = false
                                 for _, b in ipairs(buflist) do
                                     if vim.fn.getbufvar(b, "&modified") == 1 then
@@ -151,8 +163,7 @@ return {
                                     end
                                 end
 
-                                -- 当前 tab 高亮
-                                local current = (i == vim.fn.tabpagenr()) and "%#TabLineSel#" or "%#TabLine#"
+                                local current = (i == vim.fn.tabpagenr()) and "%#tablinesel#" or "%#tabline#"
                                 table.insert(
                                     tabs,
                                     string.format(
@@ -178,50 +189,18 @@ return {
         end,
     },
 
+
+
+    -- 文件图标
     {
         "nvim-tree/nvim-web-devicons",
         event = "VeryLazy",
         config = function()
             require("nvim-web-devicons").setup({
-                -- 可选：自定义图标或颜色
                 override = {},
-                color_icons = true, -- 启用彩色图标
-                default = true,     -- 没有匹配时显示默认图标
+                color_icons = true,
+                default = true,
             })
         end,
     },
-
-
-    -- {
-    --     "numToStr/FTerm.nvim",
-    --     config = function()
-    --         require 'FTerm'.setup({
-    --             border     = 'rounded',
-    --             dimensions = {
-    --                 height = 0.4,
-    --                 width  = 0.4,
-    --                 x      = 1,
-    --                 y      = 0.1,
-    --             },
-    --         })
-    --     end
-    -- }
-
-
-    -- lazy.nvim
-    -- {
-    -- 	"folke/noice.nvim",
-    -- 	event = "VeryLazy",
-    -- 	opts = {
-    -- 		-- add any options here
-    -- 	},
-    -- 	dependencies = {
-    -- 		-- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
-    -- 		"MunifTanjim/nui.nvim",
-    -- 		-- OPTIONAL:
-    -- 		--   `nvim-notify` is only needed, if you want to use the notification view.
-    -- 		--   If not available, we use `mini` as the fallback
-    -- 		"rcarriga/nvim-notify",
-    -- 	},
-    -- },
 }
