@@ -66,8 +66,7 @@ vim.o.wildmode = "longest:full,full"
 vim.o.wildoptions = "pum"
 
 -- ================== fzf.vim环境配置 ================
-vim.env.fzf_default_opts =
-'--layout=reverse --no-wrap --bind=tab:down,ctrl-n:toggle+down,shift-tab:up,ctrl-p:toggle+up'
+-- vim.env.fzf_default_opts = '--layout=reverse --no-wrap --bind=tab:down,ctrl-n:toggle+down,shift-tab:up,ctrl-p:toggle+up'
 
 -- ============= unity test ==================
 vim.g.ultest_deprecation_notice = 0

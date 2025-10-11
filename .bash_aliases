@@ -61,10 +61,6 @@ alias pandocpdf='pandoc --pdf-engine=xelatex -V mainfont="Maple Mono NF Medium I
 # batcat 增强
 alias cat='batcat --style=numbers'
 
-# fzf 文件浏览时预览内容（高亮）
-# alias fzf='fzf --layout=reverse --preview "batcat --style=numbers --color=always --line-range :500 {}"'
-alias fzf='fzf --layout=reverse --bind=tab:down,ctrl-n:toggle+down,shift-tab:up,ctrl-p:toggle+up --preview "batcat --style=numbers --color=always --line-range :500 {}"'
-
 # core生成
 core() {
     ulimit -c unlimited
