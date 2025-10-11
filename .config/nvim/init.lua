@@ -28,7 +28,7 @@ vim.opt.ttyfast = true
 vim.opt.lazyredraw = true
 vim.opt.synmaxcol = 501
 
-vim.api.nvim_create_autocmd("BufReadPost", {
+vim.api.nvim_create_autocmd("bufreadpost", {
     callback = function()
         if vim.fn.line([['"]]) > 0 and vim.fn.line([['"]]) <= vim.fn.line("$") then
             vim.cmd('normal! g`"')
@@ -40,8 +40,8 @@ vim.g.markdown_recommended_style = 0
 vim.g.c_no_curly_error = 1
 
 vim.opt.autowrite = true
-vim.api.nvim_create_autocmd("FocusLost", { command = "silent! wa" })
--- vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, { command = "silent! update" })
+vim.api.nvim_create_autocmd("focuslost", { command = "silent! wa" })
+-- vim.api.nvim_create_autocmd({ "cursorhold", "cursorholdi" }, { command = "silent! update" })
 -- vim.opt.updatetime = 600000
 
 vim.opt.tabstop = 4
@@ -66,7 +66,7 @@ vim.o.wildmode = "longest:full,full"
 vim.o.wildoptions = "pum"
 
 -- ================== fzf.vim环境配置 ================
-vim.env.FZF_DEFAULT_OPTS =
+vim.env.fzf_default_opts =
 '--layout=reverse --no-wrap --bind=tab:down,ctrl-n:toggle+down,shift-tab:up,ctrl-p:toggle+up'
 
 -- ============= unity test ==================
@@ -76,7 +76,7 @@ vim.g['test#custom_c#file_pattern'] = 'test_.*\\.c$'
 vim.g['test#custom_c#command'] = 'cd test && ./test_runner'
 
 -- ============ 自动保存：切换 buffer 或窗口时 ==============
-vim.api.nvim_create_autocmd({ "BufLeave", "WinLeave" }, {
+vim.api.nvim_create_autocmd({ "bufleave", "winleave" }, {
     pattern = "*",
     callback = function()
         if vim.bo.modified and vim.bo.buftype == "" then
@@ -85,17 +85,27 @@ vim.api.nvim_create_autocmd({ "BufLeave", "WinLeave" }, {
     end,
 })
 
+-- =================== godbolt ====================
+vim.api.nvim_create_autocmd({ "bufwinenter", "winenter" }, {
+    pattern = "*",
+    callback = function()
+        if vim.bo.filetype == "asm" and vim.bo.buftype == "nofile" then
+            vim.wo.number = true
+        end
+    end,
+})
+
 -- ====================== termdebug ===================
 
-vim.api.nvim_set_keymap('t', '<Esc>', [[<C-\><C-n>]], { noremap = true })
+vim.api.nvim_set_keymap('t', '<esc>', [[<c-\><c-n>]], { noremap = true })
 vim.opt.timeout = false
 vim.opt.ttimeout = true
 vim.opt.timeoutlen = 100
 
-vim.api.nvim_create_autocmd("User", {
-    pattern = "TermdebugStartPost",
+vim.api.nvim_create_autocmd("user", {
+    pattern = "termdebugstartpost",
     callback = function()
-        vim.cmd("resize 20")
+        vim.cmd("resize 22")
         vim.cmd("wincmd r")
     end
 })
@@ -104,8 +114,8 @@ vim.cmd('packadd termdebug')
 vim.g.termdebug_config = {
     -- 调试器命令
     command = 'gdb',
-    -- 禁用 K 键映射
-    -- map_K = false,
+    -- 禁用 k 键映射
+    -- map_k = false,
     -- 禁用 - 键映射
     -- map_minus = false,
     -- 禁用 + 键映射
@@ -143,29 +153,3 @@ vim.g.termdebug_config = {
 require("keymaps")
 
 require("config.lazy")
-
--- require("config.lazy").setup({
---     { "stevearc/aerial.nvim" },                -- 代码结构大纲
---     { "tyru/caw.vim" },                        -- 注释插件
---     { "lukas-reineke/indent-blankline.nvim" }, -- 缩进线
---     { "folke/lazy.nvim" },                     -- 插件管理器本身
---     -- { "onsails/lspkind.nvim" },                -- 补全图标
---     { "nvim-lualine/lualine.nvim" },           -- 状态栏
---     -- { "bufferline.nvim" },     -- 顶部状态栏
---     -- { "williamboman/mason.nvim" },             -- LSP/DAP/Linter 管理
---     { "echasnovski/mini.pairs" },          -- 自动补全括号
---     { "kylechui/nvim-surround" },          -- 包围符操作
---     { "nvim-tree/nvim-tree.lua" },         -- 文件树
---     { "nvim-treesitter/nvim-treesitter" }, -- 语法高亮
---     -- { "nvim-treesitter/nvim-treesitter-textobjects" }, -- treesitter 文本对象
---     -- { "nvim-tree/nvim-web-devicons" },         -- 文件图标
---     { "romainl/vim-cool" },                -- 搜索高亮消除
---     { "kshenoy/vim-signature" },           -- mark 管理
---     { "yianwillis/vimcdoc" },              -- 中文文档
---     { "HiPhish/rainbow-delimiters.nvim" }, -- 彩虹括号
---     { "neoclide/coc.nvim" },               -- 智能补全
---     {"mhinz/vim-startify"},                -- 启动页管理
---     {"OXY2DEV/markviwe.nvim"}              -- markdown预览
---     {"nvim-tree/nvim-web-devicons"}        -- 图标
---     {"h-hg/fcitx.nvim"},                   --
--- })

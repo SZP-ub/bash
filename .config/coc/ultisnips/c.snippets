@@ -238,15 +238,8 @@ endsnippet
 
 ##
 ## Control Statements
-# if
-snippet if
-	if (${1:true}) {
-		${0:${VISUAL}}
-	}
-endsnippet
-
 snippet ife
-	if (${1:true}) {
+	if (${1:expression}) {
 		${2:${VISUAL}}
 	} else {
 		${0}
@@ -261,14 +254,14 @@ endsnippet
 
 # else if
 snippet elif
-	else if (${1:true}) {
+	else if (${1:expression}) {
 		${0:${VISUAL}}
 	}
 endsnippet
 
 # ifi
 snippet ifi
-	if (${1:true}) ${0};
+	if (${1:expression}) ${0};
 endsnippet
 
 # ternary
