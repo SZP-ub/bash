@@ -1,0 +1,2 @@
+# 仅显示 registers, assembly, source，隐藏 variables, stack
+dashboard -layout registers !assembly source !variables !stack
