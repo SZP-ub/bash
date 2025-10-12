@@ -102,7 +102,7 @@ snippet once "Include header once only guard"
 #ifndef ${1:`!p
 if not snip.c:
     name = re.sub(r'[^A-Za-z0-9]+','_', snip.fn).upper()
-    snip.rv = ('%s_H' % name).upper()
+    snip.rv = ('%s' % name).upper()
 else:
     snip.rv = snip.c`}
 #define $1
@@ -345,58 +345,58 @@ endsnippet
 ## Functions
 # function definition with zero parameters
 snippet fun0
-	${1:void} ${2:function_name}() {
-		${3}
-	}
+${1:void} ${2:function_name}() {
+	${3}
+}
 endsnippet
 
 # function definition with Doxygen documentation
 snippet dfun0
-	${4:void} ${5:function_name}() {
-		${6}
-	}
+${4:void} ${5:function_name}() {
+	${6}
+}
 endsnippet
 
 # function definition with one parameter
 snippet fun1
-	${1:void} ${2:function_name}(${3:Type} ${4:Parameter}) {
-		${5}
-	}
+${1:void} ${2:function_name}(${3:Type} ${4:Parameter}) {
+	${5}
+}
 endsnippet
 
 # function definition with one parameter with  Doxygen documentation
 snippet dfun1
-	${6:void} ${7:function_name}(${8:Type} ${3:Parameter}) {
-		${9}
-	}
+${6:void} ${7:function_name}(${8:Type} ${3:Parameter}) {
+	${9}
+}
 endsnippet
 
 # function definition with two parameters
 snippet fun2
-	${1:void} ${2:function_name}(${3:Type} ${4:Parameter}, ${5:Type} ${6:Parameter}) {
-		${7}
-	}
+${1:void} ${2:function_name}(${3:Type} ${4:Parameter}, ${5:Type} ${6:Parameter}) {
+	${7}
+}
 endsnippet
 
 # function definition with two parameters with  Doxygen documentation
 snippet dfun2
-	${8:void} ${9:function_name}(${10:Type} ${3:Parameter}, ${11:Type} ${5:Parameter}) {
-		${12}
-	}
+${8:void} ${9:function_name}(${10:Type} ${3:Parameter}, ${11:Type} ${5:Parameter}) {
+	${12}
+}
 endsnippet
 
 # function definition with three parameters
 snippet fun3
-	${1:void} ${2:function_name}(${3:Type} ${4:Parameter}, ${5:Type} ${6:Parameter}, ${7:Type} ${8:Parameter}) {
-		${9}
-	}
+${1:void} ${2:function_name}(${3:Type} ${4:Parameter}, ${5:Type} ${6:Parameter}, ${7:Type} ${8:Parameter}) {
+	${9}
+}
 endsnippet
 
 # function definition with three parameters with  Doxygen documentation
 snippet dfun3
-	${10:void} ${11:function_name}(${12:Type} ${3:Parameter}, ${13:Type} ${5:Parameter}, ${14:Type} ${7:Parameter}) {
-		${15}
-	}
+${10:void} ${11:function_name}(${12:Type} ${3:Parameter}, ${13:Type} ${5:Parameter}, ${14:Type} ${7:Parameter}) {
+	${15}
+}
 endsnippet
 
 ##
@@ -642,4 +642,36 @@ endsnippet
 
 snippet fgets
 	fgets(${1:ptr *},sizeof($1),${2:fptr *})
+endsnippet
+
+snippet run
+${1:void} ${2:function_name}($3);
+ RUN_TEST(${2});
+endsnippet
+
+snippet test
+#include "/home/i/tools/Unity/src/unity.h"
+#include "${0:`!p
+name = snip.basename or "name"
+if name.startswith("test_"):
+    name = name[5:]
+if name.endswith(".c"):
+    name = name[:-2]
+snip.rv = name + ".h"
+`}"
+
+${1:void} ${2:function_name}($3);
+
+void setUp() {}
+
+void tearDown() {}
+
+int main(int argc, char *argv[]) {
+
+    UNITY_BEGIN();
+
+ RUN_TEST(${2});
+
+    return UnityEnd();
+}
 endsnippet

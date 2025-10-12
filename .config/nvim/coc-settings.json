@@ -8,8 +8,8 @@
     "clangd.semanticHighlighting": true,
     "clangd.checkUpdates": true,
     "clangd.inlayHints.enable": true,
-    // "clangd.fallbackFlags": ["-std=c17"],
-    "clangd.fallbackFlags": ["-Wall"],
+    "clangd.fallbackFlags": ["-std=c17", "-Wall"],
+    // "clangd.fallbackFlags": ["-Wall"],
     "clangd.disableCompletion": false,
     "clangd.showFileStatus": true,
 

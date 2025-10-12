@@ -98,24 +98,12 @@ return {
                             return ""
                         end,
                     },
-                    lualine_c = {
-                        "branch",
-                        function()
-                            local ok, nav = pcall(require, "coc-nav")
-                            if ok and nav and type(nav.is_available) == "function" and nav.is_available() then
-                                local status, loc = pcall(nav.get_location)
-                                if status and loc and type(loc) == "string" and loc ~= "" then
-                                    return loc
-                                end
-                            end
-                            return ""
-                        end,
-                    },
+                    lualine_c = {},
                     lualine_z = {
                         function()
                             local bufnr = vim.api.nvim_get_current_buf()
                             local name = vim.fn.expand("%:t")
-                            return string.format("❮%d❯ %s", bufnr, name)
+                            return string.format(" %d %s", bufnr, name)
                         end,
                     },
                     lualine_x = {},
@@ -125,7 +113,10 @@ return {
                     lualine_b = {},
                     lualine_c = {
                         function()
-                            return string.format("  %d ", vim.fn.winnr())
+                            local win_width = vim.api.nvim_win_get_width(0)
+                            local content = "  " .. vim.fn.winnr()
+                            local pad = math.max(0, math.floor((win_width - #content) / 2))
+                            return string.rep(" ", pad) .. content
                         end,
                     },
                     lualine_x = {},
@@ -134,7 +125,7 @@ return {
                         function()
                             local bufnr = vim.api.nvim_get_current_buf()
                             local name = vim.fn.expand("%:t")
-                            return string.format("《%d》%s", bufnr, name)
+                            return string.format(" %d %s", bufnr, name)
                         end,
                     },
                 },
@@ -185,6 +176,11 @@ return {
                     },
                 },
                 extensions = {},
+            })
+            vim.api.nvim_create_autocmd("VimResized", {
+                callback = function()
+                    vim.cmd("LualineUpdate")
+                end,
             })
         end,
     },

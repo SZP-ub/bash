@@ -113,10 +113,8 @@ vim.keymap.set('n', 'L', 'g_', { desc = "行尾（软换行）" })
 
 -- ==================== ctrl组合键 ====================
 vim.keymap.set("i", "<C-e>", "<Right>", { noremap = true, silent = true, desc = "插入模式右移光标" })
-vim.keymap.set("n", "<C-d>", "<C-d>zz", { desc = "下翻半页并居中" })
-vim.keymap.set("n", "<C-u>", "<C-u>zz", { desc = "上翻半页并居中" })
-vim.keymap.set("n", "<C-Up>", ":resize -2<CR>", { desc = "增加窗口高度" })
-vim.keymap.set("n", "<C-Down>", ":resize +2<CR>", { desc = "减少窗口高度" })
+vim.keymap.set("n", "<C-Up>", ":resize +2<CR>", { desc = "增加窗口高度" })
+vim.keymap.set("n", "<C-Down>", ":resize -2<CR>", { desc = "减少窗口高度" })
 vim.keymap.set("n", "<C-Left>", ":vertical resize +2<CR>", { desc = "减少窗口宽度" })
 vim.keymap.set("n", "<C-Right>", ":vertical resize -2<CR>", { desc = "增加窗口宽度" })
 
