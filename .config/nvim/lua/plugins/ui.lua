@@ -70,7 +70,6 @@ return {
             })
         end,
     },
-
     -- 状态栏
     {
         "nvim-lualine/lualine.nvim",
@@ -112,20 +111,32 @@ return {
                 inactive_sections = {
                     lualine_b = {},
                     lualine_c = {
+                        -- function()
+                        --     local win_width = vim.api.nvim_win_get_width(0)
+                        --     local content = "  " .. vim.fn.winnr()
+                        --     local pad = math.max(0, math.floor((win_width - #content) / 2))
+                        --     return string.rep(" ", pad) .. content
+                        -- end,
                         function()
                             local win_width = vim.api.nvim_win_get_width(0)
                             local content = "  " .. vim.fn.winnr()
                             local pad = math.max(0, math.floor((win_width - #content) / 2))
-                            return string.rep(" ", pad) .. content
+                            return string.rep(" ", pad) .. "%#MyBoldHL#" .. content
                         end,
                     },
                     lualine_x = {},
                     lualine_y = {},
                     lualine_z = {
+                        -- function()
+                        --     local bufnr = vim.api.nvim_get_current_buf()
+                        --     local name = vim.fn.expand("%:t")
+                        --     return string.format(" %d %s", bufnr, name)
+                        -- end,
                         function()
                             local bufnr = vim.api.nvim_get_current_buf()
                             local name = vim.fn.expand("%:t")
-                            return string.format(" %d %s", bufnr, name)
+                            local content = string.format(" %d %s", bufnr, name)
+                            return "%#MyBoldHL#" .. content
                         end,
                     },
                 },
