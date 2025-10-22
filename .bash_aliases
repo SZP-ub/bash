@@ -1,20 +1,23 @@
-# 启用 ls/grep 等命令的彩色输出
+# 启用 grep 等命令的彩色输出
 if [ -x /usr/bin/dircolors ]; then
-    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-    alias ls='ls --color=auto'
-    alias dir='dir --color=auto'
-    alias vdir='vdir --color=auto'
+    if [ -r ~/.dircolors ]; then
+        eval "$(dircolors -b ~/.dircolors)"
+    else
+        eval "$(dircolors -b)"
+    fi
     alias grep='grep --color=auto'
     alias fgrep='fgrep --color=auto'
     alias egrep='egrep --color=auto'
 fi
 
-# 更友好的 ls 和 tree 命令（需 exa/eza 安装）
+# ls 和 tree 命令用 exa/eza（假定 exa/eza 已安装）
 alias ls='exa --icons'
 alias ll='exa -l --icons'
 alias la='exa -a --icons'
 alias lh='exa -lh --icons'
 alias tree='eza --tree --icons'
+
+# 翻译命令（需 fanyi 安装）
 alias ff='fanyi'
 
 # 长时间命令结束后桌面通知
@@ -56,18 +59,20 @@ alias yrv='yadm remote -v'
 
 # pandoc 快捷键
 alias pandocpdf='pandoc --pdf-engine=xelatex -V mainfont="Maple Mono NF Medium Italic" -V monofont="Maple Mono NF Medium Italic" -V CJKmainfont="Maple Mono NF CN Medium" -V CJKmonofont="Maple Mono NF CN Medium"'
-# alias pandocpdf='pandoc --pdf-engine=xelatex -V mainfont="Maple Mono NF Medium Italic" -V monofont="Maple Mono NF Medium Italic" -V CJKmainfont="Maple Mono NF CN Medium" -V CJKmonofont="Maple Mono NF CN Medium" -V japanesefont="Noto Sans CJK JP" -V CJKoptions=AutoFakeBold'
 
 # batcat 增强
 alias cat='batcat --style=numbers'
 
-# core生成
-core() {
+# core 文件生成
+coredump() {
     ulimit -c unlimited
     sudo sysctl -w kernel.core_pattern='%e.core'
     echo "core文件生成已开启"
 }
 
 # gcc 编译
-alias gcc='gcc -g -std=c17'
-alias test='gcc -g -std=c17 /home/i/tools/Unity/src/unity.c'
+alias gcc='gcc -std=c17'
+alias gtest='gcc -std=c17 /home/i/tools/Unity/src/unity.c'
+
+# cdecl 解释说明变量定义
+alias cdecl='cdecl explain'

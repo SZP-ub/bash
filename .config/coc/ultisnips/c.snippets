@@ -25,6 +25,37 @@ def printf_expand_args(snip):
 
 endglobal
 
+global !p
+def fnp_expand(snip):
+    """
+    使用说明：
+    - 第一个 tabstop (${1}) 输入参数个数（整数）。
+    - 展开后 ${2} 为返回类型，${3} 为指针名，
+      后续占位按照 ${4:type1} ${5:name1}, ${6:type2} ${7:name2} ... 排列。
+    """
+    try:
+        n = int(snip.tabstops[1].current_text)
+        if n < 0: n = 0
+    except Exception:
+        n = 1
+
+    # 构造注释中参数名占位
+    comment_parts = []
+    params_parts = []
+    for i in range(n):
+        type_idx = 4 + i*2
+        name_idx = 5 + i*2
+        comment_parts.append("${%d:name%d}" % (name_idx, i+1))
+        params_parts.append("${%d:type%d} ${%d:name%d}" % (type_idx, i+1, name_idx, i+1))
+
+    comment = "/* " + (", ".join(comment_parts) if comment_parts else "") + " */"
+    params = "void" if n == 0 else ", ".join(params_parts)
+
+    # 返回字符串：注意保留第1个占位用于输入参数个数
+    snippet_body = "\n" + comment + "\n${2:type} (*${3:name}) (" + params + ");"
+    snip.expand_anon(snippet_body)
+endglobal
+
 # ==============
 # Snippets 
 # ==============
@@ -58,28 +89,6 @@ int main(int argc, char *argv[]) {
 
 	return 0;
 }
-endsnippet
-
-snippet for "for loop (for)"
-for (${2:i} = 0; $2 < ${1:count}; ${3:++$2}) {
-	${VISUAL}$0
-}
-endsnippet
-
-snippet fori "for int loop (fori)"
-for (${4:int} ${2:i} = 0; $2 < ${1:count}; ${3:++$2}) {
-	${VISUAL}$0
-}
-endsnippet
-
-snippet fora "for-loop" b
-for (${1:var}; ${2:condition}; `!p
-if len(t[1]) > 0:
-	snip.rv = t[1].split('=')[0].split()[-1]
-`++) {
-	
-	$0
-} 
 endsnippet
 
 # snippet once "Include header once only guard"
@@ -144,7 +153,8 @@ ${1:void} ${2:function_name}($3) {
 }
 endsnippet
 
-snippet fund "function declaration" b
+snippet fnd "function declaration" b
+/*${4:Introduction}*/
 ${1:void} ${2:function_name}($3);
 endsnippet
 
@@ -308,17 +318,29 @@ endsnippet
 ##
 ## Loops
 # for
-snippet for
-	for (int ${2:i} = 0; $2 < ${1:count}; $2${3:++}) {
+snippet for "reserve: int, = 0, <"
+	for (int ${2:i} = 0; $2 < ${1:count}; ${3:++}$2) {
 		${4}
 	}
 endsnippet
 
 # for (custom)
-snippet forr
-	for (int ${1:i} = ${2:0}; ${3:$1 < 10}; $1${4:++}) {
+snippet fori "reserve: int"
+	for (int ${1:i} = ${2:0}; ${3:$1 < 10}; ${4:++}$1) {
 		${5}
 	}
+endsnippet
+
+snippet fora "reserve: = 0, <"
+for (${2:i} = 0; $2 < ${1:count}; ${3:++$2}) {
+	${VISUAL}$0
+}
+endsnippet
+
+snippet forr "reserve: = 0"
+for (${4:int} ${2:i} = 0; $2 < ${1:count}; ${3:++$2}) {
+	${VISUAL}$0
+}
 endsnippet
 
 # while
@@ -344,56 +366,56 @@ endsnippet
 ##
 ## Functions
 # function definition with zero parameters
-snippet fun0
+snippet fn0
 ${1:void} ${2:function_name}() {
 	${3}
 }
 endsnippet
 
 # function definition with Doxygen documentation
-snippet dfun0
+snippet dfn0
 ${4:void} ${5:function_name}() {
 	${6}
 }
 endsnippet
 
 # function definition with one parameter
-snippet fun1
+snippet fn1
 ${1:void} ${2:function_name}(${3:Type} ${4:Parameter}) {
 	${5}
 }
 endsnippet
 
 # function definition with one parameter with  Doxygen documentation
-snippet dfun1
+snippet dfn1
 ${6:void} ${7:function_name}(${8:Type} ${3:Parameter}) {
 	${9}
 }
 endsnippet
 
 # function definition with two parameters
-snippet fun2
+snippet fn2
 ${1:void} ${2:function_name}(${3:Type} ${4:Parameter}, ${5:Type} ${6:Parameter}) {
 	${7}
 }
 endsnippet
 
 # function definition with two parameters with  Doxygen documentation
-snippet dfun2
+snippet dfn2
 ${8:void} ${9:function_name}(${10:Type} ${3:Parameter}, ${11:Type} ${5:Parameter}) {
 	${12}
 }
 endsnippet
 
 # function definition with three parameters
-snippet fun3
+snippet fn3
 ${1:void} ${2:function_name}(${3:Type} ${4:Parameter}, ${5:Type} ${6:Parameter}, ${7:Type} ${8:Parameter}) {
 	${9}
 }
 endsnippet
 
 # function definition with three parameters with  Doxygen documentation
-snippet dfun3
+snippet dfn3
 ${10:void} ${11:function_name}(${12:Type} ${3:Parameter}, ${13:Type} ${5:Parameter}, ${14:Type} ${7:Parameter}) {
 	${15}
 }
@@ -402,13 +424,20 @@ endsnippet
 ##
 ## Types
 # typedef
-snippet ty
+snippet tp
 typedef ${1:int} ${2:MyCustomType};
 endsnippet
 
 # typedef struct
-snippet tds
+snippet tps
 typedef struct ${1:`!p snip.rv = (snip.basename or "name") + "_t"`} { 
+	${2:Data}
+} ${1};
+endsnippet
+
+# typedef struct
+snippet tpa
+typedef struct { 
 	${2:Data}
 } ${1};
 endsnippet
@@ -419,29 +448,46 @@ snippet enum
 endsnippet
 
 # typedef enum
-snippet tde
+snippet tpe
 typedef enum {
 	${1:Data} 
 } ${2:foo};
 endsnippet
 
 #  typedef type (*) (type,type)
-snippet tdptr "typedef ptrFunction" 
+snippet tpp "typedef ptrFunction" 
 typedef ${1:type} (*${2:name})(${3:type});
 endsnippet
 
 # type (*) (type,type)
 snippet fcptr "ptrFunction" 
+/*$1 (*$2) ($3 ${5:name}) = $4*/
 ${1:type} (*${2:name})(${3:type}) = ${4:Val};
+endsnippet
+
+
+# type (*) (type,type)
+snippet fnp0 "parameter is void" 
+${1:type} (*${2:name})(void);
+endsnippet
+
+snippet fnp1 "Two parameters" 
+/* $3${5: name} */
+${1:type} (*${2:name})(${3:type});
+endsnippet
+
+snippet fnp2 "Two parameters" 
+/* $3${6: name}, $4${7: name} */
+${1:type} (*${2:name})(${3:type}, ${4:type});
+endsnippet
+
+snippet fnp3 "There parameters" 
+/* $3${6: name}, $4${7: name}, $4${8: name} */
+${1:type} (*${2:name})(${3:type}, ${4:type}, ${5:type});
 endsnippet
 
 ##
 ## Input/Output
-# fprintf (again, this isn't as nice as TextMate's version, but it works)
-snippet fpr
-	fprintf(${1:stderr}, "${2:%s}\n"${3});
-endsnippet
-
 snippet prd
 	printf("${1:} = %d\n", $1);
 endsnippet
@@ -533,12 +579,12 @@ snippet asr
 	assert($1);
 endsnippet
 
-snippet nul
-	NULL;
-endsnippet
-
 snippet anl
 	assert(${1:ptr *} != NULL);
+endsnippet
+
+snippet nul
+NULL
 endsnippet
 
 snippet mset
@@ -574,15 +620,49 @@ snippet mcm
 endsnippet
 
 ## Dynamic Allocation
-snippet mall
+snippet ma "reserve: "
+	${1:ptr *} = (${2:type}*) malloc( sizeof($2));
+endsnippet
+
+snippet mai "reserve: if"
+	${1:ptr *} = (${2:type}*) malloc( sizeof($2));
+	if ($1 == NULL) {
+		perror("The memory allocation for ${1:name} failed\n");
+		return ${3:-1};
+	}
+endsnippet
+
+snippet mat "reserve: test_assert_not_null()"
+	${1:ptr *} = (${2:type}*) malloc( sizeof($2));
+	TEST_ASSERT_NOT_NULL($1);
+endsnippet
+
+snippet mal "reserve: type"
+	${1:type} ${2:ptr *} = ($1*) malloc(sizeof($1));
+endsnippet
+
+snippet mali "reserve: type, if"
+	${1:type} *${2:ptr *} = ($1*) malloc(sizeof($1));
+	if ($2 == NULL) {
+		perror("The memory allocation for ${2:name} failed\n");
+		return ${3:-1};
+	}
+endsnippet
+
+snippet malt "reserve: type, if"
+	${1:type} *${2:ptr *} = ($1*) malloc(sizeof($1));
+	TEST_ASSERT_NOT_NULL($2);
+endsnippet
+
+snippet mall "reserve: size"
 	${1:ptr *} = (${2:type}*) malloc(${3:size} * sizeof($2));
 endsnippet
 
-snippet malli
+snippet malli "reserve: size, if"
 	${1:ptr *} = (${2:type}*) malloc(${3:size} * sizeof($2));
 	if ($1 == NULL) {
-		printf("Memory allocation failed\n");
-		return 1;
+		perror("The memory allocation for ${1:name} failed\n");
+		return ${3:-1};
 	}
 endsnippet
 
@@ -594,18 +674,6 @@ snippet real
 	${1:ptr *} = realloc($1, ${2:size} * sizeof(${3:type}));
 endsnippet
 
-snippet mal
-	${1:type} ${2:ptr *} = ($1*) malloc(sizeof($1));
-endsnippet
-
-snippet mali
-	${1:type} ${2:ptr *} = ($1*) malloc(sizeof($1));
-	if ($2 == NULL) {
-		printf("Memory allocation failed\n");
-		return ${3:-1};
-	}
-endsnippet
-
 snippet cal
 	${1:type} ${2:ptr *} = ($1*) calloc(${3:size} * sizeof($1));
 endsnippet
@@ -614,7 +682,7 @@ snippet fre
 	free(${1:ptr *});
 endsnippet
 
-snippet free
+snippet free "add ptr* = NULL"
 	free(${1:ptr *});
 	$1 = NULL;
 endsnippet
@@ -660,11 +728,11 @@ if name.endswith(".c"):
 snip.rv = name + ".h"
 `}"
 
-${1:void} ${2:function_name}($3);
-
 void setUp() {}
 
 void tearDown() {}
+
+${1:void} ${2:function_name}($3);
 
 int main(int argc, char *argv[]) {
 

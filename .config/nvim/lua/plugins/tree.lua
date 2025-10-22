@@ -14,7 +14,7 @@ return {
         config = function()
             require("nvim-tree").setup({
                 sort_by = "case_sensitive",
-                view = { width = 20 },
+                view = { width = 40 },
                 renderer = { group_empty = true },
                 filters = { dotfiles = true },
             })
@@ -46,7 +46,6 @@ return {
         lazy = true,
         build = "./install --bin",
     },
-
     {
         "junegunn/fzf.vim",
         event = "VeryLazy",
@@ -139,7 +138,7 @@ return {
         event = "VeryLazy",
         dependencies = { "ibhagwan/fzf-lua", "nvim-tree/nvim-web-devicons" },
         opts = {
-            cscope = { db_file = "./cscope.out", picker = "fzf-lua" },
+            cscope = { db_file = "./cscope.out", picker = "quickfix", skip_picker_for_single_result = false, },
             stack_view = { tree_hl = true },
         },
 
@@ -169,7 +168,7 @@ return {
             end, { desc = "显示被调用关系树（up）" })
 
             -- 查找全局定义
-            -- vim.keymap.set('n', '<space>csg', ":Cs f g <C-R><C-W><CR>", { desc = "查找全局定义" })
+            vim.keymap.set('n', '<space>csg', ":Cs f g <C-R><C-W><CR>", { desc = "查找全局定义" })
 
             -- 查找调用该函数的位置
             vim.keymap.set('n', 'csc', ":Cs f c <C-R><C-W><CR>", { desc = "查找调用该函数的位置" })
@@ -179,6 +178,8 @@ return {
 
             -- 查找被该函数调用的位置
             vim.keymap.set('n', 'cst', ":Cs f t <C-R><C-W><CR>", { desc = "查找被该函数调用的位置" })
+
+            vim.keymap.set('n', 'csa', ":Cs f a <C-R><C-W><CR>", { desc = "查找赋值位置" })
         end,
 
     }

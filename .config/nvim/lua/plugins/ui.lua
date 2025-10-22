@@ -1,6 +1,26 @@
 ---@diagnostic disable: undefined-global
 return {
 
+    {
+        "nvim-treesitter/nvim-treesitter-context",
+        event = "VeryLazy",
+        config = function()
+            require("treesitter-context").setup({
+                enable = true,           -- 启用此插件（也可以通过命令随时启用/禁用）
+                multiwindow = true,      -- 是否支持多窗口（多分屏时每个窗口都显示上下文）
+                max_lines = 2,           -- 上下文窗口最多显示多少行（小于等于0表示不限制行数）
+                min_window_height = 0,   -- 编辑器窗口最小高度，低于此高度不显示上下文（小于等于0表示不限制）
+                line_numbers = true,     -- 是否显示行号
+                multiline_threshold = 2, -- 单个上下文最多显示多少行（超过则折叠）
+                trim_scope = 'inner',    -- 当超过 max_lines 时，丢弃哪部分上下文（'inner' 丢弃内部，'outer' 丢弃外部）
+                mode = 'topline',        -- 用哪一行来计算上下文（'cursor' 用光标所在行，'topline' 用窗口顶部行）
+                separator = nil,         -- 上下文和正文之间的分隔符（如 '-'，设置后只有光标上方至少有2行时才显示上下文）
+                zindex = 2,              -- 上下文窗口的 Z-index（层级，数字越大越靠上）
+                on_attach = nil,         -- 附加到 buffer 时的回调函数，返回 false 可禁用上下文显示
+            })
+        end,
+    },
+
     -- <leader>1~9 跳转到第N个窗口
     {
         "s1n7ax/nvim-window-picker",
@@ -11,6 +31,7 @@ return {
                     local wins = vim.api.nvim_tabpage_list_wins(0)
                     if wins[i] then
                         vim.api.nvim_set_current_win(wins[i])
+                        vim.cmd("normal! zz") -- 跳转后居中光标
                     end
                 end, { desc = "跳转到窗口 " .. i })
             end
@@ -64,12 +85,44 @@ return {
         "lukas-reineke/indent-blankline.nvim",
         event = "VeryLazy",
         config = function()
+            local highlight = {
+                "RainbowRed",
+                "RainbowYellow",
+                "RainbowBlue",
+                "RainbowOrange",
+                "RainbowGreen",
+                "RainbowViolet",
+                "RainbowCyan",
+            }
+
+            local hooks = require "ibl.hooks"
+            -- create the highlight groups in the highlight setup hook, so they are reset
+            -- every time the colorscheme changes
+            hooks.register(hooks.type.HIGHLIGHT_SETUP, function()
+                vim.api.nvim_set_hl(0, "RainbowRed", { fg = "#E06C75" })
+                vim.api.nvim_set_hl(0, "RainbowYellow", { fg = "#E5C07B" })
+                vim.api.nvim_set_hl(0, "RainbowBlue", { fg = "#61AFEF" })
+                vim.api.nvim_set_hl(0, "RainbowOrange", { fg = "#D19A66" })
+                vim.api.nvim_set_hl(0, "RainbowGreen", { fg = "#98C379" })
+                vim.api.nvim_set_hl(0, "RainbowViolet", { fg = "#C678DD" })
+                vim.api.nvim_set_hl(0, "RainbowCyan", { fg = "#56B6C2" })
+            end)
+
             require("ibl").setup({
-                indent = { char = "┆" },
-                scope = { enabled = true },
+                indent = {
+                    highlight = highlight,
+                    -- char = "┆",
+                },
+                scope = {
+                    enabled = true,
+                },
             })
+
+            local hooks = require "ibl.hooks"
+            hooks.register(hooks.type.SCOPE_HIGHLIGHT, hooks.builtin.scope_highlight_from_extmark)
         end,
     },
+
     -- 状态栏
     {
         "nvim-lualine/lualine.nvim",
@@ -111,12 +164,6 @@ return {
                 inactive_sections = {
                     lualine_b = {},
                     lualine_c = {
-                        -- function()
-                        --     local win_width = vim.api.nvim_win_get_width(0)
-                        --     local content = "  " .. vim.fn.winnr()
-                        --     local pad = math.max(0, math.floor((win_width - #content) / 2))
-                        --     return string.rep(" ", pad) .. content
-                        -- end,
                         function()
                             local win_width = vim.api.nvim_win_get_width(0)
                             local content = "  " .. vim.fn.winnr()
@@ -127,16 +174,16 @@ return {
                     lualine_x = {},
                     lualine_y = {},
                     lualine_z = {
-                        -- function()
-                        --     local bufnr = vim.api.nvim_get_current_buf()
-                        --     local name = vim.fn.expand("%:t")
-                        --     return string.format(" %d %s", bufnr, name)
-                        -- end,
                         function()
-                            local bufnr = vim.api.nvim_get_current_buf()
-                            local name = vim.fn.expand("%:t")
-                            local content = string.format(" %d %s", bufnr, name)
-                            return "%#MyBoldHL#" .. content
+                            local buftype = vim.api.nvim_buf_get_option(0, "filetype")
+                            if buftype == "NvimTree" or buftype == "tagbar" then
+                                return ""
+                            else
+                                local bufnr = vim.api.nvim_get_current_buf()
+                                local name = vim.fn.expand("%:t")
+                                local content = string.format(" %d %s", bufnr, name)
+                                return "%#MyBoldHL#" .. content
+                            end
                         end,
                     },
                 },

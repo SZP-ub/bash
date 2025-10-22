@@ -23,7 +23,7 @@ vim.opt.incsearch = true
 vim.opt.ignorecase = true
 vim.opt.backspace = { "indent", "eol", "start" }
 vim.opt.updatetime = 100
-vim.opt.scrolloff = 1
+vim.opt.scrolloff = 3
 vim.opt.ttyfast = true
 vim.opt.lazyredraw = true
 vim.opt.synmaxcol = 501
@@ -50,6 +50,23 @@ vim.o.background = "light"
 -- vim.cmd("colorscheme peachpuff")
 vim.cmd("colorscheme retrobox")
 
+-- ======================== Folding config ===========================
+vim.o.viewoptions = vim.o.viewoptions:match("folds") and vim.o.viewoptions or (vim.o.viewoptions .. ",folds")
+
+local g = vim.api.nvim_create_augroup("RememberFolds", { clear = true })
+-- 关闭/删除 buffer 时保存视图（包含折叠）
+vim.api.nvim_create_autocmd({ "BufDelete", "BufWipeout", "BufUnload" }, {
+    pattern = "*",
+    command = "silent! mkview",
+    group = g,
+})
+-- 打开/读取 buffer 时恢复视图（包含折叠）
+vim.api.nvim_create_autocmd({ "BufReadPost", "BufNewFile" }, {
+    pattern = "*",
+    command = "silent! loadview",
+    group = g,
+})
+
 -- ======== Return to last edit position when opening files =======
 local augroup = vim.api.nvim_create_augroup("LastEditPosition", { clear = true })
 vim.api.nvim_create_autocmd("BufReadPost", {
@@ -59,6 +76,7 @@ vim.api.nvim_create_autocmd("BufReadPost", {
         local lcount = vim.api.nvim_buf_line_count(0)
         if mark[1] > 0 and mark[1] <= lcount then
             pcall(vim.api.nvim_win_set_cursor, 0, mark)
+            vim.cmd("normal! zz") -- 跳转后居中光标
         end
     end,
 })
@@ -101,15 +119,16 @@ vim.opt.timeout = false
 vim.opt.ttimeout = true
 vim.opt.timeoutlen = 100
 
-vim.api.nvim_create_autocmd("user", {
-    pattern = "termdebugstartpost",
+vim.cmd('packadd termdebug')
+
+vim.api.nvim_create_autocmd("User", {
+    pattern = "TermdebugStartPost",
     callback = function()
-        vim.cmd("resize 22")
         vim.cmd("wincmd r")
+        vim.cmd("resize 22")
     end
 })
 
-vim.cmd('packadd termdebug')
 vim.g.termdebug_config = {
     -- 调试器命令
     command = 'gdb',

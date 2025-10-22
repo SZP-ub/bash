@@ -1,5 +1,7 @@
 ---@diagnostic disable: undefined-global
 
+-- ====================== Fold ======================
+
 -- =============== Remove buffer to new_tab =================
 vim.keymap.set("n", "<leader>mt", function()
     local buf = vim.api.nvim_get_current_buf()
@@ -31,24 +33,24 @@ end, { desc = "复制完整文件路径到剪贴板" })
 -- vim.keymap.set("v", "<A-k>", ":m '<-2<CR>gv=gv", vim.tbl_extend("force", move_opts, { desc = "Move selection up" }))
 
 -- ==================== 智能点号转箭头 ====================
-_G.dot_to_arrow = function()
-    local col = vim.fn.col('.') - 2
-    local line = vim.api.nvim_get_current_line()
-    if col >= 0 and line:sub(col + 1, col + 1):match('%w') then
-        return '->'
-    else
-        return '-'
-    end
-end
+-- _G.dot_to_arrow = function()
+--     local col = vim.fn.col('.') - 2
+--     local line = vim.api.nvim_get_current_line()
+--     if col >= 0 and line:sub(col + 1, col + 1):match('%w') then
+--         return '->'
+--     else
+--         return '-'
+--     end
+-- end
 
-vim.api.nvim_create_autocmd("FileType", {
-    pattern = { "c", "cpp" },
-    callback = function()
-        vim.api.nvim_buf_set_keymap(
-            0, "i", "-", "v:lua.dot_to_arrow()", { expr = true, noremap = true }
-        )
-    end
-})
+-- vim.api.nvim_create_autocmd("FileType", {
+--     pattern = { "c", "cpp" },
+--     callback = function()
+--         vim.api.nvim_buf_set_keymap(
+--             0, "i", "-", "v:lua.dot_to_arrow()", { expr = true, noremap = true }
+--         )
+--     end
+-- })
 
 -- ==================== 行号切换 ====================
 local function ToggleLineNumbers()
