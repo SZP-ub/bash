@@ -24,12 +24,9 @@
   "nvim-window-picker": { "branch": "main", "commit": "6382540b2ae5de6c793d4aa2e3fe6dbb518505ec" },
   "plenary.nvim": { "branch": "master", "commit": "b9fd5226c2f76c951fc8ed5923d85e4de065e509" },
   "rainbow-delimiters.nvim": { "branch": "master", "commit": "687ef75fdbd497eabc9eea92b52e7b4d403b3319" },
-  "sniprun": { "branch": "master", "commit": "e238e00d561d8dbdd047f5837b87e9d3419977ad" },
   "tagbar": { "branch": "master", "commit": "7bfffca1f121afb7a9e38747500bf5270e006bb1" },
   "vim-cool": { "branch": "master", "commit": "9ea940c0d537e55de0de4c0298c04b976960fb12" },
   "vim-signature": { "branch": "master", "commit": "6bc3dd1294a22e897f0dcf8dd72b85f350e306bc" },
-  "vim-test": { "branch": "master", "commit": "ad4b7213568d59a5e37606ad65859e3a8e45dbd2" },
-  "vim-ultest": { "branch": "master", "commit": "b06bc8715cbcb4aa0444abfd85fb705b659ba055" },
   "vimcdoc": { "branch": "master", "commit": "d98de99366c4a6fa5053becb64ea3d2b805770b5" },
   "wilder.nvim": { "branch": "master", "commit": "679f348dc90d80ff9ba0e7c470c40a4d038dcecf" },
   "wildfire.nvim": { "branch": "master", "commit": "1729faca1c6ae34520a6e531983a3737d3654ee1" }
