@@ -3,7 +3,7 @@ return {
 
     {
         "p00f/godbolt.nvim",
-        event = "VeryLazy",
+        cmd = "Godbolt",
         dependencies = { "nvim-lua/plenary.nvim" },
         config = function()
             require("godbolt").setup({

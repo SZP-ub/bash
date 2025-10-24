@@ -71,8 +71,8 @@ coredump() {
 }
 
 # gcc 编译
-alias gcc='gcc -std=c17'
-alias gtest='gcc -std=c17 /home/i/tools/Unity/src/unity.c'
+alias gcc='gcc -fsanitize=address -std=c17'
+alias gtest='gcc -fsanitize=address -std=c17 /home/i/tools/Unity/src/unity.c'
 
 # cdecl 解释说明变量定义
 alias cdecl='cdecl explain'

@@ -3,6 +3,7 @@ return {
 
     {
         "nvim-treesitter/nvim-treesitter-context",
+        -- cmd = "TSContextToggle", -- 只在调用命令时加载
         event = "VeryLazy",
         config = function()
             require("treesitter-context").setup({
@@ -24,18 +25,24 @@ return {
     -- <leader>1~9 跳转到第N个窗口
     {
         "s1n7ax/nvim-window-picker",
-        event = "VeryLazy",
-        config = function()
+        keys = (function()
+            local keys = {}
             for i = 1, 9 do
-                vim.keymap.set("n", "<leader>" .. i, function()
-                    local wins = vim.api.nvim_tabpage_list_wins(0)
-                    if wins[i] then
-                        vim.api.nvim_set_current_win(wins[i])
-                        vim.cmd("normal! zz") -- 跳转后居中光标
-                    end
-                end, { desc = "跳转到窗口 " .. i })
+                table.insert(keys, {
+                    "<leader>" .. i,
+                    function()
+                        local wins = vim.api.nvim_tabpage_list_wins(0)
+                        if wins[i] then
+                            vim.api.nvim_set_current_win(wins[i])
+                            vim.cmd("normal! zz")
+                        end
+                    end,
+                    desc = "跳转到窗口 " .. i
+                })
             end
-        end,
+            return keys
+        end)(),
+        config = false, -- 只用快捷键，不需要额外配置
     },
 
     -- 会话管理
@@ -248,7 +255,8 @@ return {
     -- 文件图标
     {
         "nvim-tree/nvim-web-devicons",
-        event = "VeryLazy",
+        -- event = "VeryLazy",
+        lazy = true,
         config = function()
             require("nvim-web-devicons").setup({
                 override = {},

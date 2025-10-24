@@ -10,7 +10,10 @@ return {
     -- 文件树侧边栏
     {
         "nvim-tree/nvim-tree.lua",
-        event = "VeryLazy",
+        cmd = "NvimTreeToggle", -- 只在打开文件树时加载
+        keys = {
+            { "<C-n>", "<cmd>NvimTreeToggle<CR>", desc = "切换NvimTree" },
+        },
         config = function()
             require("nvim-tree").setup({
                 sort_by = "case_sensitive",
@@ -24,7 +27,6 @@ return {
     -- 代码结构标签栏
     {
         "preservim/tagbar",
-        event = "VeryLazy",
         cmd = "TagbarToggle",
         keys = {
             {
@@ -46,6 +48,7 @@ return {
         lazy = true,
         build = "./install --bin",
     },
+
     {
         "junegunn/fzf.vim",
         event = "VeryLazy",
@@ -75,7 +78,7 @@ return {
 
     {
         "ibhagwan/fzf-lua",
-        -- lazy = true,
+        lazy = true,
         dependencies = { "junegunn/fzf", "nvim-tree/nvim-web-devicons" },
         config = function()
             require("fzf-lua").setup({

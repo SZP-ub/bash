@@ -3,7 +3,8 @@ return {
 
     {
         "Civitasv/cmake-tools.nvim",
-        event = "VeryLazy", -- 延迟加载插件
+        -- event = "VeryLazy", -- 延迟加载插件
+        event = { "BufReadPost", "BufNewFile" }, -- 只在打开文件时加载
         config = function()
             local osys = require("cmake-tools.osys")
             require("cmake-tools").setup {

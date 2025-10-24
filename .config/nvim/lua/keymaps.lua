@@ -112,6 +112,7 @@ vim.keymap.set("n", "gf", "gF", { desc = "跳转到文件并定位行" })
 vim.keymap.set("n", "J", "gJ", { desc = "连接行（软换行）" })
 vim.keymap.set('n', 'H', '^', { desc = "行首" })
 vim.keymap.set('n', 'L', 'g_', { desc = "行尾（软换行）" })
+vim.keymap.set('n', '<Tab>', 'gt', { noremap = true })
 
 -- ==================== ctrl组合键 ====================
 vim.keymap.set("i", "<C-e>", "<Right>", { noremap = true, silent = true, desc = "插入模式右移光标" })
@@ -120,8 +121,7 @@ vim.keymap.set("n", "<C-Down>", ":resize -2<CR>", { desc = "减少窗口高度" 
 vim.keymap.set("n", "<C-Left>", ":vertical resize +2<CR>", { desc = "减少窗口宽度" })
 vim.keymap.set("n", "<C-Right>", ":vertical resize -2<CR>", { desc = "增加窗口宽度" })
 
--- ============== NvimTree与终端窗口 ================
-vim.keymap.set('n', '<C-n>', ':NvimTreeToggle<CR>', { noremap = true, silent = true, desc = "切换NvimTree" })
+-- ============== 终端窗口 ================
 vim.keymap.set('n', '<space>tt', ':belowright vertical terminal<CR>', { desc = "右侧打开终端" })
 
 -- ==================== 重命名文件 ====================

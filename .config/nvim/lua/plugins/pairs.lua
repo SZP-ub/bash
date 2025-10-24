@@ -3,8 +3,8 @@ return {
 
     {
         "echasnovski/mini.pairs",
-        event = "VeryLazy",
-        version = false, -- 使用最新主分支
+        event = "InsertEnter", -- 插入模式时加载，更懒
+        version = false,       -- 使用最新主分支
         -- event = "InsertEnter", -- 在插入模式时加载
         config = function()
             require("mini.pairs").setup()
@@ -19,8 +19,8 @@ return {
 
     {
         "kylechui/nvim-surround",
-        version = "*",
         event = "VeryLazy",
+        version = "*",
         config = function()
             require("nvim-surround").setup()
         end,

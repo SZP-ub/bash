@@ -1,6 +1,7 @@
 return {
-  {
-    "yianwillis/vimcdoc",
-    event = "VeryLazy",
-  },
+    {
+        "yianwillis/vimcdoc",
+        -- event = "VeryLazy",
+        lazy = true,
+    },
 }

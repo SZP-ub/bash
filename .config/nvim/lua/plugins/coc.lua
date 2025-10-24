@@ -3,6 +3,7 @@ return {
 
     {
         "neoclide/coc.nvim",
+        event = "VeryLazy",
         branch = "release",
         config = function()
             -- K 显示文档（优先用 coc.nvim 的 hover，否则用内置 K）
