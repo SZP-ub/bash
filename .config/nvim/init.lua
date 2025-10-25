@@ -93,14 +93,23 @@ vim.g['test#custom_c#file_pattern'] = 'test_.*\\.c$'
 vim.g['test#custom_c#command'] = 'cd test && ./test_runner'
 
 -- ============ 自动保存：切换 buffer 或窗口时 ==============
-vim.api.nvim_create_autocmd({ "bufleave", "winleave" }, {
-    pattern = "*",
-    callback = function()
-        if vim.bo.modified and vim.bo.buftype == "" then
-            vim.cmd("silent! write")
-        end
-    end,
-})
+-- vim.api.nvim_create_autocmd({ "BufLeave", "WinLeave" }, {
+--     pattern = "*",
+--     callback = function()
+--         if vim.bo.modified and vim.bo.buftype == "" then
+--             vim.cmd("silent! write")
+--         end
+--     end,
+-- })
+--
+-- vim.api.nvim_create_autocmd("ModeChanged", {
+--     pattern = "*:[nN]", -- 进入普通模式
+--     callback = function()
+--         if vim.bo.modified and vim.bo.buftype == "" then
+--             vim.cmd("silent! write")
+--         end
+--     end,
+-- })
 
 -- =================== godbolt ====================
 vim.api.nvim_create_autocmd({ "bufwinenter", "winenter" }, {

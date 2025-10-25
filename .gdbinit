@@ -1,8 +1,11 @@
+# 加载 Python 命令
 python
 exec(open("/home/i/.gdbinit.py").read())
 end
 
-set prompt \033[1;36m   \033[0m 
+define ll
+    highlightlist
+end
 
 define xx
     x/8xw $arg0
@@ -23,8 +26,20 @@ define pf
     end
 end
 
-define ll
-    highlightlist
+define r
+    run
+    target record-full
 end
+
+set prompt \033[1;36m   \033[0m 
+
+set logging enabled on
+set logging file gdb.log
+set logging overwrite on
+
+
+set disassembly-flavor intel
+
+set print pretty on
 
 # source ~/tools/gdb-dashboard/.gdbinit

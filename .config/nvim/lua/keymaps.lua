@@ -1,7 +1,5 @@
 ---@diagnostic disable: undefined-global
 
--- ====================== Fold ======================
-
 -- =============== Remove buffer to new_tab =================
 vim.keymap.set("n", "<leader>mt", function()
     local buf = vim.api.nvim_get_current_buf()
@@ -31,26 +29,6 @@ end, { desc = "复制完整文件路径到剪贴板" })
 -- vim.keymap.set("n", "<A-k>", ":m .-2<CR>==", vim.tbl_extend("force", move_opts, { desc = "Move line up" }))
 -- vim.keymap.set("v", "<A-j>", ":m '>+1<CR>gv=gv", vim.tbl_extend("force", move_opts, { desc = "Move selection down" }))
 -- vim.keymap.set("v", "<A-k>", ":m '<-2<CR>gv=gv", vim.tbl_extend("force", move_opts, { desc = "Move selection up" }))
-
--- ==================== 智能点号转箭头 ====================
--- _G.dot_to_arrow = function()
---     local col = vim.fn.col('.') - 2
---     local line = vim.api.nvim_get_current_line()
---     if col >= 0 and line:sub(col + 1, col + 1):match('%w') then
---         return '->'
---     else
---         return '-'
---     end
--- end
-
--- vim.api.nvim_create_autocmd("FileType", {
---     pattern = { "c", "cpp" },
---     callback = function()
---         vim.api.nvim_buf_set_keymap(
---             0, "i", "-", "v:lua.dot_to_arrow()", { expr = true, noremap = true }
---         )
---     end
--- })
 
 -- ==================== 行号切换 ====================
 local function ToggleLineNumbers()
@@ -121,7 +99,7 @@ vim.keymap.set("n", "<C-Down>", ":resize -2<CR>", { desc = "减少窗口高度" 
 vim.keymap.set("n", "<C-Left>", ":vertical resize +2<CR>", { desc = "减少窗口宽度" })
 vim.keymap.set("n", "<C-Right>", ":vertical resize -2<CR>", { desc = "增加窗口宽度" })
 
--- ============== 终端窗口 ================
+-- ===================== 终端窗口 ==========================
 vim.keymap.set('n', '<space>tt', ':belowright vertical terminal<CR>', { desc = "右侧打开终端" })
 
 -- ==================== 重命名文件 ====================

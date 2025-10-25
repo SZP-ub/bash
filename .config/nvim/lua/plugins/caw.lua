@@ -22,5 +22,6 @@ return {
                 end,
             })
         end,
-    }
+    },
+
 }

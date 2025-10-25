@@ -14,6 +14,5 @@ return {
             vim.keymap.set('n', 'gS', '<Plug>(leap-backward-cross-window)')
             require("leap").opts.special_keys.next_target = '<tab>'
         end
-    }
-
+    },
 }

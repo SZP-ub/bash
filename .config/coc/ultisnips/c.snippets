@@ -80,7 +80,7 @@ ${1:#pragma mark -
 $0
 endsnippet
 
-snippet main "main() (main)"
+snippet mn "main() (main)"
 #include <stdio.h>
 
 int main(int argc, char *argv[]) {
@@ -154,7 +154,7 @@ ${1:void} ${2:function_name}($3) {
 endsnippet
 
 snippet fnd "function declaration" b
-/*${4:Introduction}*/
+/* $3 */
 ${1:void} ${2:function_name}($3);
 endsnippet
 
@@ -430,6 +430,10 @@ endsnippet
 
 # typedef struct
 snippet tps
+typedef struct ${1:name} $1;
+endsnippet
+
+snippet tpsa
 typedef struct ${1:`!p snip.rv = (snip.basename or "name") + "_t"`} { 
 	${2:Data}
 } ${1};
