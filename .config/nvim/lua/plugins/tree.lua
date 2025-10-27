@@ -4,7 +4,14 @@ return {
     -- 书签插件
     {
         "kshenoy/vim-signature",
-        event = "VeryLazy",
+        keys = {
+            { "m", mode = "n", desc = "添加/跳转标记" },
+            { "dm", mode = "n", desc = "删除标记" },
+            { "'", mode = "n", desc = "跳转到标记" },
+            { "`", mode = "n", desc = "跳转到标记" },
+            { "]`", mode = "n", desc = "下一个标记" },
+            { "[`", mode = "n", desc = "上一个标记" },
+        },
     },
 
     -- 文件树侧边栏
@@ -138,19 +145,24 @@ return {
 
     {
         "dhananjaylatkar/cscope_maps.nvim",
-        event = "VeryLazy",
         dependencies = { "ibhagwan/fzf-lua", "nvim-tree/nvim-web-devicons" },
         opts = {
-            cscope = { db_file = "./cscope.out", picker = "quickfix", skip_picker_for_single_result = false, },
+            cscope = { db_file = "./cscope.out", picker = "quickfix", skip_picker_for_single_result = false },
             stack_view = { tree_hl = true },
         },
-
+        keys = {
+            { "csb", mode = "n", desc = "构建/更新 cscope 数据库" },
+            { "csn", mode = "n", desc = "显示调用关系树（down）" },
+            { "csu", mode = "n", desc = "显示被调用关系树（up）" },
+            { "<space>csg", mode = "n", desc = "查找全局定义" },
+            { "csc", mode = "n", desc = "查找调用该函数的位置" },
+            { "cso", mode = "n", desc = "我调用的函数" },
+            { "cst", mode = "n", desc = "查找被该函数调用的位置" },
+            { "csa", mode = "n", desc = "查找赋值位置" },
+        },
         config = function(_, opts)
             require("cscope_maps").setup(opts)
-            -- 构建/更新 cscope 数据库
             vim.keymap.set('n', 'csb', ':!cscope -Rbqkv<CR>', { desc = "构建/更新 cscope 数据库（项目根目录）" })
-
-            -- 显示调用关系树（谁调用了我，down）
             vim.keymap.set('n', 'csn', function()
                 local word = vim.fn.expand('<cword>')
                 if word ~= nil and word ~= "" then
@@ -159,8 +171,6 @@ return {
                     vim.notify("请将光标停在有效符号上再使用调用关系树", vim.log.levels.WARN)
                 end
             end, { desc = "显示调用关系树（down）" })
-
-            -- 显示被调用关系树（我调用了谁，up）
             vim.keymap.set('n', 'csu', function()
                 local word = vim.fn.expand('<cword>')
                 if word ~= nil and word ~= "" then
@@ -169,22 +179,12 @@ return {
                     vim.notify("请将光标停在有效符号上再使用调用关系树", vim.log.levels.WARN)
                 end
             end, { desc = "显示被调用关系树（up）" })
-
-            -- 查找全局定义
             vim.keymap.set('n', '<space>csg', ":Cs f g <C-R><C-W><CR>", { desc = "查找全局定义" })
-
-            -- 查找调用该函数的位置
             vim.keymap.set('n', 'csc', ":Cs f c <C-R><C-W><CR>", { desc = "查找调用该函数的位置" })
-
-            -- 查找我调用的函数
             vim.keymap.set('n', 'cso', ":Cs f d <C-R><C-W><CR>", { desc = "我调用的函数" })
-
-            -- 查找被该函数调用的位置
             vim.keymap.set('n', 'cst', ":Cs f t <C-R><C-W><CR>", { desc = "查找被该函数调用的位置" })
-
             vim.keymap.set('n', 'csa', ":Cs f a <C-R><C-W><CR>", { desc = "查找赋值位置" })
         end,
-
     }
 
 }

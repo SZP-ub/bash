@@ -19,21 +19,24 @@ return {
 
     {
         "kylechui/nvim-surround",
-        event = "VeryLazy",
         version = "*",
+        keys = {
+            { "ys", mode = { "n", "x" }, desc = "添加包裹" },
+            { "ds", mode = "n", desc = "删除包裹" },
+            { "cs", mode = "n", desc = "更改包裹" },
+        },
         config = function()
             require("nvim-surround").setup()
         end,
-        -- 快捷键
+        -- 快捷键示例（无需额外配置，插件自动生效）：
         -- ysiw) ：用括号包裹当前单词
-        --  ys$" ：用双引号包裹到行尾
+        -- ys$" ：用双引号包裹到行尾
         -- ds] ：删除方括号包裹
         -- dst ：删除 HTML 标签包裹
         -- cs'" ：将单引号包裹改为双引号
         -- csth1<CR> ：将标签包裹改为 h1 标签
         -- dsf ：删除函数调用的括号包裹
     },
-
 
     {
         "HiPhish/rainbow-delimiters.nvim",

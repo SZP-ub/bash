@@ -67,7 +67,7 @@ endsnippet
 
 snippet #if "#if #endif" b
 #if ${1:0}
-${VISUAL}$0
+	${VISUAL}$0
 #endif
 endsnippet
 
@@ -133,12 +133,12 @@ endsnippet
 
 post_jump "printf_expand_args(snip)"
 snippet sf 
-scanf("%$1"$2);
+	scanf("%$1"$2);
 endsnippet
 
 post_jump "printf_expand_args(snip)"
 snippet pri "printf with auto-expand args" wr
-printf("$1\n"$2);
+	printf("$1\n"$2);
 endsnippet
 
 snippet st "struct"
@@ -154,7 +154,6 @@ ${1:void} ${2:function_name}($3) {
 endsnippet
 
 snippet fnd "function declaration" b
-/* $3 */
 ${1:void} ${2:function_name}($3);
 endsnippet
 
@@ -510,7 +509,7 @@ snippet prx
 endsnippet
 
 snippet ptr
-*ptr_${1:} = &$1;
+	*ptr_${1:} = &$1;
 endsnippet
 
 snippet warn
@@ -588,7 +587,7 @@ snippet anl
 endsnippet
 
 snippet nul
-NULL
+	NULL
 endsnippet
 
 snippet mset
@@ -718,7 +717,7 @@ endsnippet
 
 snippet run
 ${1:void} ${2:function_name}($3);
- RUN_TEST(${2});
+	RUN_TEST(${2});
 endsnippet
 
 snippet test
@@ -740,10 +739,10 @@ ${1:void} ${2:function_name}($3);
 
 int main(int argc, char *argv[]) {
 
-    UNITY_BEGIN();
+	UNITY_BEGIN();
 
- RUN_TEST(${2});
+	RUN_TEST(${2});
 
-    return UnityEnd();
+	return UnityEnd();
 }
 endsnippet

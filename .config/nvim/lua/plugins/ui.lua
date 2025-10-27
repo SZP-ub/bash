@@ -3,7 +3,6 @@ return {
 
     {
         "nvim-treesitter/nvim-treesitter-context",
-        -- cmd = "TSContextToggle", -- 只在调用命令时加载
         event = "VeryLazy",
         config = function()
             require("treesitter-context").setup({
@@ -46,15 +45,22 @@ return {
     },
 
     -- 会话管理
+
     {
         "shatur/neovim-session-manager",
-        event = "VeryLazy",
         dependencies = { "nvim-lua/plenary.nvim" },
+        keys = {
+            { "<leader>so", ":SessionManager load_session<cr>", desc = "加载会话" },
+            { "<leader>ss", ":SessionManager save_current_session<cr>", desc = "保存当前会话" },
+            { "<leader>sd", ":SessionManager delete_session<cr>", desc = "删除会话" },
+            -- { "<leader>srn", nil, desc = "重命名 Session" },
+        },
         config = function()
             local path = require("plenary.path")
+            local config = require("session_manager.config")
             require("session_manager").setup({
                 sessions_dir = path:new(vim.fn.stdpath("data"), "sessions"),
-                autoload_mode = require("session_manager.config").autoload_mode.CurrentDir,
+                autoload_mode = config.AutoloadMode.CurrentDir,
                 autosave_last_session = false,
                 autosave_ignore_not_normal = false,
                 autosave_ignore_dirs = {},
@@ -78,12 +84,7 @@ return {
                     end
                 end
             end
-
             clean_old_sessions()
-
-            vim.keymap.set("n", "<leader>so", ":SessionManager load_session<cr>", { desc = "加载会话" })
-            vim.keymap.set("n", "<leader>ss", ":SessionManager save_current_session<cr>", { desc = "保存当前会话" })
-            vim.keymap.set("n", "<leader>sd", ":SessionManager delete_session<cr>", { desc = "删除会话" })
         end,
     },
 
@@ -249,8 +250,6 @@ return {
             })
         end,
     },
-
-
 
     -- 文件图标
     {

@@ -2,7 +2,12 @@
 return {
     {
         "numToStr/Comment.nvim",
-        event = "VeryLazy",
+        keys = {
+            { "gca", mode = "n", desc = "行尾注释" },
+            { "gc", mode = { "n", "x" }, desc = "切换行注释" },
+            { "gb", mode = { "n", "x" }, desc = "切换块注释" },
+            { "gcb", mode = "n", desc = "切换块注释" },
+        },
         config = function()
             require('Comment').setup({
                 toggler = {
@@ -22,6 +27,5 @@ return {
                 end,
             })
         end,
-    },
-
+    }
 }

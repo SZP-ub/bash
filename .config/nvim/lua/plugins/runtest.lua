@@ -1,36 +1,42 @@
 ---@diagnostic disable: undefined-global
 return {
-
     {
         "Civitasv/cmake-tools.nvim",
-        -- event = "VeryLazy", -- 延迟加载插件
-        event = { "BufReadPost", "BufNewFile" }, -- 只在打开文件时加载
+        keys = {
+            { "<leader>cmg", "<cmd>CMakeGenerate<cr>", desc = "CMake 生成" },
+            { "<leader>cmb", "<cmd>CMakeBuild<cr>", desc = "CMake 构建" },
+            { "<leader>cmr", "<cmd>CMakeRun<cr>", desc = "CMake 运行" },
+            { "<leader>cmc", "<cmd>CMakeClean<cr>", desc = "CMake 清理" },
+            { "<leader>cmt", "<cmd>CMakeSelectBuildType<cr>", desc = "选择构建类型" },
+            { "<leader>cmp", "<cmd>CMakeSelectPreset<cr>", desc = "选择 Preset" },
+            { "<leader>cmd", "<cmd>CMakeDebug<cr>", desc = "CMake 调试" },
+        },
+        dependencies = { "nvim-treesitter/nvim-treesitter" },
         config = function()
             local osys = require("cmake-tools.osys")
             require("cmake-tools").setup {
-                cmake_command = "cmake",                                          -- 指定 cmake 命令
-                ctest_command = "ctest",                                          -- 指定 ctest 命令
-                cmake_build_type = "Debug",                                       -- 默认构建类型为 Debug
-                cmake_use_preset = false,                                         -- 不使用 CMake Preset
-                cmake_regenerate_on_save = true,                                  -- 保存 CMakeLists.txt 时自动重新生成
-                cmake_generate_options = { "-DCMAKE_EXPORT_COMPILE_COMMANDS=1" }, -- 生成 compile_commands.json，方便 clangd
-                cmake_build_options = {},                                         -- 构建参数（可自定义）
+                cmake_command = "cmake",
+                ctest_command = "ctest",
+                cmake_build_type = "Debug",
+                cmake_use_preset = false,
+                cmake_regenerate_on_save = true,
+                cmake_generate_options = { "-DCMAKE_EXPORT_COMPILE_COMMANDS=1" },
+                cmake_build_options = {},
                 cmake_build_directory = function()
-                    -- 根据操作系统选择构建目录格式
                     if osys.iswin32 then
                         return "build\\${variant:buildType}"
                     end
                     return "build/${variant:buildType}"
                 end,
                 cmake_compile_commands_options = {
-                    action = "copy",        -- 生成 compile_commands.json 时采用复制方式（兼容虚拟机/共享目录）
-                    target = vim.loop.cwd() -- 目标路径为当前工作目录
+                    action = "copy",
+                    target = vim.loop.cwd()
                 },
                 cmake_variants_message = {
-                    short = { show = true },                 -- 显示简短构建信息
-                    long = { show = true, max_length = 40 }, -- 显示详细构建信息，最长 40 字符
+                    short = { show = true },
+                    long = { show = true, max_length = 40 },
                 },
-                cmake_dap_configuration = {                  -- DAP 调试配置（配合 nvim-dap 使用）
+                cmake_dap_configuration = {
                     name = "cpp",
                     type = "cppdbg",
                     request = "launch",
@@ -38,40 +44,8 @@ return {
                     runInTerminal = true,
                     console = "integratedTerminal",
                 },
-                cmake_executor = {     -- 构建输出方式
-                    name = "quickfix", -- 使用 quickfix 窗口显示
-                    opts = {},
-                    default_opts = {
-                        quickfix = {
-                            show = "always",                -- 总是显示 quickfix
-                            position = "belowright",        -- quickfix 窗口位置
-                            size = 10,                      -- 窗口高度
-                            encoding = "utf-8",             -- 编码
-                            auto_close_when_success = true, -- 构建成功后自动关闭
-                        },
-                        toggleterm = {
-                            direction = "float", -- 浮动终端
-                            close_on_exit = false,
-                            auto_scroll = true,
-                            singleton = true,
-                        },
-                        terminal = {
-                            name = "Main Terminal",
-                            prefix_name = "[CMakeTools]: ",
-                            split_direction = "horizontal", -- 水平分割
-                            split_size = 11,                -- 终端高度
-                            single_terminal_per_instance = true,
-                            single_terminal_per_tab = true,
-                            keep_terminal_static_location = true,
-                            auto_resize = true,
-                            start_insert = false,
-                            focus = false,
-                            do_not_add_newline = false,
-                        },
-                    },
-                },
-                cmake_runner = {       -- 运行方式
-                    name = "terminal", -- 使用终端运行
+                cmake_executor = {
+                    name = "quickfix",
                     opts = {},
                     default_opts = {
                         quickfix = {
@@ -102,17 +76,49 @@ return {
                         },
                     },
                 },
-                cmake_notifications = { -- 通知设置
-                    runner = { enabled = true }, -- 运行时通知
-                    executor = { enabled = true }, -- 构建时通知
-                    spinner = { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" }, -- 动画效果
-                    refresh_rate_ms = 100, -- 刷新频率
+                cmake_runner = {
+                    name = "terminal",
+                    opts = {},
+                    default_opts = {
+                        quickfix = {
+                            show = "always",
+                            position = "belowright",
+                            size = 10,
+                            encoding = "utf-8",
+                            auto_close_when_success = true,
+                        },
+                        toggleterm = {
+                            direction = "float",
+                            close_on_exit = false,
+                            auto_scroll = true,
+                            singleton = true,
+                        },
+                        terminal = {
+                            name = "Main Terminal",
+                            prefix_name = "[CMakeTools]: ",
+                            split_direction = "horizontal",
+                            split_size = 11,
+                            single_terminal_per_instance = true,
+                            single_terminal_per_tab = true,
+                            keep_terminal_static_location = true,
+                            auto_resize = true,
+                            start_insert = false,
+                            focus = false,
+                            do_not_add_newline = false,
+                        },
+                    },
                 },
-                cmake_virtual_text_support = true, -- 右上角显示当前文件相关目标
-                cmake_use_scratch_buffer = false, -- 不使用 scratch buffer 显示操作
+                cmake_notifications = {
+                    runner = { enabled = true },
+                    executor = { enabled = true },
+                    spinner = { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" },
+                    refresh_rate_ms = 100,
+                },
+                cmake_virtual_text_support = true,
+                cmake_use_scratch_buffer = false,
             }
-        end
-    },
+        end,
+    }
 
     -- {
     --     "michaelb/sniprun",

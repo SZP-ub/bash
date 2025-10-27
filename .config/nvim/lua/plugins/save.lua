@@ -1,5 +1,6 @@
 ---@diagnostic disable: undefined-global
 return {
+
     {
         "okuuva/auto-save.nvim",
         event = { "BufLeave", "WinLeave", "ModeChanged" }, -- 懒加载
@@ -16,5 +17,6 @@ return {
                 debounce_delay = 0,
             })
         end,
-    }
+    },
+
 }

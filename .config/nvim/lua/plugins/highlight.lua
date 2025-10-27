@@ -26,8 +26,11 @@ return {
 
     {
         "sustech-data/wildfire.nvim",
-        event = "VeryLazy",
         dependencies = { "nvim-treesitter/nvim-treesitter" },
+        keys = {
+            { "<CR>", mode = { "n", "x" }, desc = "wildfire 区块选择/扩展" },
+            { "<BS>", mode = { "n", "x" }, desc = "wildfire 区块收缩" },
+        },
         config = function()
             require("wildfire").setup({
                 surrounds = {
@@ -42,9 +45,9 @@ return {
                     node_incremental = "<CR>",
                     node_decremental = "<BS>",
                 },
-                filetype_exclude = { "qf" }, --keymaps will be unset in excluding filetypes
+                filetype_exclude = { "qf" },
             })
         end,
-    },
+    }
 
 }
