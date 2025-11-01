@@ -1,11 +1,116 @@
 ---@diagnostic disable: undefined-global
 
+-- ============ termdebug gdb 中 '-' 替换为 '->' ==============
+local function buf_name_contains_gdb(bufnr)
+    if type(bufnr) ~= "number" then return false end
+    if not vim.api.nvim_buf_is_valid(bufnr) then return false end
+    local name = vim.api.nvim_buf_get_name(bufnr) or ""
+    -- 以包含字符串 "/usr/bin/gdb" 作为判定条件（能匹配 term://.../usr/bin/gdb）
+    return name:find("/usr/bin/gdb", 1, true) ~= nil
+end
+
+local function ensure_gdb_arrow_mapping(bufnr)
+    -- 参数校验
+    if type(bufnr) ~= "number" then return end
+    if not vim.api.nvim_buf_is_valid(bufnr) then return end
+    if not buf_name_contains_gdb(bufnr) then return end
+
+    -- 避免重复设置：用 buffer 变量做标记
+    local ok, already = pcall(vim.api.nvim_buf_get_var, bufnr, "gdb_arrow_done")
+    if ok and already then return end
+
+    -- 映射闭包：安全地读取行/列，失败时退回普通 '-'
+    local mapper = function()
+        -- 确保当前 buffer 就是我们要绑定的 buffer
+        local cur = vim.api.nvim_get_current_buf()
+        if cur ~= bufnr then
+            return "-" -- 非目标 buffer 时不替换
+        end
+
+        -- 尝试读取光标位置与当前行，所有读取都用 pcall 以免报错
+        local lnum, col
+        local okpos, _ = pcall(function()
+            lnum = vim.fn.line(".")
+            col = vim.fn.col(".") - 1 -- 0-based: 表示光标前的字符索引
+        end)
+        if not okpos or not lnum or not col then
+            return "-" -- 无法获取位置则保守地返回 '-'
+        end
+
+        local line
+        local okline, extracted = pcall(vim.api.nvim_buf_get_lines, cur, lnum - 1, lnum, false)
+        if okline and type(extracted) == "table" then
+            line = extracted[1] or ""
+        else
+            line = ""
+        end
+
+        local prev = ""
+        if col >= 1 and #line >= col then
+            prev = line:sub(col, col)
+        end
+
+        -- 如果前一个字符已经是 '-'（连续输入 --），则插入普通 '-'
+        if prev == "-" then
+            return "-"
+        end
+
+        -- 默认把单独的 '-' 展开为 '->'
+        return "->"
+    end
+
+    -- 为 Insert 模式 和 Terminal 模式 设置 buffer-local 的 expr 映射
+    -- 注意：expr = true 表示 key 被按下时会插入 mapper() 返回的字符串
+    vim.keymap.set({ "i", "t" }, "-", mapper, { expr = true, noremap = true, buffer = bufnr })
+
+    -- 标记已设置
+    pcall(vim.api.nvim_buf_set_var, bufnr, "gdb_arrow_done", true)
+end
+
+-- 在这些事件触发时尝试为符合条件的 buffer 添加映射（覆盖打开、切换、term 打开等场景）
+vim.api.nvim_create_autocmd({ "BufEnter", "BufAdd", "BufWinEnter", "TermOpen", "BufReadPost" }, {
+    callback = function(args)
+        local bufnr = args and args.buf
+        if not bufnr or type(bufnr) ~= "number" then
+            bufnr = vim.api.nvim_get_current_buf()
+        end
+        ensure_gdb_arrow_mapping(bufnr)
+    end,
+})
+
+-- 启动时扫描已存在的 buffer（如果已打开 term://.../usr/bin/gdb，会立即绑定）
+for _, b in ipairs(vim.api.nvim_list_bufs()) do
+    ensure_gdb_arrow_mapping(b)
+end
+
 -- =============== Remove buffer to new_tab =================
+-- 可选：仅当没有设置 vim.g.mapleader 时才设为默认（不会覆盖用户已有的 leader）
+if vim.g.mapleader == nil then
+    vim.g.mapleader = " "
+end
+
 vim.keymap.set("n", "<leader>mt", function()
-    local buf = vim.api.nvim_get_current_buf()
-    vim.cmd("tabnew")    -- 新建 tab2
-    vim.cmd("b " .. buf) -- 在新 tab 打开当前 buffer
-end, { desc = "移动当前 buffer 到新 tab 并切换焦点" })
+    -- 记录原窗口与 buffer
+    local orig_win = vim.api.nvim_get_current_win()
+    local bufnr = vim.api.nvim_get_current_buf()
+
+    -- 新建 tab 并在新 tab 的窗口显示该 buffer
+    vim.cmd("tabnew")
+    local ok = pcall(vim.api.nvim_set_current_buf, bufnr)
+    if not ok then
+        vim.notify("移动 buffer 到新 tab 失败：无法切换 buffer", vim.log.levels.ERROR)
+        return
+    end
+
+    -- 关闭原来的窗口（如果仍然有效且不是当前窗口）
+    if orig_win and vim.api.nvim_win_is_valid(orig_win) then
+        local cur_win = vim.api.nvim_get_current_win()
+        if orig_win ~= cur_win then
+            -- 第二个参数 true 表示强制关闭（不提示保存）
+            pcall(vim.api.nvim_win_close, orig_win, true)
+        end
+    end
+end, { desc = "移动当前 buffer 到新 tab 并关闭原先显示该 buffer 的窗口", noremap = true })
 
 -- ================= fzf close ====================
 vim.api.nvim_create_autocmd("FileType", {
@@ -14,7 +119,6 @@ vim.api.nvim_create_autocmd("FileType", {
         vim.api.nvim_buf_set_keymap(0, "t", "<Esc>", "<C-c>", { noremap = true, silent = true })
     end,
 })
-
 
 -- ==================== 复制完整文件路径 =====================
 vim.keymap.set("n", "<leader>cp", function()
@@ -96,8 +200,8 @@ vim.keymap.set('n', '<Tab>', 'gt', { noremap = true })
 vim.keymap.set("i", "<C-e>", "<Right>", { noremap = true, silent = true, desc = "插入模式右移光标" })
 vim.keymap.set("n", "<C-Up>", ":resize +2<CR>", { desc = "增加窗口高度" })
 vim.keymap.set("n", "<C-Down>", ":resize -2<CR>", { desc = "减少窗口高度" })
-vim.keymap.set("n", "<C-Left>", ":vertical resize +2<CR>", { desc = "减少窗口宽度" })
-vim.keymap.set("n", "<C-Right>", ":vertical resize -2<CR>", { desc = "增加窗口宽度" })
+vim.keymap.set("n", "<C-Left>", ":vertical resize -2<CR>", { desc = "减少窗口宽度" })
+vim.keymap.set("n", "<C-Right>", ":vertical resize +2<CR>", { desc = "增加窗口宽度" })
 
 -- ===================== 终端窗口 ==========================
 vim.keymap.set('n', '<space>tt', ':belowright vertical terminal<CR>', { desc = "右侧打开终端" })

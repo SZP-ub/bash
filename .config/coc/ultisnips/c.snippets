@@ -453,8 +453,14 @@ endsnippet
 # typedef enum
 snippet tpe
 typedef enum {
-	${1:Data} 
-} ${2:foo};
+    ${1:name}_OK = 0,
+    $1_ERR_NULL,      /* 参数为空 （如传入的DListerOpaque* 为空 */
+    $1_ERR_EMPTY,     /* 底层lsit为空 （head==NULL） */
+    $1_ERR_OOB,       /* 下标越界或者无效位置 */
+    $1_ERR_NOMEM,     /* 内存分配失败 */
+    $1_ERR_OPERATION, /* 操作失败（一般性错误）*/
+    $1_ERR_UNKNOWN    /* 未知错误 */
+} ${2:foo}Status;
 endsnippet
 
 #  typedef type (*) (type,type)
@@ -586,7 +592,7 @@ snippet anl
 	assert(${1:ptr *} != NULL);
 endsnippet
 
-snippet nul
+snippet nll
 	NULL
 endsnippet
 
@@ -630,7 +636,7 @@ endsnippet
 snippet mai "reserve: if"
 	${1:ptr *} = (${2:type}*) malloc( sizeof($2));
 	if ($1 == NULL) {
-		perror("The memory allocation for ${1:name} failed\n");
+		fprintf(stderr,"The memory allocation for ${1:name} failed\n");
 		return ${3:-1};
 	}
 endsnippet
@@ -647,7 +653,7 @@ endsnippet
 snippet mali "reserve: type, if"
 	${1:type} *${2:ptr *} = ($1*) malloc(sizeof($1));
 	if ($2 == NULL) {
-		perror("The memory allocation for ${2:name} failed\n");
+		fprintf(stderr,"The memory allocation for ${2:name} failed\n");
 		return ${3:-1};
 	}
 endsnippet
@@ -664,7 +670,7 @@ endsnippet
 snippet malli "reserve: size, if"
 	${1:ptr *} = (${2:type}*) malloc(${3:size} * sizeof($2));
 	if ($1 == NULL) {
-		perror("The memory allocation for ${1:name} failed\n");
+		fprintf(stderr,"The memory allocation for ${1:name} failed\n");
 		return ${3:-1};
 	}
 endsnippet
@@ -716,8 +722,8 @@ snippet fgets
 endsnippet
 
 snippet run
-${1:void} ${2:function_name}($3);
-	RUN_TEST(${2});
+void ${1:function_name} (void);
+	RUN_TEST(${1});
 endsnippet
 
 snippet test
@@ -735,13 +741,12 @@ void setUp() {}
 
 void tearDown() {}
 
-${1:void} ${2:function_name}($3);
+void ${1:function_name} (void);
 
 int main(int argc, char *argv[]) {
-
 	UNITY_BEGIN();
 
-	RUN_TEST(${2});
+	RUN_TEST(${1});
 
 	return UnityEnd();
 }

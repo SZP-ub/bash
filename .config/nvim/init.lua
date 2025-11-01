@@ -92,25 +92,6 @@ vim.g['test#c#runner'] = 'custom_c'
 vim.g['test#custom_c#file_pattern'] = 'test_.*\\.c$'
 vim.g['test#custom_c#command'] = 'cd test && ./test_runner'
 
--- ============ 自动保存：切换 buffer 或窗口时 ==============
--- vim.api.nvim_create_autocmd({ "BufLeave", "WinLeave" }, {
---     pattern = "*",
---     callback = function()
---         if vim.bo.modified and vim.bo.buftype == "" then
---             vim.cmd("silent! write")
---         end
---     end,
--- })
---
--- vim.api.nvim_create_autocmd("ModeChanged", {
---     pattern = "*:[nN]", -- 进入普通模式
---     callback = function()
---         if vim.bo.modified and vim.bo.buftype == "" then
---             vim.cmd("silent! write")
---         end
---     end,
--- })
-
 -- =================== godbolt ====================
 vim.api.nvim_create_autocmd({ "bufwinenter", "winenter" }, {
     pattern = "*",
@@ -130,11 +111,36 @@ vim.opt.timeoutlen = 100
 
 vim.cmd('packadd termdebug')
 
+-- 设置窗口大小
 vim.api.nvim_create_autocmd("User", {
     pattern = "TermdebugStartPost",
     callback = function()
-        vim.cmd("wincmd r")
-        vim.cmd("resize 22")
+        -- 批量获取窗口ID，减少多次调用
+        local win_ids = vim.api.nvim_list_wins()
+        local win2, win3, win4 = win_ids[2], win_ids[3], win_ids[4]
+        -- 判断窗口是否存在
+        if not win2 or not win3 or not win4 then
+            vim.notify("窗口 2、3 或 4 不存在", vim.log.levels.WARN)
+            return
+        end
+        -- 用窗口4的buffer替换窗口2的buffer，然后关闭窗口4
+        local buf4 = vim.api.nvim_win_get_buf(win4)
+        vim.api.nvim_win_set_buf(win2, buf4)
+        vim.api.nvim_win_close(win4, true)
+        -- 交换窗口2和窗口3的buffer
+        local buf2 = vim.api.nvim_win_get_buf(win2)
+        local buf3 = vim.api.nvim_win_get_buf(win3)
+        vim.api.nvim_win_set_buf(win2, buf3)
+        vim.api.nvim_win_set_buf(win3, buf2)
+        -- 窗口2高度减半
+        local cur_height = vim.api.nvim_win_get_height(win2)
+        if cur_height > 1 then
+            vim.api.nvim_win_set_height(win2, math.max(1, math.floor(cur_height / 2)))
+        end
+        -- 新增：将光标聚焦到窗口2
+        vim.api.nvim_set_current_win(win2)
+        vim.cmd("normal! G")
+        vim.api.nvim_set_current_win(win3)
     end
 })
 
