@@ -4,6 +4,7 @@ return {
     -- 书签插件
     {
         "kshenoy/vim-signature",
+        event = "VeryLazy",
         keys = {
             { "m", mode = "n", desc = "添加/跳转标记" },
             { "dm", mode = "n", desc = "删除标记" },

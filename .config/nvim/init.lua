@@ -46,9 +46,10 @@ vim.o.pumblend = 0
 vim.opt.splitbelow = true
 vim.opt.splitright = true
 
-vim.o.background = "light"
--- vim.cmd("colorscheme peachpuff")
-vim.cmd("colorscheme retrobox")
+-- vim.o.background = "light"
+vim.o.background = "dark"
+vim.cmd("colorscheme peachpuff")
+-- vim.cmd("colorscheme retrobox")
 
 -- ======================== Folding config ===========================
 vim.o.viewoptions = vim.o.viewoptions:match("folds") and vim.o.viewoptions or (vim.o.viewoptions .. ",folds")

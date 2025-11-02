@@ -10,7 +10,7 @@ end
 
 # 定义 xx 命令，显示内存内容（8个64位十六进制数）
 define xx
-    x/8gx $arg0
+    x/8wx $arg0
 end
 
 # 定义 pf 命令，支持多参数格式化输出

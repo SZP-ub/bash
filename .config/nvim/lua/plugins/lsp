@@ -121,7 +121,6 @@ return {
 				end
 			end
 
-			-- Neovim 0.11+ 推荐用 vim.lsp.config
 			vim.lsp.config("clangd", {
 				cmd = { "clangd" },
 				filetypes = { "c", "cpp", "objc", "objcpp", "cuda" },
@@ -157,11 +156,18 @@ return {
 	-- blink.cmp 补全
 	-- =========================
 	{
+		"saghen/blink.compat",
+		version = "*",
+		lazy = true,
+		opts = {},
+	},
+	{
 		"saghen/blink.cmp",
 		version = "1.*",
 		dependencies = {
 			"L3MON4D3/LuaSnip",
-            "xzbdmw/colorful-menu.nvim",opts = {},
+			"xzbdmw/colorful-menu.nvim",
+			opts = {},
 		},
 		opts = {
 			fuzzy = {
@@ -172,26 +178,22 @@ return {
 					["<CR>"] = { "select_and_accept", "fallback" },
 				},
 			},
-
-            menu = {
-              draw = {
-                columns = { { 'kind_icon' }, { 'label', gap = 1 } },
-                components = {
-                  label = {
-                    text = function(ctx)
-                      return require('colorful-menu').blink_components_text(ctx)
-                    end,
-                    highlight = function(ctx)
-                      return require('colorful-menu').blink_components_highlight(ctx)
-                    end,
-                  },
-                },
-              },
-            }
-
 			completion = {
 				menu = {
 					auto_show = true,
+					draw = {
+						columns = { { "kind_icon" }, { "label", gap = 1 } },
+						components = {
+							label = {
+								text = function(ctx)
+									return require("colorful-menu").blink_components_text(ctx)
+								end,
+								highlight = function(ctx)
+									return require("colorful-menu").blink_components_highlight(ctx)
+								end,
+							},
+						},
+					},
 				},
 				ghost_text = { enabled = false },
 				keyword = { range = "full" },
