@@ -141,8 +141,14 @@ snippet pri "printf with auto-expand args" wr
 	printf("$1\n"$2);
 endsnippet
 
+#snippet st "struct"
+#struct ${1:`!p snip.rv = (snip.basename or "name")`} {
+#	${0:/* data */}
+#};
+#endsnippet
+
 snippet st "struct"
-struct ${1:`!p snip.rv = (snip.basename or "name") + "_t"`} {
+struct ${1:`!p snip.rv = (snip.basename or "name").capitalize()`} {
 	${0:/* data */}
 };
 endsnippet
@@ -433,7 +439,7 @@ typedef struct ${1:name} $1;
 endsnippet
 
 snippet tpsa
-typedef struct ${1:`!p snip.rv = (snip.basename or "name") + "_t"`} { 
+typedef struct ${1:`!p snip.rv = (snip.basename or "name")`} { 
 	${2:Data}
 } ${1};
 endsnippet
@@ -635,7 +641,7 @@ endsnippet
 
 snippet mai "reserve: if"
 	${1:ptr *} = (${2:type}*) malloc( sizeof($2));
-	if ($1 == NULL) {
+	if (!$1) {
 		fprintf(stderr,"The memory allocation for ${1:name} failed\n");
 		return ${3:-1};
 	}
@@ -652,7 +658,7 @@ endsnippet
 
 snippet mali "reserve: type, if"
 	${1:type} *${2:ptr *} = ($1*) malloc(sizeof($1));
-	if ($2 == NULL) {
+	if (!$2) {
 		fprintf(stderr,"The memory allocation for ${2:name} failed\n");
 		return ${3:-1};
 	}
@@ -669,7 +675,7 @@ endsnippet
 
 snippet malli "reserve: size, if"
 	${1:ptr *} = (${2:type}*) malloc(${3:size} * sizeof($2));
-	if ($1 == NULL) {
+	if (!$1) {
 		fprintf(stderr,"The memory allocation for ${1:name} failed\n");
 		return ${3:-1};
 	}

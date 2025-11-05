@@ -3,8 +3,8 @@ return {
 
     {
         "nvim-treesitter/nvim-treesitter",
-        event = { "BufReadPost", "BufNewFile" },
-        -- event = "VeryLazy",
+        -- event = { "BufReadPost", "BufNewFile" },
+        event = "VeryLazy",
         build = ":TSUpdate",
         main = "nvim-treesitter.configs",
         opts = {
@@ -12,7 +12,7 @@ return {
             ensure_installed = {
                 "cmake", "c", "cpp", "lua", "vim", "vimdoc", "query", "elixir", "heex", "javascript", "html", "json",
                 "markdown",
-                "latex",
+                -- "latex",
             },
             sync_install = false,
             highlight = {

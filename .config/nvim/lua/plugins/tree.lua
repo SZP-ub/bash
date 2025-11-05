@@ -53,35 +53,42 @@ return {
     -- fzf 二进制
     {
         "junegunn/fzf",
-        lazy = true,
+        -- lazy = true,
         build = "./install --bin",
     },
 
     {
         "junegunn/fzf.vim",
-        event = "VeryLazy",
         dependencies = { "junegunn/fzf", "nvim-tree/nvim-web-devicons" },
-        config = function()
-            vim.keymap.set('n', '<space>ff', ':Files<CR>', { desc = "fzf: 查找文件" })
-            vim.keymap.set('n', '<space>fg', ':Rg<CR>', { desc = "fzf: 全文搜索" })
-            vim.keymap.set('n', '<space>fh', ":Rg \\.h$<CR>", { desc = "fzf: 查找头文件" })
-            vim.keymap.set('n', '<space>fb', ':Buffers<CR>', { desc = "fzf: buffer 列表" })
-            vim.keymap.set('n', '<space>fr', ':History<CR>', { desc = "fzf: 最近文件" })
-            vim.keymap.set('n', '<space>fi', function()
-                local fname = vim.fn.expand('%:t')
-                vim.cmd("Rg #include \"" .. fname .. "\"")
-            end, { desc = "fzf: 查找包含当前文件的文件" })
-            vim.keymap.set('n', '<space>ft', ':Tags<CR>', { desc = "fzf: 查找 tags" })
-            vim.keymap.set('n', 'grr', function()
-                local word = vim.fn.expand('<cword>')
-                vim.fn['fzf#vim#grep'](
-                    'rg --column --line-number --no-heading --color=always --smart-case ' .. vim.fn.shellescape(word),
-                    1,
-                    vim.fn['fzf#vim#with_preview']({ options = { '--query', word } }),
-                    0
-                )
-            end, { desc = "fzf: 查找调用关系" })
-        end
+        keys = {
+            { "<space>ff", ":Files<CR>", desc = "fzf: 查找文件" },
+            { "<space>fg", ":Rg<CR>", desc = "fzf: 全文搜索" },
+            { "<space>fh", ":Rg \\.h$<CR>", desc = "fzf: 查找头文件" },
+            { "<space>fb", ":Buffers<CR>", desc = "fzf: buffer 列表" },
+            { "<space>fr", ":History<CR>", desc = "fzf: 最近文件" },
+            {
+                "<space>fi",
+                function()
+                    local fname = vim.fn.expand('%:t')
+                    vim.cmd("Rg #include \"" .. fname .. "\"")
+                end,
+                desc = "fzf: 查找包含当前文件的文件"
+            },
+            { "<space>ft", ":Tags<CR>", desc = "fzf: 查找 tags" },
+            {
+                "grr",
+                function()
+                    local word = vim.fn.expand('<cword>')
+                    vim.fn['fzf#vim#grep'](
+                        'rg --column --line-number --no-heading --color=always --smart-case ' .. vim.fn.shellescape(word),
+                        1,
+                        vim.fn['fzf#vim#with_preview']({ options = { '--query', word } }),
+                        0
+                    )
+                end,
+                desc = "fzf: 查找调用关系"
+            },
+        },
     },
 
     {
@@ -152,39 +159,48 @@ return {
             stack_view = { tree_hl = true },
         },
         keys = {
-            { "csb", mode = "n", desc = "构建/更新 cscope 数据库" },
-            { "csn", mode = "n", desc = "显示调用关系树（down）" },
-            { "csu", mode = "n", desc = "显示被调用关系树（up）" },
-            { "<space>csg", mode = "n", desc = "查找全局定义" },
-            { "csc", mode = "n", desc = "查找调用该函数的位置" },
-            { "cso", mode = "n", desc = "我调用的函数" },
-            { "cst", mode = "n", desc = "查找被该函数调用的位置" },
-            { "csa", mode = "n", desc = "查找赋值位置" },
+            {
+                "csb",
+                function()
+                    vim.cmd("!cscope -Rbqkv")
+                end,
+                mode = "n",
+                desc = "构建/更新 cscope 数据库（项目根目录）"
+            },
+            {
+                "csn",
+                function()
+                    local word = vim.fn.expand('<cword>')
+                    if word ~= nil and word ~= "" then
+                        vim.cmd("CsStackView open down " .. word)
+                    else
+                        vim.notify("请将光标停在有效符号上再使用调用关系树", vim.log.levels.WARN)
+                    end
+                end,
+                mode = "n",
+                desc = "显示调用关系树（down）"
+            },
+            {
+                "csu",
+                function()
+                    local word = vim.fn.expand('<cword>')
+                    if word ~= nil and word ~= "" then
+                        vim.cmd("CsStackView open up " .. word)
+                    else
+                        vim.notify("请将光标停在有效符号上再使用调用关系树", vim.log.levels.WARN)
+                    end
+                end,
+                mode = "n",
+                desc = "显示被调用关系树（up）"
+            },
+            { "<space>csg", ":Cs f g <C-R><C-W><CR>", mode = "n", desc = "查找全局定义" },
+            { "csc", ":Cs f c <C-R><C-W><CR>", mode = "n", desc = "查找调用该函数的位置" },
+            { "cso", ":Cs f d <C-R><C-W><CR>", mode = "n", desc = "我调用的函数" },
+            { "cst", ":Cs f t <C-R><C-W><CR>", mode = "n", desc = "查找被该函数调用的位置" },
+            { "csa", ":Cs f a <C-R><C-W><CR>", mode = "n", desc = "查找赋值位置" },
         },
         config = function(_, opts)
             require("cscope_maps").setup(opts)
-            vim.keymap.set('n', 'csb', ':!cscope -Rbqkv<CR>', { desc = "构建/更新 cscope 数据库（项目根目录）" })
-            vim.keymap.set('n', 'csn', function()
-                local word = vim.fn.expand('<cword>')
-                if word ~= nil and word ~= "" then
-                    vim.cmd("CsStackView open down " .. word)
-                else
-                    vim.notify("请将光标停在有效符号上再使用调用关系树", vim.log.levels.WARN)
-                end
-            end, { desc = "显示调用关系树（down）" })
-            vim.keymap.set('n', 'csu', function()
-                local word = vim.fn.expand('<cword>')
-                if word ~= nil and word ~= "" then
-                    vim.cmd("CsStackView open up " .. word)
-                else
-                    vim.notify("请将光标停在有效符号上再使用调用关系树", vim.log.levels.WARN)
-                end
-            end, { desc = "显示被调用关系树（up）" })
-            vim.keymap.set('n', '<space>csg', ":Cs f g <C-R><C-W><CR>", { desc = "查找全局定义" })
-            vim.keymap.set('n', 'csc', ":Cs f c <C-R><C-W><CR>", { desc = "查找调用该函数的位置" })
-            vim.keymap.set('n', 'cso', ":Cs f d <C-R><C-W><CR>", { desc = "我调用的函数" })
-            vim.keymap.set('n', 'cst', ":Cs f t <C-R><C-W><CR>", { desc = "查找被该函数调用的位置" })
-            vim.keymap.set('n', 'csa', ":Cs f a <C-R><C-W><CR>", { desc = "查找赋值位置" })
         end,
     }
 

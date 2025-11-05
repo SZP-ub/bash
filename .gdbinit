@@ -9,8 +9,12 @@ define ll
 end
 
 # 定义 xx 命令，显示内存内容（8个64位十六进制数）
-define xx
-    x/8wx $arg0
+define xw
+    x/12wx $arg0
+end
+
+define xg
+    x/12gx $arg0
 end
 
 # 定义 pf 命令，支持多参数格式化输出
@@ -42,6 +46,7 @@ set prompt \033[1;36m   \033[0m
 set logging enabled on
 set logging file gdb.log
 set logging overwrite on
+set logging redirect on
 
 # 设置反汇编风格为 Intel
 set disassembly-flavor intel

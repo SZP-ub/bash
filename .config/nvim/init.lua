@@ -27,6 +27,7 @@ vim.opt.scrolloff = 3
 vim.opt.ttyfast = true
 vim.opt.lazyredraw = true
 vim.opt.synmaxcol = 501
+-- vim.opt.winborder = 'rounded' -- 窗口边框样式
 
 vim.g.markdown_recommended_style = 0
 vim.g.c_no_curly_error = 1

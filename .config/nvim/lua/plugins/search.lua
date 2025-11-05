@@ -22,10 +22,13 @@ return {
         config = function()
             -- 默认跳转
             vim.keymap.set({ "n", "x", "o" }, "s", "<Plug>(leap)")
+            -- 后向跳转
+            vim.keymap.set({ "n", "x", "o" }, "S", "<Plug>(leap-backward)")
             -- 跨窗口跳转
-            vim.keymap.set("n", "S", "<Plug>(leap-from-window)")
-            -- 可选：设置特殊按键
+            vim.keymap.set("n", "gS", "<Plug>(leap-from-window)")
+            -- 设置特殊按键
             require("leap").opts.special_keys.next_target = '<tab>'
         end,
-    }
+    },
+
 }
