@@ -52,6 +52,18 @@ vim.o.background = "dark"
 vim.cmd("colorscheme peachpuff")
 -- vim.cmd("colorscheme retrobox")
 
+-- ========================= 复制高亮提示 ==========================
+vim.api.nvim_set_hl(0, "YankHighlight", { bg = "#cccccc", fg = "NONE" }) -- 只设置背景色
+-- vim.api.nvim_set_hl(0, "YankHighlight", { bg = "#f5c195", fg = "NONE" }) -- 只设置背景色
+
+vim.api.nvim_create_autocmd('TextYankPost', {
+    desc = 'highlight copying text',
+    group = vim.api.nvim_create_augroup('highlight-yank', { clear = true }),
+    callback = function()
+        vim.highlight.on_yank({ higroup = "YankHighlight", timeout = 500 })
+    end,
+})
+
 -- ======================== Folding config ===========================
 vim.o.viewoptions = vim.o.viewoptions:match("folds") and vim.o.viewoptions or (vim.o.viewoptions .. ",folds")
 
