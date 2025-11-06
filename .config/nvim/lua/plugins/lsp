@@ -5,6 +5,7 @@ return {
 	-- =========================
 	{
 		"mason-org/mason.nvim",
+		event = "VeryLazy",
 		opts = {
 			ui = {
 				border = "rounded",
@@ -259,14 +260,19 @@ return {
 			"mason-org/mason-lspconfig.nvim",
 		},
 		config = function()
-            local lsp_server = {
-                    "lua_ls",
-                    "bashls"
-                }
-            for _, lspserver in ipairs(lsp_server) do
-                -- vim.lsp.enable(lspserver)
-                lspconfig[lspserver].setup({})
-            end
+			local lsp_server = {
+				"clangd",
+				"lua_ls", -- "lua-language-server" 应为 "lua_ls"
+				"marksman",
+				"pyright",
+				-- "stylua",      -- stylua 是格式化工具，不是 LSP server，建议移除
+			}
+
+			for _, lspserver in ipairs(lsp_server) do
+				-- require("lspconfig")[lspserver].setup({})
+				vim.lsp.config(lspserver, {})
+				vim.lsp.enable(lspserver)
+			end
 			vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
 			vim.diagnostic.config({
 				underline = false,

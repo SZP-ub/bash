@@ -1,55 +1,68 @@
 ---@diagnostic disable: undefined-global
-vim.opt.autoindent = true
-vim.opt.cindent = false
-vim.cmd("filetype indent off")
 
-vim.g.mapleader = "\\"
-vim.opt.compatible = false
-vim.opt.wrap = true
-vim.opt.swapfile = false
-vim.cmd("syntax enable")
-vim.opt.number = true
-vim.opt.relativenumber = true
-vim.opt.termguicolors = true
--- vim.opt.clipboard = "unnamedplus"
-vim.opt.errorbells = false
-vim.opt.visualbell = true
-vim.opt.wildignorecase = true
-vim.opt.cursorline = true
-vim.opt.helplang = "cn"
+-- 基本缩进与文件类型行为
+vim.opt.autoindent = true            -- 自动缩进（新行继承上一行缩进）
+vim.opt.cindent = false              -- 关闭 C 风格的自动缩进（使用更简单的 smartindent）
+vim.cmd("filetype indent off")       -- 关闭 filetype 提供的 indent 脚本（如果你想自己控制缩进恢复为 on）
 
-vim.opt.hlsearch = true
-vim.opt.incsearch = true
-vim.opt.ignorecase = true
-vim.opt.backspace = { "indent", "eol", "start" }
-vim.opt.updatetime = 100
-vim.opt.scrolloff = 3
-vim.opt.ttyfast = true
-vim.opt.lazyredraw = true
-vim.opt.synmaxcol = 501
--- vim.opt.winborder = 'rounded' -- 窗口边框样式
+-- 全局 leader 键与兼容性
+vim.g.mapleader = "\\"               -- 自定义 leader 键为反斜杠
+vim.opt.compatible = false           -- 关闭兼容模式，启用现代 Vim/Neovim 特性
 
-vim.g.markdown_recommended_style = 0
-vim.g.c_no_curly_error = 1
+-- 显示与文件行为
+vim.opt.wrap = true                  -- 长行换行显示
+vim.opt.swapfile = false             -- 关闭 swapfile（避免临时文件）
+vim.opt.backup = false               -- 关闭备份文件（避免与 LSP 等交互时产生兼容问题）
+vim.opt.writebackup = false          -- 关闭写入备份（与 backup 配合）
+vim.opt.signcolumn = "yes"           -- 总是显示左侧标志栏（避免文本抖动）
+vim.cmd("syntax enable")             -- 启用语法高亮
+vim.opt.number = true                -- 显示行号
+vim.opt.relativenumber = true        -- 显示相对行号（当前行为绝对行号）
+vim.opt.termguicolors = true         -- 启用 24-bit 颜色支持
+-- vim.opt.clipboard = "unnamedplus" -- 如果想与系统剪贴板互通可以启用
+vim.opt.errorbells = false           -- 关闭错误提示声音
+vim.opt.visualbell = true            -- 使用可视提示代替声音
+vim.opt.wildignorecase = true        -- 补全命令时忽略大小写
+vim.opt.cursorline = true            -- 高亮当前行
+vim.opt.helplang = "cn"              -- 帮助文档首选语言（中文）
 
-vim.opt.autowrite = true
-vim.api.nvim_create_autocmd("focuslost", { command = "silent! wa" })
+-- 搜索
+vim.opt.hlsearch = true              -- 高亮搜索结果
+vim.opt.incsearch = true             -- 增量搜索（输入时高亮匹配）
+vim.opt.ignorecase = true            -- 搜索忽略大小写（除非包含大写）
 
-vim.opt.tabstop = 4
-vim.opt.shiftwidth = 4
-vim.opt.expandtab = true
-vim.opt.smartindent = true
+-- 编辑行为
+vim.opt.backspace = { "indent", "eol", "start" } -- backspace 更智能
+vim.opt.updatetime = 100             -- CursorHold 与诊断延迟（毫秒），较低值更灵敏但更频繁写入
+vim.opt.scrolloff = 3                -- 光标上下保留 3 行上下文
+vim.opt.ttyfast = true               -- 终端优化提示（老选项，通常设置无害）
+vim.opt.lazyredraw = true            -- 在执行宏/复杂命令时延迟重绘以提高速度
+vim.opt.synmaxcol = 501              -- 语法高亮最大列数，超出后跳过以节省 CPU
+-- vim.opt.winborder = 'rounded' -- 如果需要可以设置窗口边框样式（部分 UI 插件使用）
 
-vim.o.pumheight = 8
-vim.o.pumwidth = 30
-vim.o.pumblend = 0
+-- 文件类型/插件兼容
+-- vim.g.markdown_recommended_style = 0 -- 取消 markdown.lua 推荐样式（如果使用自定义主题）
+vim.g.c_no_curly_error = 0           -- C 文件中关闭某些报错（与 coc/c 相关）
 
-vim.opt.splitbelow = true
-vim.opt.splitright = true
+-- 缩进与制表符
+vim.opt.tabstop = 4                  -- Tab 显示宽度
+vim.opt.shiftwidth = 4               -- 自动缩进时的宽度
+vim.opt.expandtab = true             -- 使用空格代替 Tab 字符
+vim.opt.smartindent = true           -- 智能缩进（适合编程）
 
+-- 补全菜单外观
+vim.o.pumheight = 8                  -- 补全菜单高度
+vim.o.pumwidth = 30                  -- 补全菜单宽度（窗口管理器可能会忽略）
+vim.o.pumblend = 0                   -- 补全菜单透明度（0 为不透明）
+
+-- 窗口拆分方向
+vim.opt.splitbelow = true            -- 新窗口在下方
+vim.opt.splitright = true            -- 新窗口在右侧
+
+-- 主题与背景
 -- vim.o.background = "light"
-vim.o.background = "dark"
-vim.cmd("colorscheme peachpuff")
+vim.o.background = "dark"            -- 主题使用暗色背景（确保颜色方案匹配）
+vim.cmd("colorscheme peachpuff")     -- 加载 colorscheme（确保已安装 peachpuff）
 -- vim.cmd("colorscheme retrobox")
 
 -- ========================= 复制高亮提示 ==========================

@@ -15,11 +15,6 @@ return {
                 end
             end
 
-            -- 禁用备份文件，避免 LSP 兼容性问题
-            vim.opt.backup = false
-            vim.opt.writebackup = false
-            vim.opt.signcolumn = "yes" -- 总是显示左侧标志栏
-
             -- snippet 跳转键
             vim.g.coc_snippet_next = '<Tab>'
             vim.g.coc_snippet_prev = '<S-Tab>'
@@ -123,41 +118,12 @@ return {
             -- CocList 相关映射（需定义 keyset 或用 vim.keymap.set 替换）
             local opts_list = { silent = true, nowait = true }
             vim.keymap.set("n", "<leader>ca", ":<C-u>CocList diagnostics<cr>", opts_list) -- 诊断列表
-            -- vim.keymap.set("n", "<leader>ce", ":<C-u>CocList extensions<cr>", opts_list)  -- 扩展管理
+            vim.keymap.set("n", "<leader>ce", ":<C-u>CocList extensions<cr>", opts_list)  -- 扩展管理
             -- vim.keymap.set("n", "<leader>cc", ":<C-u>CocList commands<cr>", opts_list)    -- 命令列表
             -- vim.keymap.set("n", "<leader>co", ":<C-u>CocList outline<cr>", opts_list) -- 文档大纲（如需可取消注释）
             -- vim.keymap.set("n", "<leader>cj", ":<C-u>CocNext<cr>", opts_list)       -- 下一个 CocList 项
             -- vim.keymap.set("n", "<leader>ck", ":<C-u>CocPrev<cr>", opts_list)       -- 上一个 CocList 项
             -- vim.keymap.set("n", "<leader>cp", ":<C-u>CocListResume<cr>", opts_list) -- 恢复 CocList
-
-            -- ccls 专用命令和快捷键
-            --             local ccls_cmds = {
-            --                 Derived = { "$ccls/inheritance", { derived = true }, "查找派生类" },
-            --                 Base = { "$ccls/inheritance", nil, "查找基类" },
-            --                 VarAll = { "$ccls/vars", nil, "查找所有变量" },
-            --                 VarLocal = { "$ccls/vars", { kind = 1 }, "查找局部变量" },
-            --                 VarArg = { "$ccls/vars", { kind = 4 }, "查找参数变量" },
-            --                 MemberFunction = { "$ccls/member", { kind = 3 }, "查找成员函数" },
-            --                 MemberType = { "$ccls/member", { kind = 2 }, "查找成员类型" },
-            --                 MemberVar = { "$ccls/member", { kind = 4 }, "查找成员变量" },
-            --             }
-            --             for name, v in pairs(ccls_cmds) do
-            --                 -- 创建命令，执行相应 ccls 查询
-            --                 vim.api.nvim_create_user_command(name, function()
-            --                     vim.fn.CocLocations('ccls', v[1], v[2])
-            --                 end, {})
-            --             end
-            --
-            --             -- ccls 相关快捷键
-            --             vim.keymap.set('n', 'grt', '<Cmd>MemberType<CR>', { silent = true, desc = '查找成员类型（ccls）' }) -- grt 查找成员类型
-            --             vim.keymap.set('n', 'grv', '<Cmd>MemberVar<CR>', { silent = true, desc = '查找成员变量（ccls）' }) -- grv 查找成员变量
-            --             vim.keymap.set('n', 'gc', function()
-            --                 vim.fn.CocLocations('ccls', '$ccls/call') -- gc 查找当前符号的调用者
-            --             end, { silent = true, desc = '查找当前符号的调用者（Callers）' })
-            --             vim.keymap.set('n', 'gcc', function()
-            --                 vim.fn.CocLocations('ccls', '$ccls/call', { callee = true }) -- gcc 查找当前符号调用的函数
-            --             end, { silent = true, desc = '查找当前符号调用的函数（Callees）' })
-            --
         end
     },
 
@@ -166,7 +132,8 @@ return {
         build = ":UpdateRemotePlugins", -- 安装后自动注册 remote plugin
         event = "CmdlineEnter",         -- 只在命令行模式加载
         dependencies = {
-            "romgrk/fzy-lua-native",
+            -- "romgrk/fzy-lua-native",
+            { 'romgrk/fzy-lua-native', build = 'make' },
         },
         config = function()
             local wilder = require('wilder')
