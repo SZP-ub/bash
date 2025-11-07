@@ -94,11 +94,10 @@ vim.keymap.set("n", "<leader>mt", function()
     local orig_win = vim.api.nvim_get_current_win()
     local bufnr = vim.api.nvim_get_current_buf()
 
-    -- 新建 tab 并在新 tab 的窗口显示该 buffer
-    vim.cmd("tabnew")
-    local ok = pcall(vim.api.nvim_set_current_buf, bufnr)
+    -- 在新 tab 中直接打开当前 buffer（不会先创建空白 buffer）
+    local ok, err = pcall(vim.cmd, ("tab sbuffer %d"):format(bufnr))
     if not ok then
-        vim.notify("移动 buffer 到新 tab 失败：无法切换 buffer", vim.log.levels.ERROR)
+        vim.notify("移动 buffer 到新 tab 失败: " .. tostring(err), vim.log.levels.ERROR)
         return
     end
 
@@ -111,14 +110,6 @@ vim.keymap.set("n", "<leader>mt", function()
         end
     end
 end, { desc = "移动当前 buffer 到新 tab 并关闭原先显示该 buffer 的窗口", noremap = true })
-
--- ================= fzf close ====================
-vim.api.nvim_create_autocmd("FileType", {
-    pattern = "fzf",
-    callback = function()
-        vim.api.nvim_buf_set_keymap(0, "t", "<Esc>", "<C-c>", { noremap = true, silent = true })
-    end,
-})
 
 -- ==================== 复制完整文件路径 =====================
 vim.keymap.set("n", "<leader>cp", function()

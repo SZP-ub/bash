@@ -3,23 +3,24 @@ return {
 
     {
         "nvim-treesitter/nvim-treesitter-context",
-        event = "VeryLazy",
+        ft = { "lua", "python", "javascript", "typescript", "rust", "c", "cpp", "go", "java", "sh", "vim", "markdown" },
         config = function()
             require("treesitter-context").setup({
-                enable = true,           -- 启用此插件（也可以通过命令随时启用/禁用）
-                multiwindow = true,      -- 是否支持多窗口（多分屏时每个窗口都显示上下文）
-                max_lines = 2,           -- 上下文窗口最多显示多少行（小于等于0表示不限制行数）
-                min_window_height = 0,   -- 编辑器窗口最小高度，低于此高度不显示上下文（小于等于0表示不限制）
-                line_numbers = true,     -- 是否显示行号
-                multiline_threshold = 2, -- 单个上下文最多显示多少行（超过则折叠）
-                trim_scope = 'inner',    -- 当超过 max_lines 时，丢弃哪部分上下文（'inner' 丢弃内部，'outer' 丢弃外部）
-                mode = 'topline',        -- 用哪一行来计算上下文（'cursor' 用光标所在行，'topline' 用窗口顶部行）
-                separator = nil,         -- 上下文和正文之间的分隔符（如 '-'，设置后只有光标上方至少有2行时才显示上下文）
-                zindex = 2,              -- 上下文窗口的 Z-index（层级，数字越大越靠上）
-                on_attach = nil,         -- 附加到 buffer 时的回调函数，返回 false 可禁用上下文显示
+                enable = true,
+                multiwindow = true,
+                max_lines = 2,
+                min_window_height = 0,
+                line_numbers = true,
+                multiline_threshold = 2,
+                trim_scope = 'inner',
+                mode = 'topline',
+                separator = nil,
+                zindex = 2,
+                on_attach = nil,
             })
         end,
     },
+
 
     -- 缩进线
     {
@@ -69,8 +70,8 @@ return {
         "nvim-lualine/lualine.nvim",
         event = "VeryLazy",
         config = function()
-            vim.opt.laststatus = 2
-            vim.opt.showtabline = 2
+            -- vim.opt.laststatus = 2
+            -- vim.opt.showtabline = 2
 
             require("lualine").setup({
                 options = {
@@ -187,7 +188,6 @@ return {
     -- 文件图标
     {
         "nvim-tree/nvim-web-devicons",
-        -- event = "VeryLazy",
         lazy = true,
         config = function()
             require("nvim-web-devicons").setup({
