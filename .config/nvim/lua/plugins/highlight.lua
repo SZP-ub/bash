@@ -89,10 +89,10 @@ return {
                 -- ensure_installed = { "lua", "python", "javascript", "typescript", "c", "cpp", "java" },
 
                 -- 启用基于 treesitter 的语法高亮（便于 textobject 更准确）
-                highlight = { enable = true },
+                -- highlight = { enable = true },
 
                 -- 启用基于 treesitter 的缩进（可选，按需打开/关闭）
-                indent = { enable = true },
+                -- indent = { enable = true },
 
                 textobjects = {
                     -- select = {

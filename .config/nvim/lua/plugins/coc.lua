@@ -19,25 +19,90 @@ return {
             vim.g.coc_snippet_next = '<Tab>'
             vim.g.coc_snippet_prev = '<S-Tab>'
 
-            -- 检查光标前是否是空白
-            function _G.check_back_space()
+            -- helper: 把 termcodes 转换并发送到 Neovim（feedkeys）
+            local function feed_termcodes(keys, feed_mode)
+                -- feed_mode 默认用 'n'（不让结果被再次映射）
+                feed_mode = feed_mode or 'n'
+                local t = vim.api.nvim_replace_termcodes(keys, true, false, true)
+                vim.api.nvim_feedkeys(t, feed_mode, true)
+            end
+
+            -- 检查光标前是否是空白（局部函数，避免污染 _G）
+            local function check_back_space()
                 local col = vim.fn.col('.') - 1
                 return col == 0 or vim.fn.getline('.'):sub(col, col):match('%s') ~= nil
             end
 
-            -- 智能 Tab 映射（补全、snippet、Tab）
-            vim.api.nvim_set_keymap("i", "<Tab>",
-                "coc#pum#visible() ? coc#pum#next(1) : coc#expandableOrJumpable() ? '<C-r>=coc#rpc#request(\"doKeymap\", [\"snippets-expand-jump\",\"\"])<CR>' : v:lua.check_back_space() ? '<Tab>' : coc#refresh()",
-                { noremap = true, silent = true, expr = true })
+            -- tabout-like：括号/引号跳出（局部函数）
+            local function tabout_like()
+                local col = vim.fn.col('.')
+                local line = vim.fn.getline('.')
+                local next_char = line:sub(col, col)
+                local targets = {
+                    [")"] = true,
+                    ["]"] = true,
+                    ["}"] = true,
+                    [">"] = true,
+                    ["'"] = true,
+                    ['"'] = true,
+                    [";"] = true,
+                    [","] = true,
+                    ["`"] = true
+                }
+                if targets[next_char] then
+                    return "<Right>"
+                else
+                    return "<Tab>"
+                end
+            end
+
+            -- 智能 Tab 映射（补全、snippet、Tab、括号跳出）
+            vim.keymap.set("i", "<Tab>", function()
+                if vim.fn['coc#pum#visible']() == 1 then
+                    -- coc 的下一个项通常会返回按键序列字符串，若不是则降级到 <C-n>
+                    local ok, s = pcall(vim.fn['coc#pum#next'], 1)
+                    if ok and type(s) == "string" and #s > 0 then
+                        feed_termcodes(s)
+                    else
+                        feed_termcodes("<C-n>")
+                    end
+                    -- 非 expr 映射：不需要返回字符串
+                    return
+                elseif vim.fn['coc#expandableOrJumpable']() == 1 then
+                    -- 触发 coc snippets expand/jump via rpc doKeymap
+                    feed_termcodes('<C-r>=coc#rpc#request("doKeymap", ["snippets-expand-jump",""])<CR>')
+                    return
+                else
+                    -- 括号/引号跳出或插入 Tab
+                    local k = tabout_like()
+                    feed_termcodes(k)
+                    return
+                end
+            end, { noremap = true, silent = true })
 
             -- Shift-Tab 映射（补全、snippet、Shift-Tab）
-            vim.api.nvim_set_keymap("i", "<S-Tab>",
-                "coc#pum#visible() ? coc#pum#prev(1) : coc#jumpable(-1) ? '<C-r>=coc#rpc#request(\"doKeymap\", [\"snippets-expand-jump-back\",\"\"])<CR>' : '<S-Tab>'",
-                { noremap = true, silent = true, expr = true })
+            vim.keymap.set("i", "<S-Tab>", function()
+                if vim.fn['coc#pum#visible']() == 1 then
+                    local ok, s = pcall(vim.fn['coc#pum#prev'], 1)
+                    if ok and type(s) == "string" and #s > 0 then
+                        feed_termcodes(s)
+                    else
+                        feed_termcodes("<C-p>")
+                    end
+                    return
+                elseif vim.fn['coc#jumpable'](-1) == 1 then
+                    feed_termcodes('<C-r>=coc#rpc#request("doKeymap", ["snippets-expand-jump-back",""])<CR>')
+                    return
+                else
+                    feed_termcodes("<S-Tab>")
+                    return
+                end
+            end, { noremap = true, silent = true })
 
             -- 回车键：补全菜单可见时确认，否则用 mini.pairs 处理（需安装 mini.pairs 插件）
             vim.keymap.set("i", "<CR>", function()
                 if vim.fn['coc#pum#visible']() == 1 then
+                    -- 直接调用 coc 的确认函数（它会处理光标/插入等）
                     return vim.fn['coc#pum#confirm']()
                 else
                     return require("mini.pairs").cr()
@@ -136,6 +201,7 @@ return {
     {
         "gelguy/wilder.nvim",
         build = ":UpdateRemotePlugins",
+        -- event = "InsertEnter", -- 改为在进入插入模式时加载
         keys = { ":", "/", "?" }, -- 按下这些键时加载插件
         dependencies = {
             "romgrk/fzy-lua-native",

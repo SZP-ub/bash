@@ -2,15 +2,9 @@
 return {
 
     {
-        "tpope/vim-repeat",
-        lazy = true,
-    },
-
-    {
         "echasnovski/mini.pairs",
         event = "InsertEnter", -- 插入模式时加载，更懒
         version = false,       -- 使用最新主分支
-        -- event = "InsertEnter", -- 在插入模式时加载
         config = function()
             require("mini.pairs").setup()
             -- 你可以在这里自定义配置，例如：
@@ -20,6 +14,11 @@ return {
             --   },
             -- })
         end,
+    },
+
+    {
+        "tpope/vim-repeat",
+        lazy = true,
     },
 
     {

@@ -58,5 +58,11 @@
     "sh.format.command": "shfmt",
     "sh.format.args": ["-i", "2", "-ci"],
 
+    "suggest.noselect": false,
+    "suggest.enablePreselect": true,
+    "snippets.ultisnips.enable": true,
+    "coc.preferences.jumpCommand": "",
+    "coc.preferences.useQuickfixForLocations": true,
+
     "coc.preferences.formatOnSave": true
 }
