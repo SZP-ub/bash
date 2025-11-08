@@ -1,5 +1,21 @@
 ---@diagnostic disable: undefined-global
 return {
+
+    {
+        "andymass/vim-matchup",
+        keys = { "%" }, -- 仅在按下 % 键时加载插件
+        -- event = { "BufReadPost", "BufNewFile" }, -- 延迟加载，优化启动速度
+        init = function()
+            vim.g.matchup_enabled = 1
+            vim.g.matchup_matchparen_enabled = 1
+            vim.g.matchup_matchparen_hi_surround_always = 0
+            vim.g.matchup_matchparen_deferred = 1
+            vim.g.matchup_matchparen_deferred_show_delay = 50
+            vim.g.matchup_matchparen_deferred_hide_delay = 300
+            vim.g.matchup_delim_noskips = 1
+        end,
+    },
+
     {
         "romainl/vim-cool",
         keys = {

@@ -128,12 +128,17 @@ return {
     },
 
     {
+        "romgrk/fzy-lua-native",
+        lazy = true,
+        build = "make",
+    },
+
+    {
         "gelguy/wilder.nvim",
-        build = ":UpdateRemotePlugins", -- 安装后自动注册 remote plugin
-        event = "CmdlineEnter",         -- 只在命令行模式加载
+        build = ":UpdateRemotePlugins",
+        keys = { ":", "/", "?" }, -- 按下这些键时加载插件
         dependencies = {
-            -- "romgrk/fzy-lua-native",
-            { 'romgrk/fzy-lua-native', build = 'make' },
+            "romgrk/fzy-lua-native",
         },
         config = function()
             local wilder = require('wilder')

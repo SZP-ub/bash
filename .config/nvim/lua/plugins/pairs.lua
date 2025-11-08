@@ -2,6 +2,11 @@
 return {
 
     {
+        "tpope/vim-repeat",
+        lazy = true,
+    },
+
+    {
         "echasnovski/mini.pairs",
         event = "InsertEnter", -- 插入模式时加载，更懒
         version = false,       -- 使用最新主分支
@@ -19,6 +24,7 @@ return {
 
     {
         "kylechui/nvim-surround",
+        dependencies = { "tpope/vim-repeat" },
         version = "*",
         keys = {
             { "ys", mode = { "n", "x" }, desc = "添加包裹" },

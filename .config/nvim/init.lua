@@ -30,6 +30,7 @@ vim.opt.helplang = "cn"       -- 帮助文档首选语言（中文）
 vim.opt.hlsearch = true   -- 高亮搜索结果
 vim.opt.incsearch = true  -- 增量搜索（输入时高亮匹配）
 vim.opt.ignorecase = true -- 搜索忽略大小写（除非包含大写）
+-- vim.o.inccommand = "nosplit" -- 正则表达式
 
 -- 编辑行为
 vim.opt.backspace = { "indent", "eol", "start" } -- backspace 更智能

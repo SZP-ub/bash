@@ -2,6 +2,11 @@
 return {
 
     {
+        "nvim-lua/plenary.nvim",
+        lazy = true,
+    },
+
+    {
         "p00f/godbolt.nvim",
         keys = {
             { "<leader>gb", "<cmd>Godbolt<CR>", desc = "打开 Godbolt" }
