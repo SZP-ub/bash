@@ -32,6 +32,7 @@
     "diagnostic.checkCurrentLine": true,
 
     "coc.preferences.messageLevel": "warning",
+    "coc.preferences.jumpCommand": "edit",
 
     "suggest.autoTrigger": "always",
     "suggest.maxCompleteItemCount": 20,
@@ -57,12 +58,6 @@
 
     "sh.format.command": "shfmt",
     "sh.format.args": ["-i", "2", "-ci"],
-
-    "suggest.noselect": false,
-    "suggest.enablePreselect": true,
-    "snippets.ultisnips.enable": true,
-    "coc.preferences.jumpCommand": "",
-    "coc.preferences.useQuickfixForLocations": true,
 
     "coc.preferences.formatOnSave": true
 }
