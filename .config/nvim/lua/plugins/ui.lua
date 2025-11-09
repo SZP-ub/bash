@@ -3,7 +3,8 @@ return {
 
     {
         "nvim-treesitter/nvim-treesitter-context",
-        ft = { "lua", "python", "javascript", "typescript", "rust", "c", "cpp", "go", "java", "sh", "vim", "markdown" },
+        event = "VeryLazy",
+        -- ft = { "lua", "python", "javascript", "typescript", "rust", "c", "cpp", "go", "java", "sh", "vim", "markdown" },
         config = function()
             require("treesitter-context").setup({
                 enable = true,

@@ -1,20 +1,20 @@
 ---@diagnostic disable: undefined-global
 return {
 
-    {
-        "andymass/vim-matchup",
-        keys = { "%" }, -- 仅在按下 % 键时加载插件
-        -- event = { "BufReadPost", "BufNewFile" }, -- 延迟加载，优化启动速度
-        init = function()
-            vim.g.matchup_enabled = 1
-            vim.g.matchup_matchparen_enabled = 1
-            vim.g.matchup_matchparen_hi_surround_always = 0
-            vim.g.matchup_matchparen_deferred = 1
-            vim.g.matchup_matchparen_deferred_show_delay = 50
-            vim.g.matchup_matchparen_deferred_hide_delay = 300
-            vim.g.matchup_delim_noskips = 1
-        end,
-    },
+    -- {
+    --     "andymass/vim-matchup",
+    --     keys = { "%" }, -- 仅在按下 % 键时加载插件
+    --     -- event = "VeryLazy",
+    --     init = function()
+    --         vim.g.matchup_enabled = 1
+    --         vim.g.matchup_matchparen_enabled = 1
+    --         vim.g.matchup_matchparen_hi_surround_always = 0
+    --         vim.g.matchup_matchparen_deferred = 1
+    --         vim.g.matchup_matchparen_deferred_show_delay = 50
+    --         vim.g.matchup_matchparen_deferred_hide_delay = 300
+    --         vim.g.matchup_delim_noskips = 1
+    --     end,
+    -- },
 
     {
         "romainl/vim-cool",
@@ -56,7 +56,7 @@ return {
 
     {
         "junegunn/fzf.vim",
-        dependencies = { "junegunn/fzf", "nvim-tree/nvim-web-devicons" },
+        dependencies = { "junegunn/fzf" },
         keys = {
             { "<space>ff", ":Files<CR>", desc = "fzf: 查找文件" },
             { "<space>fg", ":Rg<CR>", desc = "fzf: 全文搜索" },
@@ -91,7 +91,7 @@ return {
     {
         "ibhagwan/fzf-lua",
         lazy = true,
-        dependencies = { "junegunn/fzf", "nvim-tree/nvim-web-devicons" },
+        dependencies = { "junegunn/fzf" },
         config = function()
             require("fzf-lua").setup({
                 grep = {
@@ -150,7 +150,7 @@ return {
 
     {
         "dhananjaylatkar/cscope_maps.nvim",
-        dependencies = { "ibhagwan/fzf-lua", "nvim-tree/nvim-web-devicons" },
+        dependencies = { "ibhagwan/fzf-lua" },
         opts = {
             cscope = { db_file = "./cscope.out", picker = "quickfix", skip_picker_for_single_result = false },
             stack_view = { tree_hl = true },

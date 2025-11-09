@@ -18,7 +18,7 @@ return {
     -- 文件树侧边栏
     {
         "nvim-tree/nvim-tree.lua",
-        cmd = "NvimTreeToggle", -- 只在打开文件树时加载
+        -- cmd = "NvimTreeToggle", -- 只在打开文件树时加载
         keys = {
             { "<C-n>", "<cmd>NvimTreeToggle<CR>", desc = "切换NvimTree" },
         },
@@ -35,7 +35,7 @@ return {
     -- 代码结构标签栏
     {
         "preservim/tagbar",
-        cmd = "TagbarToggle",
+        -- cmd = "TagbarToggle",
         keys = {
             {
                 "<leader>o",

@@ -3,17 +3,14 @@ return {
 
     {
         "nvim-treesitter/nvim-treesitter",
-        -- event = { "BufReadPost", "BufNewFile" },
-        -- event = "VeryLazy",
-        ft = { "lua", "python", "javascript", "typescript", "rust", "c", "cpp", "go", "java", "sh", "vim", "markdown" },
+        event = "VeryLazy",
         build = ":TSUpdate",
         main = "nvim-treesitter.configs",
         opts = {
-            auto_install = true,
+            auto_install = false,
             ensure_installed = {
                 "cmake", "c", "cpp", "lua", "vim", "vimdoc", "query", "elixir", "heex", "javascript", "html", "json",
                 "markdown",
-                -- "latex",
             },
             sync_install = false,
             highlight = {
@@ -69,10 +66,10 @@ return {
             -- { "ib",         mode = { "o", "x" } }, -- 代码块 inner（示例）
 
             -- move 映射（普通模式）
-            -- { "]f",         mode = "n" }, -- 跳到下一个函数起始
-            -- { "[f",         mode = "n" }, -- 跳到上一个函数起始
-            -- { "]F",         mode = "n" }, -- 跳到下一个函数结束
-            -- { "[F",         mode = "n" }, -- 跳到上一个函数结束
+            { "]f",  mode = "n" }, -- 跳到下一个函数起始
+            { "[f",  mode = "n" }, -- 跳到上一个函数起始
+            { "]F",  mode = "n" }, -- 跳到下一个函数结束
+            { "[F",  mode = "n" }, -- 跳到上一个函数结束
 
             -- swap（普通模式）
             { "gsp", mode = "n" }, -- 将当前参数与下一个参数交换（lazy 首次按键触发加载）
@@ -117,28 +114,28 @@ return {
                     --     include_surrounding_whitespace = false, -- 是否包含周围空白（false：只选语义节点）
                     -- },
 
-                    -- move = {
-                    --     enable = true,
-                    --     set_jumps = true, -- 把跳转位置记录到 jumplist，便于 <c-o> 回退
-                    --     -- goto_next_start：跳到下一个 textobject 的起始处
-                    --     goto_next_start = {
-                    --         ["]f"] = "@function.outer",
-                    --         -- ["]c"] = "@class.outer", -- 如需类跳转可取消注释
-                    --     },
-                    --     -- goto_next_end：跳到下一个 textobject 的结束处（通常绑定大写字母）
-                    --     goto_next_end = {
-                    --         ["]f"] = "@function.outer",
-                    --         -- ["]c"] = "@class.outer",
-                    --     },
-                    --     goto_previous_start = {
-                    --         ["[f"] = "@function.outer",
-                    --         -- ["[c"] = "@class.outer",
-                    --     },
-                    --     goto_previous_end = {
-                    --         ["[f"] = "@function.outer",
-                    --         -- ["[c"] = "@class.outer",
-                    --     },
-                    -- },
+                    move = {
+                        enable = true,
+                        set_jumps = true, -- 把跳转位置记录到 jumplist，便于 <c-o> 回退
+                        -- goto_next_start：跳到下一个 textobject 的起始处
+                        goto_next_start = {
+                            ["]f"] = "@function.outer",
+                            -- ["]c"] = "@class.outer", -- 如需类跳转可取消注释
+                        },
+                        -- goto_next_end：跳到下一个 textobject 的结束处（通常绑定大写字母）
+                        goto_next_end = {
+                            ["]f"] = "@function.outer",
+                            -- ["]c"] = "@class.outer",
+                        },
+                        goto_previous_start = {
+                            ["[f"] = "@function.outer",
+                            -- ["[c"] = "@class.outer",
+                        },
+                        goto_previous_end = {
+                            ["[f"] = "@function.outer",
+                            -- ["[c"] = "@class.outer",
+                        },
+                    },
 
                     swap = {
                         enable = true,
