@@ -94,18 +94,6 @@ return {
         dependencies = { "junegunn/fzf" },
         config = function()
             require("fzf-lua").setup({
-                grep = {
-                    actions = {
-                        ["default"] = require("fzf-lua.actions").file_edit,
-                    }
-                },
-                defaults = {
-                    multi_select = false,
-                },
-                fzf_opts = {
-                    ['--cycle'] = '',
-                    ['--no-wrap'] = ''
-                },
                 winopts = {
                     height     = 0.75,
                     width      = 0.70,
@@ -114,25 +102,24 @@ return {
                     border     = "solid",
                     backdrop   = 60,
                     fullscreen = false,
-                    treesitter = {
-                        enabled    = true,
-                        fzf_colors = { ["hl"] = "-1:reverse", ["hl+"] = "-1:reverse" }
+                    win_hl     = {
+                        border = "FzfLuaBorder",
+                        preview = "NormalFloat",
                     },
+
                     preview    = {
-                        border       = "single",
-                        wrap         = true,
-                        hidden       = false,
-                        vertical     = "down:45%",
-                        horizontal   = "right:60%",
-                        layout       = "flex",
-                        flip_columns = 100,
-                        title        = true,
+                        layout       = "horizontal", -- 左右分屏
+                        horizontal   = "right:55%",  -- 右侧55%为预览区
+                        wrap         = true,         -- 自动换行
+                        title        = true,         -- 关闭预览标题栏
                         title_pos    = "center",
-                        scrollbar    = "border",
                         scrolloff    = 0,
                         delay        = 20,
+                        scrollbar    = "border", -- 滚动条在边界
+                        vertical     = "down:45%",
+                        flip_columns = 100,
                         winopts      = {
-                            number         = true,
+                            number         = true, -- 行号（可选，fzf.vim 默认预览也是带行号）
                             relativenumber = false,
                             cursorline     = true,
                             cursorlineopt  = "both",
@@ -141,8 +128,26 @@ return {
                             list           = false,
                             foldenable     = false,
                             foldmethod     = "manual",
+                            win_hl         = {
+                                border  = "FzfLuaBorder",
+                                preview = "NormalFloat",
+                            },
                         },
-                    },
+                    }
+
+                },
+                defaults = {
+                    multi_select = false,
+                    separator = "─",
+                },
+                grep = {
+                    actions = {
+                        ["default"] = require("fzf-lua.actions").file_edit,
+                    }
+                },
+                treesitter = {
+                    enabled    = true,
+                    fzf_colors = { ["hl"] = "-1:reverse", ["hl+"] = "-1:reverse" }
                 },
             })
         end,
@@ -152,7 +157,8 @@ return {
         "dhananjaylatkar/cscope_maps.nvim",
         dependencies = { "ibhagwan/fzf-lua" },
         opts = {
-            cscope = { db_file = "./cscope.out", picker = "quickfix", skip_picker_for_single_result = false },
+            -- cscope = { db_file = "./cscope.out", picker = "quickfix", skip_picker_for_single_result = false },
+            cscope = { db_file = "./cscope.out", picker = "fzf-lua", skip_picker_for_single_result = false },
             stack_view = { tree_hl = true },
         },
         keys = {
