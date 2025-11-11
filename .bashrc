@@ -92,7 +92,7 @@ export GTK_IM_MODULE=fcitx
 export QT_IM_MODULE=fcitx
 export XMODIFIERS="@im=fcitx"
 
-export FZF_DEFAULT_OPTS='--layout=reverse --bind=tab:down,ctrl-n:toggle+down,shift-tab:up,ctrl-p:toggle+up --preview-window=wrap --preview "batcat --style=numbers --color=always --line-range :500 {}"'
+export FZF_DEFAULT_OPTS='--layout=reverse --bind=tab:down,ctrl-n:toggle+down,shift-tab:up,ctrl-p:toggle+up --bind=pgup:preview-page-up,pgdn:preview-page-down --bind=up:preview-up,down:preview-down --preview-window=wrap --preview "batcat --style=numbers --color=always --line-range :500 {}"'
 
 # =======================
 # 其他增强
