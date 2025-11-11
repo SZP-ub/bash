@@ -41,6 +41,7 @@ alias gd='git diff'
 alias gpl='git pull'
 alias gcl='git clone'
 alias grv='git remote -v'
+alias gls='yadm ls-files'
 
 # yadm 快捷键
 alias ylg='yadm --no-pager log --pretty=format:"%C(auto)提交：%h %d%n作者：%an%n日期：%ar（%ad）%n说明：%s%n" --date="format:%Y-%m-%d"'
@@ -56,6 +57,7 @@ alias yd='yadm diff'
 alias ypl='yadm pull'
 alias ycl='yadm clone'
 alias yrv='yadm remote -v'
+alias yls='yadm ls-files'
 
 # pandoc 快捷键
 alias pandocpdf='pandoc --pdf-engine=xelatex -V mainfont="Maple Mono NF Medium Italic" -V monofont="Maple Mono NF Medium Italic" -V CJKmainfont="Maple Mono NF CN Medium" -V CJKmonofont="Maple Mono NF CN Medium"'
