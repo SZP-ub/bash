@@ -22,52 +22,6 @@ return {
         opts_extend = { "ensure_installed" },
     },
 
-    -- {
-    --     "sustech-data/wildfire.nvim",
-    --     dependencies = { "nvim-treesitter/nvim-treesitter" },
-    --     keys = {
-    --         { "<CR>", mode = { "n", "x" }, desc = "wildfire 区块选择/扩展" },
-    --         { "<BS>", mode = { "n", "x" }, desc = "wildfire 区块收缩" },
-    --         -- ↓ normal 模式组合功能，ys 自动扩展+包裹（用于 surround 配合）
-    --         {
-    --             "ys",
-    --             mode = "n",
-    --             desc = "wildfire 区块扩展选区+包裹",
-    --             callback = function()
-    --                 -- 1. 进入 visual，并让 wildfire 扩展选区
-    --                 vim.cmd("normal! v")
-    --                 vim.cmd("normal! <CR>")
-    --                 -- 2. 立刻使用 MiniSurround 的 visual add（保持和你配置一致！）
-    --                 -- 推荐用 feedkeys，保证映射和 delay 的兼容性
-    --                 vim.schedule(function()
-    --                     vim.api.nvim_feedkeys(
-    --                         vim.api.nvim_replace_termcodes(":<C-u>lua MiniSurround.add('visual')<CR>", true, false, true),
-    --                         "x", true
-    --                     )
-    --                 end)
-    --             end
-    --         },
-    --     },
-    --     config = function()
-    --         require("wildfire").setup({
-    --             surrounds = {
-    --                 { "(", ")" },
-    --                 { "{", "}" },
-    --                 { "<", ">" },
-    --                 { "[", "]" },
-    --                 { "`", "`" },
-    --                 -- 如需其它包裹符，继续在此添加，如: { "'", "'" }, { '"', '"' }
-    --             },
-    --             keymaps = {
-    --                 init_selection   = "<CR>", -- 初始扩展 wildfire
-    --                 node_incremental = "<CR>", -- 继续 wildfire 扩展
-    --                 node_decremental = "<BS>", -- wildfire 收缩
-    --             },
-    --             filetype_exclude = { "qf" },
-    --         })
-    --     end,
-    -- },
-
     {
         "sustech-data/wildfire.nvim",
         dependencies = { "nvim-treesitter/nvim-treesitter" },
@@ -78,11 +32,13 @@ return {
         config = function()
             require("wildfire").setup({
                 surrounds = {
-                    { "(", ")" },
-                    { "{", "}" },
-                    { "<", ">" },
-                    { "[", "]" },
-                    { "`", "`" },
+                    { "(",  ")" },
+                    { "{",  "}" },
+                    { "<",  ">" },
+                    { "[",  "]" },
+                    { "`",  "`" },
+                    { "\"", "\"" },
+                    { "'",  "'" },
                 },
                 keymaps = {
                     init_selection = "<CR>",
@@ -123,7 +79,7 @@ return {
 
             -- lsp_interop peek（普通模式）
             -- { "<leader>df", mode = "n" }, -- peek 函数定义（浮窗预览）
-            -- { "<leader>dF", mode = "n" }, -- peek 类定义（浮窗预览）
+            -- { "<leader>dc", mode = "n" }, -- peek 类定义（浮窗预览）
         },
 
         config = function()
@@ -197,8 +153,8 @@ return {
                     -- lsp_interop = {
                     --     enable = true,
                     --     peek_definition_code = {
-                    --         ["<leader>dF"] = "@function.outer", -- 在浮窗中预览函数定义（无需跳转）
-                    --         ["<leader>df"] = "@class.outer",    -- 在浮窗中预览类定义
+                    --         ["<leader>df"] = "@function.outer", -- 在浮窗中预览函数定义（无需跳转）
+                    --         ["<leader>dc"] = "@class.outer",    -- 在浮窗中预览类定义
                     --     },
                     -- },
                 },
