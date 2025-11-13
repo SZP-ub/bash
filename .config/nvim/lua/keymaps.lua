@@ -357,6 +357,6 @@ vim.keymap.set('n', '<F1>', compile_and_run_c, { noremap = true, silent = true, 
 
 -- ==================== Quickfix 窗口快捷键映射 ====================
 vim.keymap.set('n', '<Space>co', ':belowright copen<CR>', { noremap = true, silent = true, desc = '打开 quickfix 窗口' })
-vim.keymap.set('n', 'q', ':cclose<CR>', { noremap = true, silent = true, desc = '关闭 quickfix 窗口' })
-vim.keymap.set('n', 'j', ':cnext<CR>zz', { noremap = true, silent = true, desc = '跳转到下一个 quickfix 项' })
-vim.keymap.set('n', 'k', ':cprev<CR>zz', { noremap = true, silent = true, desc = '跳转到上一个 quickfix 项' })
+vim.keymap.set('n', '<Space>cq', ':cclose<CR>', { noremap = true, silent = true, desc = '关闭 quickfix 窗口' })
+vim.keymap.set('n', '<Space>cj', ':cnext<CR>zz', { noremap = true, silent = true, desc = '跳转到下一个 quickfix 项' })
+vim.keymap.set('n', '<Space>ck', ':cprev<CR>zz', { noremap = true, silent = true, desc = '跳转到上一个 quickfix 项' })
