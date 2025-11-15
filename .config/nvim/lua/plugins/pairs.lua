@@ -11,7 +11,7 @@ return {
             require("mini.pairs").setup({
                 mappings = {
                     -- 添加 <> 包裹支持
-                    ["<"] = { action = "open", pair = "<>", neigh_pattern = "[^%a\\]" },
+                    -- ["<"] = { action = "open", pair = "<>", neigh_pattern = "[^%a\\]" },
                 },
             })
         end,
