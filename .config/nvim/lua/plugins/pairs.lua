@@ -8,11 +8,12 @@ return {
         config = function()
             require("mini.pairs").setup()
             -- 你可以在这里自定义配置，例如：
-            -- require("mini.pairs").setup({
-            --   mappings = {
-            --     ["'"] = { action = "open", pair = "''", neigh_pattern = "[^%a\\]" },
-            --   },
-            -- })
+            require("mini.pairs").setup({
+                mappings = {
+                    -- 添加 <> 包裹支持
+                    -- ["<"] = { action = "open", pair = "<>", neigh_pattern = "[^%a\\]" },
+                },
+            })
         end,
     },
 
@@ -32,6 +33,7 @@ return {
         },
         config = function()
             require("nvim-surround").setup()
+            vim.keymap.set("x", "ys", "<Plug>(nvim-surround-visual)", { silent = true })
         end,
         -- 快捷键示例（无需额外配置，插件自动生效）：
         -- ysiw) ：用括号包裹当前单词

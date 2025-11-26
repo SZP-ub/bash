@@ -164,16 +164,32 @@ end
 vim.keymap.set("n", "<space>q", smart_close, { silent = true, desc = "智能关闭窗口或缓冲区" })
 
 -- ==================== 水平窗口切换 ====================
-vim.keymap.set("n", "<C-l>", "<C-w>l", { silent = true, desc = "右移窗口" })
-vim.keymap.set("n", "<C-h>", "<C-w>h", { silent = true, desc = "左移窗口" })
-vim.keymap.set("i", "<C-l>", "<C-o><C-w>l", { silent = true, desc = "插入模式右移窗口" })
-vim.keymap.set("i", "<C-h>", "<C-o><C-w>h", { silent = true, desc = "插入模式左移窗口" })
+local win_move_keymaps = {
+    -- 普通模式
+    { "n", "<C-l>", "<C-w>l", "右移窗口" },
+    { "n", "<C-h>", "<C-w>h", "左移窗口" },
+    -- 插入模式
+    { "i", "<C-l>", "<C-o><C-w>l", "插入模式右移窗口" },
+    { "i", "<C-h>", "<C-o><C-w>h", "插入模式左移窗口" },
+}
+
+for _, v in ipairs(win_move_keymaps) do
+    vim.keymap.set(v[1], v[2], v[3], { silent = true, desc = v[4] })
+end
 
 -- ==================== 垂直窗口切换 ====================
-vim.keymap.set("n", "<C-j>", "<C-w>j", { silent = true, desc = "下移窗口" })
-vim.keymap.set("n", "<C-k>", "<C-w>k", { silent = true, desc = "上移窗口" })
-vim.keymap.set("i", "<C-j>", "<C-o><C-w>j", { silent = true, desc = "插入模式下移窗口" })
-vim.keymap.set("i", "<C-k>", "<C-o><C-w>k", { silent = true, desc = "插入模式上移窗口" })
+local win_move_v_keymaps = {
+    -- 普通模式
+    { "n", "<C-j>", "<C-w>j", "下移窗口" },
+    { "n", "<C-k>", "<C-w>k", "上移窗口" },
+    -- 插入模式
+    { "i", "<C-j>", "<C-o><C-w>j", "插入模式下移窗口" },
+    { "i", "<C-k>", "<C-o><C-w>k", "插入模式上移窗口" },
+}
+
+for _, v in ipairs(win_move_v_keymaps) do
+    vim.keymap.set(v[1], v[2], v[3], { silent = true, desc = v[4] })
+end
 
 -- ==================== 高效退出键 ====================
 vim.keymap.set("i", "jf", "<esc>", { desc = "插入模式退出" })
@@ -188,11 +204,20 @@ vim.keymap.set('n', 'L', 'g_', { desc = "行尾（软换行）" })
 vim.keymap.set('n', '<Tab>', 'gt', { noremap = true })
 
 -- ==================== ctrl组合键 ====================
-vim.keymap.set("i", "<C-e>", "<Right>", { noremap = true, silent = true, desc = "插入模式右移光标" })
-vim.keymap.set("n", "<C-Up>", ":resize +2<CR>", { desc = "增加窗口高度" })
-vim.keymap.set("n", "<C-Down>", ":resize -2<CR>", { desc = "减少窗口高度" })
-vim.keymap.set("n", "<C-Left>", ":vertical resize -2<CR>", { desc = "减少窗口宽度" })
-vim.keymap.set("n", "<C-Right>", ":vertical resize +2<CR>", { desc = "增加窗口宽度" })
+local misc_keymaps = {
+    -- 插入模式右移光标
+    { "i", "<C-e>", "<Right>", { noremap = true, silent = true }, "插入模式右移光标" },
+    -- 普通模式窗口大小调整
+    { "n", "<C-Up>", ":resize +2<CR>", {}, "增加窗口高度" },
+    { "n", "<C-Down>", ":resize -2<CR>", {}, "减少窗口高度" },
+    { "n", "<C-Left>", ":vertical resize -2<CR>", {}, "减少窗口宽度" },
+    { "n", "<C-Right>", ":vertical resize +2<CR>", {}, "增加窗口宽度" },
+}
+
+for _, v in ipairs(misc_keymaps) do
+    local options = vim.tbl_extend("force", v[4], { desc = v[5] })
+    vim.keymap.set(v[1], v[2], v[3], options)
+end
 
 -- ===================== 终端窗口 ==========================
 vim.keymap.set('n', '<space>tt', ':belowright vertical terminal<CR>', { desc = "右侧打开终端" })
@@ -220,12 +245,23 @@ end
 vim.keymap.set('n', '<space>rn', RenameInPlace, { desc = "重命名当前文件" })
 
 -- ==================== 重构粘贴复制 ====================
-vim.keymap.set('n', 'p', '""p', { noremap = true, desc = "普通粘贴" })
-vim.keymap.set('v', 'p', '""p', { noremap = true, desc = "可视模式粘贴" })
-vim.keymap.set('n', 'P', '""P', { noremap = true, desc = "普通粘贴到上方" })
-vim.keymap.set('v', 'P', '""P', { noremap = true, desc = "可视模式粘贴到上方" })
-vim.keymap.set('n', '<space>p', '"0p', { noremap = true, desc = "粘贴最近一次复制内容" })
-vim.keymap.set('v', '<space>p', '"0p', { noremap = true, desc = "可视模式粘贴最近一次复制内容" })
+local paste_keymaps = {
+    -- 普通模式、可视模式往下方粘贴
+    { 'n', 'p', '"0p', "普通粘贴" },
+    { 'v', 'p', '"0p', "可视模式粘贴" },
+    { 'n', 'P', '"0P', "普通粘贴到上方" },
+    { 'v', 'P', '"0P', "可视模式粘贴到上方" },
+
+    -- 使用最近复制内容
+    { 'n', '<space>p', '""p', "粘贴最近一次复制内容" },
+    { 'v', '<space>p', '""p', "可视模式粘贴最近一次复制内容" },
+    { 'n', '<space>P', '""P', "粘贴最近一次复制内容到上方" },
+    { 'v', '<space>P', '""P', "可视模式粘贴最近一次复制内容到上方" },
+}
+
+for _, v in ipairs(paste_keymaps) do
+    vim.keymap.set(v[1], v[2], v[3], { noremap = true, desc = v[4] })
+end
 
 -- ==================== 智能粘贴系统剪贴板内容到光标位置 ====================
 vim.keymap.set('n', '<leader>p', function()
@@ -358,5 +394,5 @@ vim.keymap.set('n', '<F1>', compile_and_run_c, { noremap = true, silent = true, 
 -- ==================== Quickfix 窗口快捷键映射 ====================
 vim.keymap.set('n', '<Space>co', ':belowright copen<CR>', { noremap = true, silent = true, desc = '打开 quickfix 窗口' })
 vim.keymap.set('n', '<Space>cq', ':cclose<CR>', { noremap = true, silent = true, desc = '关闭 quickfix 窗口' })
-vim.keymap.set('n', '<Space>cn', ':cnext<CR>zz', { noremap = true, silent = true, desc = '跳转到下一个 quickfix 项' })
-vim.keymap.set('n', '<Space>cp', ':cprev<CR>zz', { noremap = true, silent = true, desc = '跳转到上一个 quickfix 项' })
+vim.keymap.set('n', '<Space>cj', ':cnext<CR>zz', { noremap = true, silent = true, desc = '跳转到下一个 quickfix 项' })
+vim.keymap.set('n', '<Space>ck', ':cprev<CR>zz', { noremap = true, silent = true, desc = '跳转到上一个 quickfix 项' })

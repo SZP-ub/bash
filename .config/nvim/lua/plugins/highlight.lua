@@ -32,11 +32,13 @@ return {
         config = function()
             require("wildfire").setup({
                 surrounds = {
-                    { "(", ")" },
-                    { "{", "}" },
-                    { "<", ">" },
-                    { "[", "]" },
-                    { "`", "`" },
+                    { "(",  ")" },
+                    { "{",  "}" },
+                    { "<",  ">" },
+                    { "[",  "]" },
+                    { "`",  "`" },
+                    { "\"", "\"" },
+                    { "'",  "'" },
                 },
                 keymaps = {
                     init_selection = "<CR>",
@@ -77,7 +79,7 @@ return {
 
             -- lsp_interop peek（普通模式）
             -- { "<leader>df", mode = "n" }, -- peek 函数定义（浮窗预览）
-            -- { "<leader>dF", mode = "n" }, -- peek 类定义（浮窗预览）
+            -- { "<leader>dc", mode = "n" }, -- peek 类定义（浮窗预览）
         },
 
         config = function()
@@ -151,8 +153,8 @@ return {
                     -- lsp_interop = {
                     --     enable = true,
                     --     peek_definition_code = {
-                    --         ["<leader>dF"] = "@function.outer", -- 在浮窗中预览函数定义（无需跳转）
-                    --         ["<leader>df"] = "@class.outer",    -- 在浮窗中预览类定义
+                    --         ["<leader>df"] = "@function.outer", -- 在浮窗中预览函数定义（无需跳转）
+                    --         ["<leader>dc"] = "@class.outer",    -- 在浮窗中预览类定义
                     --     },
                     -- },
                 },

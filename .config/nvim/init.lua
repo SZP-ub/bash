@@ -27,10 +27,10 @@ vim.opt.cursorline = true     -- 高亮当前行
 vim.opt.helplang = "cn"       -- 帮助文档首选语言（中文）
 
 -- 搜索
-vim.opt.hlsearch = true   -- 高亮搜索结果
-vim.opt.incsearch = true  -- 增量搜索（输入时高亮匹配）
-vim.opt.ignorecase = true -- 搜索忽略大小写（除非包含大写）
--- vim.o.inccommand = "nosplit" -- 正则表达式
+vim.opt.hlsearch = true      -- 高亮搜索结果
+vim.opt.incsearch = true     -- 增量搜索（输入时高亮匹配）
+vim.opt.ignorecase = true    -- 搜索忽略大小写（除非包含大写）
+vim.o.inccommand = "nosplit" -- 正则表达式
 
 -- 编辑行为
 vim.opt.backspace = { "indent", "eol", "start" } -- backspace 更智能
@@ -65,6 +65,15 @@ vim.opt.splitright = true -- 新窗口在右侧
 vim.o.background = "dark"        -- 主题使用暗色背景（确保颜色方案匹配）
 vim.cmd("colorscheme peachpuff") -- 加载 colorscheme（确保已安装 peachpuff）
 -- vim.cmd("colorscheme retrobox")
+
+-- ========================= fzf.vim - config ========================
+-- ESC 直接退出 fzf，针对终端 buffer 映射
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = "fzf",
+    callback = function()
+        vim.api.nvim_buf_set_keymap(0, 't', '<Esc>', '<C-c>', { noremap = true, silent = true })
+    end
+})
 
 -- ========================= 复制高亮提示 ==========================
 vim.api.nvim_set_hl(0, "YankHighlight", { bg = "#cccccc", fg = "NONE" }) -- 只设置背景色
