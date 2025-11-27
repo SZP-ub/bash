@@ -2,193 +2,226 @@
 return {
 
     {
+        -- 加载 coc.nvim 插件，事件触发方式为 VeryLazy，分支选择 release
         "neoclide/coc.nvim",
         event = "VeryLazy",
         branch = "release",
         config = function()
-            -- K 显示文档（优先用 coc.nvim 的 hover，否则用内置 K）
-            local function show_doc()
-                if vim.fn.CocAction('hasProvider', 'hover') then
-                    vim.fn.CocActionAsync('doHover')
-                else
-                    vim.api.nvim_feedkeys('K', 'in', false)
-                end
+            local fn = vim.fn
+            local api = vim.api
+            local uv = vim.loop
+
+            -- 将字符串转为 neovim termcodes 并注入到输入队列
+            local function feed_termcodes(keys, mode)
+                mode = mode or "i"
+                local t = api.nvim_replace_termcodes(keys, true, false, true)
+                api.nvim_feedkeys(t, mode, true)
             end
 
-            -- snippet 跳转键
-            vim.g.coc_snippet_next = '<Tab>'
-            vim.g.coc_snippet_prev = '<S-Tab>'
+            -- 检查补全菜单是否可见
+            local function pum_visible() return fn['coc#pum#visible']() == 1 end
+            -- 检查当前是否可以进行 coc 片段跳转或展开
+            local function coc_expand_or_jump() return fn['coc#expandableOrJumpable']() == 1 end
+            -- 检查当前是否可以向后跳 coc 片段占位符
+            local function coc_jumpable_back() return fn['coc#jumpable'](-1) == 1 end
 
-            -- helper: 把 termcodes 转换并发送到 Neovim（feedkeys）
-            local function feed_termcodes(keys, feed_mode)
-                -- feed_mode 默认用 'n'（不让结果被再次映射）
-                feed_mode = feed_mode or 'n'
-                local t = vim.api.nvim_replace_termcodes(keys, true, false, true)
-                vim.api.nvim_feedkeys(t, feed_mode, true)
-            end
-
-            -- 检查光标前是否是空白（局部函数，避免污染 _G）
+            -- 检查前面是否为空格（用于确定 Tab 行为）
             local function check_back_space()
-                local col = vim.fn.col('.') - 1
-                return col == 0 or vim.fn.getline('.'):sub(col, col):match('%s') ~= nil
+                local col = fn.col('.') - 1
+                if col == 0 then return true end
+                return fn.getline('.'):sub(col, col):match('%s') ~= nil
             end
 
-            -- tabout-like：括号/引号跳出（局部函数）
+            -- tabout 仿真：如果当前为右括号等符号，则右移光标
             local function tabout_like()
-                local col = vim.fn.col('.')
-                local line = vim.fn.getline('.')
-                local next_char = line:sub(col, col)
-                local targets = {
-                    [")"] = true,
-                    ["]"] = true,
-                    ["}"] = true,
-                    [">"] = true,
-                    ["'"] = true,
-                    ['"'] = true,
-                    [";"] = true,
-                    [","] = true,
-                    ["`"] = true
-                }
-                if targets[next_char] then
-                    return "<Right>"
+                local col = fn.col('.')
+                local ch = fn.getline('.'):sub(col, col)
+                local t = { [")"] = 1, ["]"] = 1, ["}"] = 1, [">"] = 1, ["'"] = 1, ['"'] = 1, [";"] = 1, [","] = 1, ["`"] = 1 }
+                return t[ch] and "<Right>" or nil
+            end
+
+            -- 防抖变量，避免 doKeymap 短时间多次调用（150ms 间隔）
+            local last_doKeymap_ns = 0
+            local DO_KEYMAP_MIN_INTERVAL_NS = 150 * 1e6 -- 150ms
+
+            -- 通过 coc.rpc 的 doKeymap 实现跳转，并判断光标是否实际移动
+            local function try_doKeymap_once(keyname)
+                local now = uv.hrtime()
+                if now - last_doKeymap_ns < DO_KEYMAP_MIN_INTERVAL_NS then
+                    return false
+                end
+                last_doKeymap_ns = now
+
+                local before = api.nvim_win_get_cursor(0)
+                pcall(function()
+                    fn['coc#rpc#request']("doKeymap", { keyname, "" })
+                end)
+                local after = api.nvim_win_get_cursor(0)
+                return after[1] ~= before[1] or after[2] ~= before[2]
+            end
+
+            -- Tab 键处理函数（支持 Insert/Select 模式）
+            local function tab_handler()
+                if pum_visible() then
+                    -- 若补全菜单打开，选中下一个条目
+                    local ok, s = pcall(fn['coc#pum#next'], 1)
+                    if ok and type(s) == "string" and #s > 0 then
+                        feed_termcodes(s, "i")
+                    else
+                        feed_termcodes("<C-n>", "i")
+                    end
+                    return
+                end
+
+                -- 1. 如可跳 coc 片段，则优先跳转
+                if coc_expand_or_jump() then
+                    local ok, jumped = pcall(try_doKeymap_once, "snippets-expand-jump")
+                    if ok and jumped then return end
+                end
+
+                -- 2. 若未检测到，依然尝试一次（带防抖）
+                local ok_forced, forced = pcall(try_doKeymap_once, "snippets-expand-jump")
+                if ok_forced and forced then return end
+
+                -- 3. 尝试 tabout（右移出括号等符号）
+                local k = tabout_like()
+                if k then
+                    feed_termcodes(k, "i")
+                    return
+                end
+
+                -- 4. 插入 Tab 或触发补全
+                if check_back_space() then
+                    feed_termcodes("<Tab>", "i")
                 else
-                    return "<Tab>"
+                    pcall(fn['coc#refresh'])
                 end
             end
 
-            -- 智能 Tab 映射（补全、snippet、Tab、括号跳出）
-            vim.keymap.set("i", "<Tab>", function()
-                if vim.fn['coc#pum#visible']() == 1 then
-                    -- coc 的下一个项通常会返回按键序列字符串，若不是则降级到 <C-n>
-                    local ok, s = pcall(vim.fn['coc#pum#next'], 1)
+            -- Shift-Tab 处理函数（支持 Insert/Select 模式）
+            local function s_tab_handler()
+                if pum_visible() then
+                    -- 补全菜单时，选中上一个条目
+                    local ok, s = pcall(fn['coc#pum#prev'], 1)
                     if ok and type(s) == "string" and #s > 0 then
-                        feed_termcodes(s)
+                        feed_termcodes(s, "i")
                     else
-                        feed_termcodes("<C-n>")
-                    end
-                    -- 非 expr 映射：不需要返回字符串
-                    return
-                elseif vim.fn['coc#expandableOrJumpable']() == 1 then
-                    -- 触发 coc snippets expand/jump via rpc doKeymap
-                    feed_termcodes('<C-r>=coc#rpc#request("doKeymap", ["snippets-expand-jump",""])<CR>')
-                    return
-                else
-                    -- 括号/引号跳出或插入 Tab
-                    local k = tabout_like()
-                    feed_termcodes(k)
-                    return
-                end
-            end, { noremap = true, silent = true })
-
-            -- Shift-Tab 映射（补全、snippet、Shift-Tab）
-            vim.keymap.set("i", "<S-Tab>", function()
-                if vim.fn['coc#pum#visible']() == 1 then
-                    local ok, s = pcall(vim.fn['coc#pum#prev'], 1)
-                    if ok and type(s) == "string" and #s > 0 then
-                        feed_termcodes(s)
-                    else
-                        feed_termcodes("<C-p>")
+                        feed_termcodes("<C-p>", "i")
                     end
                     return
-                elseif vim.fn['coc#jumpable'](-1) == 1 then
-                    feed_termcodes('<C-r>=coc#rpc#request("doKeymap", ["snippets-expand-jump-back",""])<CR>')
-                    return
-                else
-                    feed_termcodes("<S-Tab>")
-                    return
                 end
-            end, { noremap = true, silent = true })
 
-            -- 回车键：补全菜单可见时确认，否则用 mini.pairs 处理（需安装 mini.pairs 插件）
-            vim.keymap.set("i", "<CR>", function()
-                if vim.fn['coc#pum#visible']() == 1 then
-                    -- 直接调用 coc 的确认函数（它会处理光标/插入等）
-                    return vim.fn['coc#pum#confirm']()
-                else
-                    return require("mini.pairs").cr()
+                -- 优先尝试 coc 片段向后跳转
+                if coc_jumpable_back() then
+                    local ok, jumped_back = pcall(try_doKeymap_once, "snippets-expand-jump-back")
+                    if ok and jumped_back then return end
                 end
-            end, { expr = true, silent = true, noremap = true })
 
-            -- <C-Space> 触发补全
-            vim.keymap.set("i", "<C-Space>", "coc#refresh()", { expr = true, silent = true })
+                -- 强制再尝试一次跳转
+                local ok_forced_back, forced_back = pcall(try_doKeymap_once, "snippets-expand-jump-back")
+                if ok_forced_back and forced_back then return end
 
-            -- [g / ]g 跳转诊断信息
-            vim.keymap.set("n", "[g", "<Plug>(coc-diagnostic-prev)", { silent = true }) -- 上一个诊断
-            vim.keymap.set("n", "]g", "<Plug>(coc-diagnostic-next)", { silent = true }) -- 下一个诊断
+                -- 否则正常插入 Shift-Tab
+                feed_termcodes("<S-Tab>", "i")
+            end
 
-            -- 跳转到定义/类型定义/实现/引用
-            vim.keymap.set("n", "gd", "<Plug>(coc-definition)", { silent = true })       -- 跳转到定义
-            vim.keymap.set("n", "grt", "<Plug>(coc-type-definition)", { silent = true }) -- 跳转到类型定义
-            vim.keymap.set("n", "gi", "<Plug>(coc-implementation)", { silent = true })   -- 跳转到实现
-            -- vim.keymap.set("n", "gr", "<Plug>(coc-references)", { silent = true })      -- 查找引用
+            -- Enter 键处理（Insert/Select），保持补全确认行为
+            local function cr_handler()
+                if pum_visible() then
+                    -- 如果补全菜单打开，确认补全
+                    return fn['coc#pum#confirm']()
+                else
+                    -- 否则尝试调用 mini.pairs 的回车
+                    local ok, mp = pcall(require, "mini.pairs")
+                    if ok and mp and mp.cr then
+                        return mp.cr()
+                    else
+                        return api.nvim_replace_termcodes("<CR>", true, false, true)
+                    end
+                end
+            end
 
-            -- K 显示文档
-            vim.keymap.set("n", "K", show_doc, { silent = true }) -- 悬浮显示文档
+            -- 绑定 Insert / Select 模式下 Tab、Shift-Tab、Enter 的自定义行为
+            vim.keymap.set({ "i", "s" }, "<Tab>", tab_handler, { noremap = true, silent = true })
+            vim.keymap.set({ "i", "s" }, "<S-Tab>", s_tab_handler, { noremap = true, silent = true })
+            vim.keymap.set({ "i", "s" }, "<CR>", cr_handler, { expr = true, silent = true, noremap = true })
 
-            -- 光标悬停时高亮符号及引用
-            vim.api.nvim_create_autocmd("CursorHold", {
-                pattern = "*",
-                callback = function()
-                    vim.fn.CocActionAsync('highlight')
-                end,
-            })
+            -- C-Space 手动触发补全（i 模式）
+            vim.keymap.set("i", "<C-Space>", function() pcall(fn['coc#refresh']) end, { noremap = true, silent = true })
 
-            -- 重命名符号
-            vim.keymap.set("n", "grn", "<Plug>(coc-rename)", { silent = true }) -- 重命名
+            -- 其余常用快捷键函数
+            local nmap = function(lhs, rhs) vim.keymap.set("n", lhs, rhs, { silent = true }) end
+            local xmap = function(lhs, rhs) vim.keymap.set("x", lhs, rhs, { silent = true }) end
 
-            -- 选区代码操作
-            vim.keymap.set("x", "gra", "<Plug>(coc-codeaction-selected)", { silent = true })       -- 选区代码操作
-            vim.keymap.set("n", "<leader>a", "<Plug>(coc-codeaction-selected)", { silent = true }) -- 选区代码操作
-            -- 光标处代码操作
-            vim.keymap.set("n", "<leader>ac", "<Plug>(coc-codeaction-cursor)", { silent = true })  -- 光标处代码操作
-            -- 整个 buffer 代码操作
-            vim.keymap.set("n", "<leader>as", "<Plug>(coc-codeaction-source)", { silent = true })  -- buffer 代码操作
-            -- 当前行诊断快速修复
-            vim.keymap.set("n", "<leader>qf", "<Plug>(coc-fix-current)", { silent = true })        -- 快速修复
+            -- 跳转/重命名/查找定义等常用 LSP 功能
+            nmap("gd", "<Plug>(coc-definition)")       -- 跳转到定义
+            nmap("grt", "<Plug>(coc-type-definition)") -- 跳转到类型定义
+            nmap("gi", "<Plug>(coc-implementation)")   -- 跳转到实现
+            nmap("grn", "<Plug>(coc-rename)")          -- 重命名符号
 
-            -- 重构操作
-            vim.keymap.set("n", "<leader>re", "<Plug>(coc-codeaction-refactor)", { silent = true })         -- 重构
-            vim.keymap.set("x", "<leader>r", "<Plug>(coc-codeaction-refactor-selected)", { silent = true }) -- 选区重构
-            vim.keymap.set("n", "<leader>r", "<Plug>(coc-codeaction-refactor-selected)", { silent = true }) -- 选区重构
+            -- codeaction/修复/导入等
+            xmap("gra", "<Plug>(coc-codeaction-selected)")                -- 可视选区代码操作
+            nmap("<leader>a", "<Plug>(coc-codeaction-selected)")          -- 当前选中范围代码操作
+            nmap("<leader>ac", "<Plug>(coc-codeaction-cursor)")           -- 光标处代码操作
+            nmap("<leader>as", "<Plug>(coc-codeaction-source)")           -- 文件级 source action
+            nmap("<leader>qf", "<Plug>(coc-fix-current)")                 -- 当前快速修复
+            nmap("<leader>re", "<Plug>(coc-codeaction-refactor)")         -- 重构
+            xmap("<leader>r", "<Plug>(coc-codeaction-refactor-selected)") -- 选区重构
+            nmap("<leader>r", "<Plug>(coc-codeaction-refactor-selected)") -- 选区重构
+            nmap("<leader>cl", "<Plug>(coc-codelens-action)")             -- codelens
 
-            -- 运行当前行的 Code Lens
-            vim.keymap.set("n", "<leader>cl", "<Plug>(coc-codelens-action)", { silent = true }) -- CodeLens
-
-            -- 函数/类文本对象映射
+            -- 文本对象增强：函数对象、类对象
             local objs = { { "f", "funcobj" }, { "c", "classobj" } }
-            for _, obj in ipairs(objs) do
-                vim.keymap.set("x", "i" .. obj[1], "<Plug>(coc-" .. obj[2] .. "-i)") -- 内部函数/类
-                vim.keymap.set("o", "i" .. obj[1], "<Plug>(coc-" .. obj[2] .. "-i)")
-                vim.keymap.set("x", "a" .. obj[1], "<Plug>(coc-" .. obj[2] .. "-a)") -- 外部函数/类
-                vim.keymap.set("o", "a" .. obj[1], "<Plug>(coc-" .. obj[2] .. "-a)")
+            for _, o in ipairs(objs) do
+                xmap("i" .. o[1], "<Plug>(coc-" .. o[2] .. "-i)") -- 内部函数/类
+                vim.keymap.set("o", "i" .. o[1], "<Plug>(coc-" .. o[2] .. "-i)")
+                xmap("a" .. o[1], "<Plug>(coc-" .. o[2] .. "-a)") -- 全部函数/类
+                vim.keymap.set("o", "a" .. o[1], "<Plug>(coc-" .. o[2] .. "-a)")
             end
 
-            -- :Fold 命令折叠当前 buffer
-            vim.api.nvim_create_user_command("Fold", function(opts)
-                vim.fn.CocAction('fold', table.unpack(opts.fargs)) -- 折叠代码
+            -- 自定义 Fold 命令（CocAction fold）
+            api.nvim_create_user_command("Fold", function(opts)
+                fn.CocAction('fold', table.unpack(opts.fargs))
             end, { nargs = "?" })
 
-            -- :OR 命令组织导入
-            vim.api.nvim_create_user_command("OR", function()
-                vim.fn.CocActionAsync('runCommand', 'editor.action.organizeImport') -- 组织导入
+            -- 自定义 OR 命令（组织导入）
+            api.nvim_create_user_command("OR", function()
+                fn.CocActionAsync('runCommand', 'editor.action.organizeImport')
             end, {})
 
-            -- 悬浮窗优先滚动/移动
-            local opts_float = { noremap = true, silent = true, expr = true, desc = "coc.nvim 悬浮窗优先滚动/移动" }
-            vim.api.nvim_set_keymap("n", "<C-d>", [[coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-d>"]], opts_float)
-            vim.api.nvim_set_keymap("n", "<C-u>", [[coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-u>"]], opts_float)
-            vim.api.nvim_set_keymap("n", "j", [[coc#float#has_scroll() ? coc#float#scroll(1, 1) : "gj"]], opts_float)
-            vim.api.nvim_set_keymap("n", "k", [[coc#float#has_scroll() ? coc#float#scroll(0, 1) : "gk"]], opts_float)
+            -- 悬浮窗优先滚动（<C-d>/<C-u>/j/k）
+            api.nvim_set_keymap("n", "<C-d>",
+                [[coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-d>"]],
+                { noremap = true, silent = true, expr = true })
+            api.nvim_set_keymap("n", "<C-u>",
+                [[coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-u>"]],
+                { noremap = true, silent = true, expr = true })
+            api.nvim_set_keymap("n", "j",
+                [[coc#float#has_scroll() ? coc#float#scroll(1, 1) : "gj"]],
+                { noremap = true, silent = true, expr = true })
+            api.nvim_set_keymap("n", "k",
+                [[coc#float#has_scroll() ? coc#float#scroll(0, 1) : "gk"]],
+                { noremap = true, silent = true, expr = true })
 
-            -- CocList 相关映射（需定义 keyset 或用 vim.keymap.set 替换）
-            local opts_list = { silent = true, nowait = true }
-            vim.keymap.set("n", "<leader>ca", ":<C-u>CocList diagnostics<cr>", opts_list) -- 诊断列表
-            vim.keymap.set("n", "<leader>ce", ":<C-u>CocList extensions<cr>", opts_list)  -- 扩展管理
-            -- vim.keymap.set("n", "<leader>cc", ":<C-u>CocList commands<cr>", opts_list)    -- 命令列表
-            -- vim.keymap.set("n", "<leader>co", ":<C-u>CocList outline<cr>", opts_list) -- 文档大纲（如需可取消注释）
-            -- vim.keymap.set("n", "<leader>cj", ":<C-u>CocNext<cr>", opts_list)       -- 下一个 CocList 项
-            -- vim.keymap.set("n", "<leader>ck", ":<C-u>CocPrev<cr>", opts_list)       -- 上一个 CocList 项
-            -- vim.keymap.set("n", "<leader>cp", ":<C-u>CocListResume<cr>", opts_list) -- 恢复 CocList
+            -- CocList 相关快捷键（查看诊断、扩展等）
+            nmap("<leader>ca", ":<C-u>CocList diagnostics<cr>") -- 显示诊断列表
+            nmap("<leader>ce", ":<C-u>CocList extensions<cr>")  -- 显示扩展列表
+
+            -- 光标悬停时高亮同名变量
+            api.nvim_create_autocmd("CursorHold", {
+                pattern = "*",
+                callback = function() fn.CocActionAsync('highlight') end,
+            })
+
+            -- K 键悬停文档，如果 coc 支持则使用 coc hover，否则用默认 K
+            local function show_doc()
+                if fn.CocAction('hasProvider', 'hover') == 1 then
+                    fn.CocActionAsync('doHover')
+                else
+                    feed_termcodes("K", "n")
+                end
+            end
+            nmap("K", show_doc)
         end
     },
 

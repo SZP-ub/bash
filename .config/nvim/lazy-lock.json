@@ -1,7 +1,7 @@
 {
   "Comment.nvim": { "branch": "master", "commit": "e30b7f2008e52442154b66f7c519bfd2f1e32acb" },
   "cmake-tools.nvim": { "branch": "master", "commit": "88e07c6bff838a5bda2f461e9c1122b79ff0829f" },
-  "coc.nvim": { "branch": "release", "commit": "89425920ef943a20e56072665f4be33d8f320ddf" },
+  "coc.nvim": { "branch": "release", "commit": "c18a26cced383145e25fa5e003fd8c31af2b1332" },
   "cscope_maps.nvim": { "branch": "main", "commit": "ad4559030192e784a9df7af2c07ed108ad6d109b" },
   "fzf": { "branch": "master", "commit": "8a05083503d247b3c020b0540492114070c54f23" },
   "fzf-lua": { "branch": "main", "commit": "be1c28b4a32beec16e29ac9c3edb7c6f760747ae" },
