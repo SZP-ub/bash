@@ -9,13 +9,13 @@ bold = { family = "Maple Mono NF CN SemiBold", style = "SemiBold Italic" }
 # normal = { family = "Maple Mono NF CN Medium", style = "Medium Italic" }
 # bold = { family = "Maple Mono NF CN Medium", style = "Medium Italic" }
 italic = { family = "Maple Mono NF CN SemiBold", style = "Italic" }
-size = 22.0                            # 字体大小
+size = 22                            # 字体大小
 # features = "liga"
 
 # Offset 是每个字符周围的额外空白。offset.y 可以理解为调整行间距，offset.x 可以理解为调整字间距。
 [font.offset]
 x = 0
-y = 10
+y = 8
 
 # draw_bold_text_with_bright_colors = true  # 粗体文本使用亮色
 
