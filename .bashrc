@@ -94,6 +94,8 @@ export XMODIFIERS="@im=fcitx"
 
 export FZF_DEFAULT_OPTS='--layout=reverse --bind=tab:down,ctrl-n:toggle+down,shift-tab:up,ctrl-p:toggle+up --preview "batcat --style=numbers --color=always --line-range :500 {}"'
 
+export PATH="$PATH:/home/i/tools/advcpmv"
+
 # =======================
 # 其他增强
 # =======================

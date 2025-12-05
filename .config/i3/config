@@ -210,7 +210,7 @@ smart_gaps on
 # finds out, if available)
 bar {
        # status_command i3status
-       # position top
+       position top
        font pango:Maple Mono NF Medium Italic 16
 
        colors {
