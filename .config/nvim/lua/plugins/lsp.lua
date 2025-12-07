@@ -1,6 +1,5 @@
 --@diagnostic disable: undefined-global
 return {
-
 	-- =========================
 	-- mason.nvim：只负责 LSP / 工具 安装
 	-- =========================
@@ -31,7 +30,7 @@ return {
 		"mason-org/mason-lspconfig.nvim",
 		dependencies = {
 			{ "mason-org/mason.nvim", opts = {} },
-			"saghen/blink.cmp",
+			-- "saghen/blink.cmp",
 		},
 		opts = {
 			ensure_installed = {},
@@ -151,10 +150,10 @@ return {
 			vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
 
 			---------------------------------------------------------------------------
-			-- 3. blink.cmp 能力注入到 LSP（作为全局默认能力）
+			-- 3. nvim-cmp/cmp_nvim_lsp 能力注入到 LSP（作为全局默认能力）
 			---------------------------------------------------------------------------
 			local base_capabilities = vim.lsp.protocol.make_client_capabilities()
-			local capabilities = require("blink.cmp").get_lsp_capabilities(base_capabilities)
+			local capabilities = require("cmp_nvim_lsp").default_capabilities(base_capabilities)
 
 			vim.lsp.config("*", {
 				capabilities = capabilities,
@@ -282,93 +281,225 @@ return {
 	},
 
 	-- =========================
-	-- blink.cmp 补全（对应 coc 的补全功能）
+	-- nvim-cmp 补全（替代 blink.cmp，与 coc 补全功能类似）
 	-- =========================
 	{
-		"saghen/blink.cmp",
-		version = "1.*",
+		"hrsh7th/nvim-cmp",
+		event = "InsertEnter",
 		dependencies = {
-			{ "L3MON4D3/LuaSnip", version = "v2.*" },
-			"xzbdmw/colorful-menu.nvim",
+			"hrsh7th/cmp-nvim-lsp",
+			"saadparwaiz1/cmp_luasnip",
+			"hrsh7th/cmp-buffer",
+			"hrsh7th/cmp-path",
+			"L3MON4D3/LuaSnip",
+			"hrsh7th/cmp-cmdline",
 		},
-		opts = {
-			keymap = {
-				preset = "none",
-				["<C-space>"] = { "show", "show_documentation", "hide_documentation" }, -- 类似 Coc 的 <C-Space> 手动补全
-				["<CR>"] = { "accept", "fallback" }, -- 类似 Coc 的回车确认补全
-				["<Tab>"] = { "select_next", "snippet_forward", "fallback" }, -- 类似 Coc 的 Tab：下一个 item / snippet 跳转
-				["<S-Tab>"] = { "select_prev", "snippet_backward", "fallback" }, -- 类似 Coc 的 S-Tab：上一个 item / snippet 反向跳
-				["<C-b>"] = { "scroll_documentation_up", "fallback" },
-				["<C-f>"] = { "scroll_documentation_down", "fallback" },
-			},
-
-			appearance = {
-				use_nvim_cmp_as_default = true,
-				nerd_font_variant = "mono",
-			},
-
-			completion = {
-				menu = {
-					auto_show = true,
-					draw = {
-						columns = { { "kind_icon" }, { "label", gap = 1 } },
-						components = {
-							label = {
-								text = function(ctx)
-									return require("colorful-menu").blink_components_text(ctx)
-								end,
-								highlight = function(ctx)
-									return require("colorful-menu").blink_components_highlight(ctx)
-								end,
-							},
-						},
-					},
-				},
-				ghost_text = { enabled = false },
-				keyword = { range = "full" },
-				documentation = { auto_show = true, auto_show_delay_ms = 0 },
-			},
-
-			signature = { enabled = true },
-
-			enabled = function()
-				return vim.bo.buftype == "" or vim.bo.buftype == "acwrite"
-			end,
-
-			sources = {
-				default = { "lsp", "path", "snippets", "buffer" },
-				providers = {
-					buffer = { score_offset = 3 },
-					path = { score_offset = 2 },
-					lsp = { score_offset = 2 },
-					snippets = { score_offset = 4, min_keyword_length = 1 },
-					cmdline = {
-						min_keyword_length = function(ctx)
-							if ctx.mode == "cmdline" and string.find(ctx.line, " ") == nil then
-								return 2
-							end
-							return 0
-						end,
-					},
-				},
-			},
-
-			fuzzy = { implementation = "prefer_rust_with_warning" },
-
-			cmdline = {
-				keymap = {
-					["<CR>"] = { "select_and_accept", "fallback" },
-				},
-			},
-		},
-		-- opts_extend = { "sources.default" },
-		config = function(_, opts)
-			require("blink.cmp").setup(opts)
-			require("luasnip.loaders.from_lua").lazy_load({
+		config = function()
+			local cmp = require("cmp")
+			local luasnip = require("luasnip")
+			require("luasnip.loaders.from_snipmate").lazy_load({
 				paths = { vim.fn.stdpath("config") .. "/snippets" },
+			})
+
+			-- 自动弹出并自动选中第一项
+			cmp.setup({
+				snippet = {
+					expand = function(args)
+						luasnip.lsp_expand(args.body)
+					end,
+				},
+				mapping = cmp.mapping.preset.insert({
+					["<C-Space>"] = cmp.mapping.complete(),
+					["<CR>"] = cmp.mapping.confirm({ select = true }),
+					["<Tab>"] = cmp.mapping(function(fallback)
+						if cmp.visible() then
+							cmp.select_next_item()
+						elseif luasnip.expand_or_jumpable() then
+							luasnip.expand_or_jump()
+						else
+							fallback()
+						end
+					end, { "i", "s" }),
+					["<S-Tab>"] = cmp.mapping(function(fallback)
+						if cmp.visible() then
+							cmp.select_prev_item()
+						elseif luasnip.jumpable(-1) then
+							luasnip.jump(-1)
+						else
+							fallback()
+						end
+					end, { "i", "s" }),
+					["<C-b>"] = cmp.mapping.scroll_docs(-4),
+					["<C-f>"] = cmp.mapping.scroll_docs(4),
+				}),
+				formatting = {
+					format = function(entry, vim_item)
+						vim_item.menu = ({
+							luasnip = "[Snip]",
+							buffer = "[Buf]",
+							path = "[Path]",
+							nvim_lsp = "[LSP]",
+						})[entry.source.name]
+						return vim_item
+					end,
+				},
+				sources = cmp.config.sources({
+					{ name = "luasnip" },
+					{ name = "buffer" },
+					{ name = "path" },
+					{ name = "nvim_lsp" },
+				}),
+				experimental = {
+					ghost_text = false,
+				},
+				completion = { completeopt = "menu,menuone,noinsert" }, -- 自动弹窗自动高亮第一项（不插入内容）
+			})
+
+			-- 命令行模式补全（:），自动弹窗并高亮第一项
+			cmp.setup.cmdline(":", {
+				mapping = cmp.mapping.preset.cmdline(),
+				sources = cmp.config.sources({
+					{ name = "path" },
+					{ name = "cmdline" },
+				}),
+				completion = { completeopt = "menu,menuone,noinsert" },
+			})
+
+			-- 搜索模式补全（/ ?），自动弹窗并高亮第一项
+			cmp.setup.cmdline({ "/", "?" }, {
+				mapping = cmp.mapping.preset.cmdline(),
+				sources = cmp.config.sources({
+					{ name = "buffer" },
+				}),
+				completion = { completeopt = "menu,menuone,noinsert" },
+			})
+
+			-- 自动在 CmdlineEnter 触发弹窗（如下三 autocommand，可以三选一或保留全部）
+			vim.api.nvim_create_autocmd("CmdlineEnter", {
+				pattern = ":",
+				callback = function()
+					vim.schedule(function()
+						require("cmp").complete()
+					end)
+				end,
+			})
+
+			vim.api.nvim_create_autocmd("CmdlineEnter", {
+				pattern = "/",
+				callback = function()
+					vim.schedule(function()
+						require("cmp").complete()
+					end)
+				end,
+			})
+
+			vim.api.nvim_create_autocmd("CmdlineEnter", {
+				pattern = "?",
+				callback = function()
+					vim.schedule(function()
+						require("cmp").complete()
+					end)
+				end,
 			})
 		end,
 	},
+
+	-- =========================
+	-- blink.cmp 补全（对应 coc 的补全功能）
+	-- =========================
+	-- {
+	-- 	"saghen/blink.cmp",
+	-- 	version = "1.*",
+	-- 	dependencies = {
+	-- 		{ "L3MON4D3/LuaSnip", version = "v2.*" },
+	-- 		-- "rafamadriz/friendly-snippets",
+	-- 		"xzbdmw/colorful-menu.nvim",
+	-- 	},
+	--
+	-- 	opts = {
+	-- 		keymap = {
+	-- 			preset = "none",
+	-- 			["<C-space>"] = { "show", "show_documentation", "hide_documentation" }, -- 类似 Coc 的 <C-Space> 手动补全
+	-- 			["<CR>"] = { "accept", "fallback" }, -- 类似 Coc 的回车确认补全
+	-- 			["<Tab>"] = { "select_next", "snippet_forward", "fallback" }, -- 类似 Coc 的 Tab：下一个 item / snippet 跳转
+	-- 			["<S-Tab>"] = { "select_prev", "snippet_backward", "fallback" }, -- 类似 Coc 的 S-Tab：上一个 item / snippet 反向跳
+	-- 			["<C-b>"] = { "scroll_documentation_up", "fallback" },
+	-- 			["<C-f>"] = { "scroll_documentation_down", "fallback" },
+	-- 		},
+	--
+	-- 		appearance = {
+	-- 			use_nvim_cmp_as_default = true,
+	-- 			nerd_font_variant = "mono",
+	-- 		},
+	--
+	-- 		completion = {
+	-- 			menu = {
+	-- 				auto_show = true,
+	-- 				draw = {
+	-- 					columns = { { "kind_icon" }, { "label", gap = 1 } },
+	-- 					components = {
+	-- 						label = {
+	-- 							text = function(ctx)
+	-- 								return require("colorful-menu").blink_components_text(ctx)
+	-- 							end,
+	-- 							highlight = function(ctx)
+	-- 								return require("colorful-menu").blink_components_highlight(ctx)
+	-- 							end,
+	-- 						},
+	-- 					},
+	-- 				},
+	-- 			},
+	-- 			ghost_text = { enabled = false },
+	-- 			keyword = { range = "full" },
+	-- 			documentation = { auto_show = true, auto_show_delay_ms = 0 },
+	-- 		},
+	--
+	-- 		signature = { enabled = true },
+	--
+	-- 		enabled = function()
+	-- 			return vim.bo.buftype == "" or vim.bo.buftype == "acwrite"
+	-- 		end,
+	--
+	-- 		sources = {
+	-- 			default = { "lsp", "path", "snippets", "buffer" },
+	-- 			-- default = { "snippets" },
+	-- 			providers = {
+	-- 				buffer = { score_offset = 3 },
+	-- 				path = { score_offset = 2 },
+	-- 				lsp = { score_offset = 2 },
+	-- 				snippets = { score_offset = 4, min_keyword_length = 1 },
+	-- 				cmdline = {
+	-- 					min_keyword_length = function(ctx)
+	-- 						if ctx.mode == "cmdline" and string.find(ctx.line, " ") == nil then
+	-- 							return 2
+	-- 						end
+	-- 						return 0
+	-- 					end,
+	-- 				},
+	-- 			},
+	-- 		},
+	--
+	-- 		fuzzy = { implementation = "prefer_rust_with_warning" },
+	--
+	-- 		cmdline = {
+	-- 			keymap = {
+	-- 				["<CR>"] = { "select_and_accept", "fallback" },
+	-- 			},
+	-- 		},
+	-- 	},
+	--
+	-- 	sources = {
+	-- 		{ name = "luasnip" }, -- 必须有这个
+	-- 	},
+	--
+	-- 	-- opts_extend = { "sources.default" },
+	-- 	config = function(_, opts)
+	-- 		require("blink.cmp").setup(opts)
+	-- 		require("luasnip.loaders.from_snipmate").lazy_load({
+	-- 			paths = { vim.fn.stdpath("config") .. "/snippets" },
+	-- 		})
+	-- 	end,
+	-- },
 
 	-- =========================
 	-- Treesitter Textobjects（对齐 coc 的函数/类文本对象等）

@@ -1,0 +1,50 @@
+# -------------------------
+# Sections and Paragraphs
+# -------------------------
+snippet h1 "Section" b
+    # ${1:Section Name}
+    $0
+
+snippet h2 "Sub Section" b
+    ## ${1:Section Name}
+    $0
+
+snippet h3 "SubSub Section" b
+    ### ${1:Section Name}
+    $0
+
+snippet h4 "Paragraph" b
+    #### ${1:Paragraph Name}
+    $0
+
+snippet h5 "Paragraph" b
+    ##### ${1:Paragraph Name}
+    $0
+
+# -------------------------
+# Text formatting
+# -------------------------
+snippet bld "bold"
+    **${1:${VISUAL}}**$0
+
+snippet bit "bold italics"
+    ***${1:${VISUAL}}***$0
+
+snippet "/*" "Comment"
+    <!-- ${1:${VISUAL}} -->$0
+
+# -------------------------
+# Common stuff
+# -------------------------
+snippet link "Link to something"
+    [${1:${VISUAL:Text}}](${3:https://${2:www.url.com}})$0
+
+snippet img "Image"
+    ![${1:pic alt}](${2:path}${3/.+/ "/}${3:opt title}${3/.+/"/})$0
+
+snippet ilc "Inline Code" i
+    `${1:${VISUAL}}`$0
+
+snippet cb "Codeblock" b
+    ```$1
+    ${2:${VISUAL}}

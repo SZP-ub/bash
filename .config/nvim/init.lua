@@ -134,10 +134,10 @@ vim.o.wildmode = "longest:full,full"
 vim.o.wildoptions = "pum"
 
 -- ==================== Mason 安装工具 PATH ================
-local mason_bin = vim.fn.stdpath("data") .. "/mason/bin"
-if not string.find(vim.env.PATH or "", mason_bin, 1, true) then
-	vim.env.PATH = mason_bin .. ":" .. (vim.env.PATH or "")
-end
+-- local mason_bin = vim.fn.stdpath("data") .. "/mason/bin"
+-- if not string.find(vim.env.PATH or "", mason_bin, 1, true) then
+-- 	vim.env.PATH = mason_bin .. ":" .. (vim.env.PATH or "")
+-- end
 
 -- ============= unity test ==================
 vim.g.ultest_deprecation_notice = 0
@@ -239,3 +239,8 @@ vim.g.termdebug_config = {
 require("keymaps")
 
 require("config.lazy")
+
+-- ========= SnipMate snippets loader for LuaSnip =========
+-- require("luasnip.loaders.from_snipmate").lazy_load({
+-- 	paths = { vim.fn.stdpath("config") .. "/snippets" },
+-- })

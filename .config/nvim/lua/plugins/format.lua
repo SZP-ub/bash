@@ -14,7 +14,7 @@ return {
 					"prettier", -- JSON/Markdown/YAML/HTML/CSS/JS/TS/Markdown
 					"codespell", -- 拼写检查
 				},
-				auto_update = false,
+				auto_update = true,
 				run_on_start = true,
 			})
 		end,
@@ -39,6 +39,11 @@ return {
 					javascript = { "prettier" },
 					typescript = { "prettier" },
 				},
+				formatters = {
+					prettier = {
+						prepend_args = { "--tab-width", "4" }, -- 关键：设置为 4 空格
+					},
+				},
 				format_on_save = {
 					lsp_fallback = true,
 					timeout_ms = 300,
@@ -50,14 +55,28 @@ return {
 	-- =========================
 	-- nvim-lint：保存时自动 lint
 	-- =========================
+
 	{
 		"mfussenegger/nvim-lint",
 		event = "BufWritePost",
 		config = function()
-			vim.api.nvim_create_autocmd({ "BufWritePost" }, {
+			local lint = require("lint")
+
+			-- 显式指定各 filetype 用哪些 linter
+			lint.linters_by_ft = {
+				json = {}, -- 关键行：禁用 json 的所有 linter（包括 jsonlint）
+				markdown = { "codespell" },
+				lua = { "codespell" },
+				c = { "codespell" },
+				cpp = { "codespell" },
+			}
+
+			vim.api.nvim_create_autocmd("BufWritePost", {
 				callback = function()
-					require("lint").try_lint()
-					require("lint").try_lint("codespell")
+					lint.try_lint() -- 按上面 linters_by_ft 跑
+					-- 如果你已经在 linters_by_ft 里给各语言加了 codespell
+					-- 这里的单独 `try_lint("codespell")` 就可以去掉，避免重复
+					-- lint.try_lint("codespell")
 				end,
 			})
 		end,
