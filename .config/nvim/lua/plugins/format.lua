@@ -94,13 +94,13 @@ return {
 				return
 			end
 
-			lint.linters_by_ft = {
-				json = {}, -- 显式禁用 json lint（包括 jsonlint）
-				markdown = { "codespell" },
-				-- lua = { "codespell" },
-				-- c = { "codespell" },
-				-- cpp = { "codespell" },
-			}
+			-- lint.linters_by_ft = {
+			-- 	json = {}, -- 显式禁用 json lint（包括 jsonlint）
+			-- 	markdown = { "codespell" },
+			-- 	-- lua = { "codespell" },
+			-- 	-- c = { "codespell" },
+			-- 	-- cpp = { "codespell" },
+			-- }
 
 			-- 只在保存后对当前 buffer 运行一次 lint
 			vim.api.nvim_create_autocmd("BufWritePost", {
