@@ -106,3 +106,4 @@ eval "$(zoxide init --cmd cd bash)"
 . "$HOME/.cargo/env"
 export PATH="$HOME/.local/bin:$PATH"
 source ~/tools/bashmarks/bashmarks.sh
+export PATH="$HOME/tools/lua-language-server-3.16.1-linux-x64/bin:$PATH"
