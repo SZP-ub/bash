@@ -19,6 +19,8 @@ return {
 		"lukas-reineke/indent-blankline.nvim",
 		event = "VeryLazy",
 		config = function()
+			local hooks = require("ibl.hooks")
+
 			local highlight = {
 				"RainbowRed",
 				"RainbowYellow",
@@ -29,8 +31,7 @@ return {
 				"RainbowCyan",
 			}
 
-			local hooks = require("ibl.hooks")
-			-- 颜色根据 colorscheme 变化时重置
+			-- 在 colorscheme 切换时设置高亮组
 			hooks.register(hooks.type.HIGHLIGHT_SETUP, function()
 				vim.api.nvim_set_hl(0, "RainbowRed", { fg = "#E06C75" })
 				vim.api.nvim_set_hl(0, "RainbowYellow", { fg = "#E5C07B" })
@@ -39,21 +40,25 @@ return {
 				vim.api.nvim_set_hl(0, "RainbowGreen", { fg = "#98C379" })
 				vim.api.nvim_set_hl(0, "RainbowViolet", { fg = "#C678DD" })
 				vim.api.nvim_set_hl(0, "RainbowCyan", { fg = "#56B6C2" })
+
+				-- 活动/当前作用域高亮：纯黑、粗体并下划线（snacks.scope.underline 等价）
+				-- 注意：终端对 bold/underline 支持不一，竖线字符可能看不明显
+				-- vim.api.nvim_set_hl(0, "RainbowActive", { fg = "#000000", bold = true, underline = true })
 			end)
 
 			require("ibl").setup({
 				indent = {
-					highlight = highlight,
-					char = "│",
-					-- char = "┆",
+					highlight = highlight, -- 多色普通缩进线
+					char = "│", -- 若终端看不出粗体，可换为 "┃"
 				},
 				scope = {
-					enabled = true,
+					enabled = true, -- 显示当前 scope
+					show_start = true, -- 显示作用域开始处的缩进线
+					-- highlight = { "RainbowActive" }, -- 使用上面定义的带下划线高亮
 				},
-				-- 在这些 filetype 中禁用 indent-blankline
 				exclude = {
 					filetypes = {
-						-- "markdown", -- 在 markdown 里不显示缩进线
+						"markdown",
 						"help",
 						"startify",
 						"dashboard",
@@ -61,7 +66,7 @@ return {
 						"neo-tree",
 						"Trouble",
 						"alpha",
-						-- "snippets",
+						"snippets",
 					},
 				},
 			})
