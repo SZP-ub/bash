@@ -58,7 +58,7 @@ o.inccommand = "nosplit" -- :s 等命令实时预览（不分屏）
 -----------------------------------------------------------------------
 opt.backspace = { "indent", "eol", "start" } -- backspace 更智能
 opt.updatetime = 100 -- CursorHold / 诊断延迟（ms）
-opt.scrolloff = 3 -- 上下预留 3 行
+opt.scrolloff = 1 -- 上下预留 3 行
 -- opt.ttyfast = true -- 老选项，现代终端几乎无影响
 opt.lazyredraw = true -- 执行宏/复杂命令时延迟重绘
 opt.synmaxcol = 501 -- 语法高亮最大列数，超出跳过以提速

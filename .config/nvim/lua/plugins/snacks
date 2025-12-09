@@ -1,6 +1,8 @@
 return {
 	"folke/snacks.nvim",
-	event = "VeryLazy",
+	-- priority = 1000,
+	-- lazy = false,
+	-- event = "VeryLazy",
 	opts = {
 		-- 全局配置选项
 		bigfile = { enabled = true }, -- 大文件支持：启用大文件相关优化

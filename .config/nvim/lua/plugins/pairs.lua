@@ -60,6 +60,7 @@ return {
 	{
 		"HiPhish/rainbow-delimiters.nvim",
 		event = "VeryLazy",
+		version = "*",
 		config = function()
 			require("rainbow-delimiters.setup").setup({
 				strategy = {
@@ -76,8 +77,8 @@ return {
 				},
 			})
 			vim.cmd([[
-  hi MatchParen guibg=#444444 guifg=#ff8800 gui=bold
-]])
+	  hi MatchParen guibg=#444444 guifg=#ff8800 gui=bold
+	]])
 		end,
 	},
 }

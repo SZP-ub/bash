@@ -144,10 +144,10 @@ return {
 	-- =========================
 	-- Trouble：诊断 / quickfix / LSP 列表可视化
 	-- =========================
+
 	{
 		"folke/trouble.nvim",
 		keys = {
-
 			-- <leader>gd：文档诊断列表（Trouble diagnostics）
 			-- 显示当前 buffer 的 LSP/编译错误、警告等诊断信息
 			{ "<leader>gd", "<CMD>Trouble diagnostics toggle<CR>", desc = "[Trouble] Toggle buffer diagnostics" },
@@ -183,30 +183,35 @@ return {
 			-- { "gri", "<CMD>Trouble lsp_implementations focus=true<CR>",    mode = { "n" }, desc = "[Trouble] LSP implementations"                   }, -- 显示实现列表
 		},
 
+		-- 修正后的 specs 部分：将 folke/snacks.nvim 作为一个单独的插件条目，
 		specs = {
-			"folke/snacks.nvim",
-			event = "VeryLazy",
-			-- 将 Trouble 的 actions 集成到 snacks.nvim 的 picker 里，
-			-- 方便在 snacks 结果列表中一键用 Trouble 面板重新展示（例如诊断列表、文档符号列表等）
-			opts = function(_, opts)
-				return vim.tbl_deep_extend("force", opts or {}, {
-					picker = {
-						-- 使用 trouble 提供的 snacks 集成 actions：
-						-- 比如在 snacks 中选择一个结果后，可以用 trouble_open 打开 Trouble 面板
-						actions = require("trouble.sources.snacks").actions,
-						win = {
-							input = {
-		                              -- stylua: ignore
-		                              keys = {
-		                                -- 在 snacks 的输入窗口中，Ctrl+t 调用 trouble_open 操作（支持 normal/insert 模式）
-		                                -- 可以将当前 snacks 的结果集切换到 Trouble 面板浏览（包括文档符号列表、诊断列表等）
-		                                ["<c-t>"] = { "trouble_open", mode = { "n", "i" }, },
-		                              },
-							},
+			{
+				"folke/snacks.nvim",
+				event = "VeryLazy",
+				-- 将 Trouble 的 actions 注入到 snacks 的 picker 中，以便在 snacks 结果中使用 trouble_open
+				opts = function(_, opts)
+					-- 兼容性检查：确保模块可用且包含 actions
+					local ok, snacks_trouble = pcall(require, "trouble.sources.snacks")
+					if not ok or type(snacks_trouble) ~= "table" or type(snacks_trouble.actions) ~= "table" then
+						return opts
+					end
+
+					return vim.tbl_deep_extend("force", opts or {}, {
+						picker = {
+							actions = snacks_trouble.actions,
+							-- 如果你想在 snacks 的输入窗口中绑定快捷键（例如 <C-t> 打开 Trouble），
+							-- 可以取消下面的注释并按需修改。
+							-- win = {
+							--   input = {
+							--     keys = {
+							--       ["<c-t>"] = { "trouble_open", mode = { "n", "i" } },
+							--     },
+							--   },
+							-- },
 						},
-					},
-				})
-			end,
+					})
+				end,
+			},
 		},
 
 		-- Trouble 全局配置
@@ -233,27 +238,78 @@ return {
 			},
 		},
 
+		-- 底部状态栏
+		-- config = function(_, opts)
+		-- 	-- 初始化 Trouble（保留原有设置）
+		-- 	require("trouble").setup(opts)
+		--
+		-- 	-- 创建一个基于 Trouble 的 statusline 组件（与原来逻辑相同）
+		-- 	local symbols = require("trouble").statusline({
+		-- 		mode = "lsp_document_symbols",
+		-- 		groups = {},
+		-- 		title = false,
+		-- 		filter = { range = true },
+		-- 		format = "{kind_icon}{symbol.name:Normal}",
+		-- 		hl_group = "lualine_b_normal",
+		-- 	})
+		--
+		-- 	-- 尝试加载 lualine
+		-- 	local lualine_ok, lualine = pcall(require, "lualine")
+		-- 	if not lualine_ok then
+		-- 		return
+		-- 	end
+		--
+		-- 	-- 获取当前 lualine 配置（兼容用户已有配置）
+		-- 	local lualine_opts = lualine.get_config() or {}
+		--
+		-- 	-- 确保 sections 存在（lualine 的底栏在 .sections 下）
+		-- 	lualine_opts.sections = lualine_opts.sections or {}
+		--
+		-- 	-- 选择你想放入的 section：常用为 lualine_c 或 lualine_b
+		-- 	-- 这里我们把它插入到 lualine_b（可以改成 "lualine_c" 或 "lualine_x"）
+		-- 	local target_section = "lualine_b"
+		-- 	lualine_opts.sections[target_section] = lualine_opts.sections[target_section] or {}
+		--
+		-- 	-- 将 symbols 组件插入到目标 section 的最前面（显示在左侧）
+		-- 	table.insert(lualine_opts.sections[target_section], 2, {
+		-- 		symbols.get, -- 渲染函数（来自 trouble.statusline）
+		-- 		cond = symbols.has, -- 仅在存在文档符号时显示
+		-- 	})
+		--
+		-- 	-- 应用并重新设置 lualine
+		-- 	lualine.setup(lualine_opts)
+		-- end,
+
+		-- 顶部状态栏
+
+		-- 下面是实际生效的 config：把 Trouble 集成到 lualine 的 winbar 中，并保证在没有文档符号时使用单个空格占位，从而保持背景色不塌缩。
 		config = function(_, opts)
-			-- 初始化 Trouble 插件（包括诊断列表、文档符号列表、LSP 结果列表等）
-			require("trouble").setup(opts)
+			-- 初始化 Trouble（保留用户传入的 opts）
+			require("trouble").setup(opts or {})
 
 			-- 创建一个用于 lualine/winbar 的文档符号状态组件（基于 Trouble 的文档符号列表）
+			-- 这里不再创建自定义高亮组，而是直接使用已有的 lualine 高亮组（例如 lualine_b_normal）
 			local symbols = require("trouble").statusline({
-				mode = "lsp_document_symbols", -- 使用 LSP 文档符号模式：与 Trouble symbols 列表同源数据
-				groups = {}, -- 不做额外分组，按默认层级显示
-				title = false, -- 不显示标题，仅显示符号本身
-				filter = { range = true }, -- 仅显示当前可见范围内的符号，避免过长
-				format = "{kind_icon}{symbol.name:Normal}", -- 显示“图标 + 符号名”，和文档符号列表风格一致
-
-				-- The following line is needed to fix the background color
-				-- Set it to the lualine section you want to use
-				-- 下面这一行用来修正背景色，需要设置为你实际使用的 lualine section 高亮组
+				mode = "lsp_document_symbols",
+				groups = {},
+				title = false,
+				filter = { range = true },
+				format = "{kind_icon}{symbol.name:Normal}",
+				-- 不创建自定义 hl_group，改为使用 lualine 自带的高亮组（保持与 lualine 的一致性）
 				hl_group = "lualine_b_normal",
 			})
 
-			-- Insert status into lualine
-			-- 将 Trouble 的文档符号组件插入到 lualine 的 winbar 中，
-			-- 形成一个“当前光标所在符号路径”的迷你文档符号列表（类似 breadcrumb）
+			-- 让组件在没有文档符号时仍然显示，使用单个空格作为占位符，避免 winbar 崩塌或背景不一致
+			local function winbar_symbols_fallback()
+				if symbols.has and symbols.has() then
+					-- 当有符号时，直接返回 symbols 提供的渲染
+					return symbols.get()
+				end
+				-- 没有符号时，返回单个空格占位符
+				return " "
+			end
+
+			-- 将状态插入到 lualine winbar 中（放到 lualine_b 的第一个位置）
 			local lualine_ok, lualine = pcall(require, "lualine")
 			if not lualine_ok then
 				return
@@ -261,16 +317,31 @@ return {
 
 			local lualine_opts = lualine.get_config() or {}
 
-			-- 确保 winbar 和其中的 lualine_b 存在
+			-- 确保 winbar 存在（lualine 的 winbar 可以是表或按 filetype 映射）
 			lualine_opts.winbar = lualine_opts.winbar or {}
-			lualine_opts.winbar.lualine_b = lualine_opts.winbar.lualine_b or {}
 
+			-- 如果 winbar 是按 filetype 映射（table），则确保通用 section 存在
+			-- 我们主要关心 .lualine_b
+			if type(lualine_opts.winbar) == "table" and not lualine_opts.winbar.lualine_b then
+				-- 常见场景：winbar = { filetype = { ... } } or winbar = { lualine_a = {...}, ... }
+				-- 确保直接使用表结构时有 lualine_b 列表可插入
+				lualine_opts.winbar.lualine_b = lualine_opts.winbar.lualine_b or {}
+			else
+				lualine_opts.winbar.lualine_b = lualine_opts.winbar.lualine_b or {}
+			end
+
+			-- 插入组件：始终显示（没有 cond 限制），并依赖 lualine 自身的配色与高亮
 			table.insert(lualine_opts.winbar.lualine_b, 1, {
-				symbols.get, -- 实际渲染函数：展示当前文档符号信息
-				cond = symbols.has, -- 仅在当前 buffer 有文档符号（LSP 支持）时显示
+				winbar_symbols_fallback, -- 函数组件：总是返回字符串（符号或单空格）
+				-- 有些 lualine 版本使用 color 字段来设置 fg/bg；这里不主动设置高亮，交给 lualine 与 colorscheme
+				color = { gui = "none" }, -- 不强制额外样式
+				-- 不设置 hl 字段（移除自定义高亮），由 lualine 的配置/主题决定最终样式
+				cond = function()
+					return true
+				end, -- 显式确保始终显示
 			})
 
-			-- 使用更新后的配置重新设置 lualine
+			-- 重新设置 lualine 配置，使更改生效
 			lualine.setup(lualine_opts)
 		end,
 	},

@@ -7,7 +7,13 @@ return {
 		lazy = true,
 		config = function()
 			require("nvim-web-devicons").setup({
-				override = {},
+				override = {
+					copilot = {
+						icon = "",
+						color = "#cba6f7", -- Catppuccin.mocha.mauve
+						name = "Copilot",
+					},
+				},
 				color_icons = true,
 				default = true,
 			})
@@ -43,7 +49,7 @@ return {
 
 				-- 活动/当前作用域高亮：纯黑、粗体并下划线（snacks.scope.underline 等价）
 				-- 注意：终端对 bold/underline 支持不一，竖线字符可能看不明显
-				-- vim.api.nvim_set_hl(0, "RainbowActive", { fg = "#000000", bold = true, underline = true })
+				vim.api.nvim_set_hl(0, "RainbowActive", { fg = "#000000", bold = true, underline = true })
 			end)
 
 			require("ibl").setup({
@@ -54,7 +60,7 @@ return {
 				scope = {
 					enabled = true, -- 显示当前 scope
 					show_start = true, -- 显示作用域开始处的缩进线
-					-- highlight = { "RainbowActive" }, -- 使用上面定义的带下划线高亮
+					highlight = { "RainbowActive" }, -- 使用上面定义的带下划线高亮
 				},
 				exclude = {
 					filetypes = {
@@ -76,9 +82,11 @@ return {
 	},
 
 	-- 状态栏
+
 	{
 		"nvim-lualine/lualine.nvim",
 		event = "VeryLazy",
+		-- dependencies = { "nvim-tree/nvim-web-devicons" },
 		config = function()
 			require("lualine").setup({
 				options = {
