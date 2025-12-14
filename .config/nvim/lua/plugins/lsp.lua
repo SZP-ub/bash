@@ -409,7 +409,7 @@ return {
 
 				-- 插入模式下的快捷键映射
 				mapping = cmp.mapping.preset.insert({
-					["<C-Space>"] = cmp.mapping.complete(), -- 手动触发补全
+					-- ["<C-Space>"] = cmp.mapping.complete(), -- 手动触发补全
 					["<CR>"] = cmp.mapping.confirm({ select = true }), -- 回车确认当前选中项（如果没有则选中第一个）
 
 					["<Tab>"] = cmp.mapping(function()
@@ -440,12 +440,15 @@ return {
 
 					["<C-b>"] = cmp.mapping.scroll_docs(-4), -- 向上滚动文档
 					["<C-f>"] = cmp.mapping.scroll_docs(4), -- 向下滚动文档
+
+					-- 新增：取消当前弹出的补全菜单
+					["<C-e>"] = cmp.mapping.close(), -- 按 Ctrl-e 关闭候选列表
 				}),
 
 				-- 这里去掉 noinsert，让第一个候选自动高亮
 				completion = {
 					completeopt = "menu,menuone",
-					keyword_length = 2, -- 输入 ≥2 个字符才自动弹补全
+					keyword_length = 1, -- 输入 ≥2 个字符才自动弹补全
 				},
 
 				-- 补全项的显示形式（图标 + 文本 + 来源标签）
@@ -531,8 +534,239 @@ return {
 					end,
 				})
 			end
+
+			-------------------------------------------------------------------
+			-- 额外建议：让 LuaSnip 占位符颜色更明显（可选）
+			-------------------------------------------------------------------
+			-- 示例：占位符前景高亮为黄色、粗体，方便看到光标所在位置
+			-- 你可以把下面这段放到你的 colorscheme 之后：
+			-- vim.api.nvim_set_hl(0, "LuasnipInsertNode", { fg = "#ffdd00", bold = true })
+			-- vim.api.nvim_set_hl(0, "LuasnipChoiceNode", { fg = "#00ddff", underline = true })
 		end,
 	},
+	-- {
+	-- 	"hrsh7th/nvim-cmp",
+	-- 	event = "VeryLazy", -- 打开 Neovim 一段时间后再加载，避免启动阻塞
+	-- 	-- event = "InsertEnter",
+	-- 	dependencies = {
+	-- 		"hrsh7th/cmp-nvim-lsp", -- LSP 完成源
+	-- 		"saadparwaiz1/cmp_luasnip", -- LuaSnip snippet 完成源
+	-- 		"hrsh7th/cmp-buffer", -- buffer 文本完成源
+	-- 		"hrsh7th/cmp-path", -- 文件路径完成源
+	-- 		"L3MON4D3/LuaSnip", -- snippet 引擎
+	-- 		"hrsh7th/cmp-cmdline", -- 命令行完成源
+	-- 	},
+	--
+	-- 	config = function()
+	-- 		local cmp = require("cmp")
+	-- 		local luasnip = require("luasnip")
+	--
+	-- 		-------------------------------------------------------------------
+	-- 		-- 3.1 加载 SnipMate 格式的 snippets（从 ~/.config/nvim/snippets）
+	-- 		-------------------------------------------------------------------
+	-- 		require("luasnip.loaders.from_snipmate").lazy_load({
+	-- 			paths = { vim.fn.stdpath("config") .. "/snippets" },
+	-- 		})
+	--
+	-- 		-------------------------------------------------------------------
+	-- 		-- 3.2 与 mini.pairs / 任意自动补全括号联动的“智能 Tab / S-Tab”
+	-- 		--     - 若右侧是闭合括号/引号，Tab 直接跳出
+	-- 		--     - 否则退化为真正的 <Tab>/<S-Tab>
+	-- 		-------------------------------------------------------------------
+	-- 		local function jump_out_pair_forward_or_tab()
+	-- 			local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+	-- 			local line = vim.api.nvim_get_current_line()
+	-- 			local next_char = line:sub(col + 1, col + 1)
+	-- 			if next_char:match("[%)%]%}'\"`]") then
+	-- 				-- 右侧是闭合符号：直接把光标移到其后面
+	-- 				vim.api.nvim_win_set_cursor(0, { row, col + 1 })
+	-- 			else
+	-- 				-- 否则退化为真正的 <Tab>
+	-- 				vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Tab>", true, false, true), "n", false)
+	-- 			end
+	-- 		end
+	--
+	-- 		local function jump_out_pair_backward_or_stab()
+	-- 			local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+	-- 			local line = vim.api.nvim_get_current_line()
+	-- 			local prev_char = line:sub(col, col)
+	-- 			if prev_char:match("[%(%[%{'\"`]") then
+	-- 				-- 左侧是开括号/引号：向左跳一格
+	-- 				vim.api.nvim_win_set_cursor(0, { row, math.max(col - 1, 0) })
+	-- 			else
+	-- 				-- 否则退化为真正的 <S-Tab>
+	-- 				vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<S-Tab>", true, false, true), "n", false)
+	-- 			end
+	-- 		end
+	--
+	-- 		-------------------------------------------------------------------
+	-- 		-- 3.3 补全项 kind 对应的图标（用于美化补全列表）
+	-- 		-------------------------------------------------------------------
+	-- 		local kind_icons = {
+	-- 			Text = "󰉿",
+	-- 			Method = "󰆧",
+	-- 			Function = "󰊕",
+	-- 			Constructor = "",
+	-- 			Field = "󰜢",
+	-- 			Variable = "󰀫",
+	-- 			Class = "󰠱",
+	-- 			Interface = "",
+	-- 			Module = "",
+	-- 			Property = "󰜢",
+	-- 			Unit = "",
+	-- 			Value = "󰎠",
+	-- 			Enum = "",
+	-- 			Keyword = "󰌋",
+	-- 			Snippet = "",
+	-- 			Color = "󰏘",
+	-- 			File = "󰈙",
+	-- 			Reference = "󰈇",
+	-- 			Folder = "󰉋",
+	-- 			EnumMember = "",
+	-- 			Constant = "󰏿",
+	-- 			Struct = "󰙅",
+	-- 			Event = "",
+	-- 			Operator = "󰆕",
+	-- 			TypeParameter = "",
+	-- 		}
+	--
+	-- 		-------------------------------------------------------------------
+	-- 		-- 3.4 主补全配置（插入模式）
+	-- 		-------------------------------------------------------------------
+	-- 		cmp.setup({
+	-- 			-- 告诉 nvim-cmp 如何展开 snippet
+	-- 			snippet = {
+	-- 				expand = function(args)
+	-- 					luasnip.lsp_expand(args.body)
+	-- 				end,
+	-- 			},
+	--
+	-- 			-- 插入模式下的快捷键映射
+	-- 			mapping = cmp.mapping.preset.insert({
+	-- 				["<C-Space>"] = cmp.mapping.complete(), -- 手动触发补全
+	-- 				["<CR>"] = cmp.mapping.confirm({ select = true }), -- 回车确认当前选中项（如果没有则选中第一个）
+	--
+	-- 				["<Tab>"] = cmp.mapping(function()
+	-- 					if cmp.visible() then
+	-- 						-- 补全菜单可见：下一个候选
+	-- 						cmp.select_next_item()
+	-- 					elseif luasnip.expand_or_jumpable() then
+	-- 						-- 若 snippet 可展开或可跳转：走 snippet
+	-- 						luasnip.expand_or_jump()
+	-- 					else
+	-- 						-- 否则尝试“跳出括号”；再退化为真正 Tab
+	-- 						jump_out_pair_forward_or_tab()
+	-- 					end
+	-- 				end, { "i", "s" }),
+	--
+	-- 				["<S-Tab>"] = cmp.mapping(function()
+	-- 					if cmp.visible() then
+	-- 						-- 补全菜单可见：上一个候选
+	-- 						cmp.select_prev_item()
+	-- 					elseif luasnip.jumpable(-1) then
+	-- 						-- 反向跳 snippet
+	-- 						luasnip.jump(-1)
+	-- 					else
+	-- 						-- 否则尝试“反向跳出括号”；再退化为真正 S-Tab
+	-- 						jump_out_pair_backward_or_stab()
+	-- 					end
+	-- 				end, { "i", "s" }),
+	--
+	-- 				["<C-b>"] = cmp.mapping.scroll_docs(-4), -- 向上滚动文档
+	-- 				["<C-f>"] = cmp.mapping.scroll_docs(4), -- 向下滚动文档
+	-- 			}),
+	--
+	-- 			-- 这里去掉 noinsert，让第一个候选自动高亮
+	-- 			completion = {
+	-- 				completeopt = "menu,menuone",
+	-- 				keyword_length = 1, -- 输入 ≥2 个字符才自动弹补全
+	-- 			},
+	--
+	-- 			-- 补全项的显示形式（图标 + 文本 + 来源标签）
+	-- 			formatting = {
+	-- 				fields = { "kind", "abbr", "menu" },
+	-- 				format = function(entry, vim_item)
+	-- 					-- 左边图标 + 类型名称
+	-- 					vim_item.kind = (kind_icons[vim_item.kind] or "") .. " " .. vim_item.kind
+	--
+	-- 					-- 右侧的 menu 来源标记
+	-- 					vim_item.menu = ({
+	-- 						luasnip = "[Snip]", -- snippet 来源
+	-- 						buffer = "[Buf]", -- 当前 buffer
+	-- 						path = "[Path]", -- 文件路径
+	-- 						nvim_lsp = "[LSP]", -- LSP
+	-- 					})[entry.source.name] or ""
+	--
+	-- 					return vim_item
+	-- 				end,
+	-- 			},
+	--
+	-- 			-- 补全来源的优先级和顺序
+	-- 			sources = cmp.config.sources({
+	-- 				{ name = "luasnip" }, -- snippet
+	-- 				{ name = "buffer" }, -- buffer 单词
+	-- 				{ name = "path" }, -- 文件路径
+	-- 				{ name = "nvim_lsp" }, -- LSP
+	-- 			}),
+	--
+	-- 			-- 关闭 ghost text（若主题里没有配颜色，容易看不清）
+	-- 			experimental = {
+	-- 				ghost_text = true,
+	-- 			},
+	-- 			-- 不填写 window，使用 cmp 默认无边框菜单
+	-- 		})
+	--
+	-- 		-------------------------------------------------------------------
+	-- 		-- 3.5 命令行模式补全（:）：
+	-- 		--     - 完成命令名、路径、最近 buffer 内容
+	-- 		-------------------------------------------------------------------
+	-- 		cmp.setup.cmdline(":", {
+	-- 			mapping = cmp.mapping.preset.cmdline(),
+	-- 			sources = cmp.config.sources({
+	-- 				{ name = "cmdline" }, -- : 后的命令补全
+	-- 				{ name = "path" }, -- 路径补全
+	-- 				{ name = "buffer" }, -- 当前 / 最近 buffer 内容
+	-- 			}),
+	-- 			-- 这里也去掉 noinsert
+	-- 			completion = {
+	-- 				completeopt = "menu,menuone",
+	-- 			},
+	-- 			-- 不设置 window，保持默认无边框传统样式
+	-- 		})
+	--
+	-- 		-------------------------------------------------------------------
+	-- 		-- 3.6 搜索模式补全（/ 和 ?）：
+	-- 		--     - 从 buffer / path / cmdline 源里给出候选
+	-- 		-------------------------------------------------------------------
+	-- 		cmp.setup.cmdline({ "/", "?" }, {
+	-- 			mapping = cmp.mapping.preset.cmdline(),
+	-- 			sources = cmp.config.sources({
+	-- 				{ name = "buffer" }, -- 当前 buffer 文本
+	-- 				{ name = "path" }, -- 路径字符串
+	-- 				{ name = "cmdline" }, -- 之前输入过的命令/搜索
+	-- 			}),
+	-- 			-- 同样去掉 noinsert
+	-- 			completion = {
+	-- 				completeopt = "menu,menuone",
+	-- 			},
+	-- 			-- 同样不设置 window，沿用默认传统菜单
+	-- 		})
+	--
+	-- 		-------------------------------------------------------------------
+	-- 		-- 3.7 进入命令行时自动触发补全（: / / / ?）
+	-- 		-------------------------------------------------------------------
+	-- 		for _, pat in ipairs({ ":", "/", "?" }) do
+	-- 			vim.api.nvim_create_autocmd("CmdlineEnter", {
+	-- 				pattern = pat,
+	-- 				callback = function()
+	-- 					vim.schedule(function()
+	-- 						require("cmp").complete()
+	-- 					end)
+	-- 				end,
+	-- 			})
+	-- 		end
+	-- 	end,
+	-- },
 
 	---------------------------------------------------------------------------
 	-- 4. nvim-treesitter-textobjects：

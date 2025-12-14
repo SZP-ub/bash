@@ -100,13 +100,16 @@ snippet el
 # else if
 snippet elif
 	else if (${1:expression}) {
-		${1:${VISUAL}}
+		${2:${VISUAL}}
 	}$0
 
 # ifi
-snippet ifi
-	if (${1:expression}) 
-        ${1};$0
+snippet ifelif
+	if (${1:expression}) {
+            ${2:${VISUAL}}
+            } else if (${3:expression}) {
+            ${4:${VISUAL}}
+	}$0
 
 # ternary
 snippet t Ternary: `condition ? true : false`
@@ -142,7 +145,7 @@ snippet ret
 
 # exit
 snippet ex
-	exit($0);
+	exit(${0});
 
 ##
 ## Loops
@@ -475,33 +478,43 @@ snippet nll
 
 ## Dynamic Allocation
 
+# mset
 snippet mset
 	memset(${1:ptr *}, 0, ${2:size} * sizeof(${3:type}));
 
+# mse
 snippet mse
 	memset(${1:ptr *}, 0, sizeof(${2:type}));
 
+# mcpy
 snippet mcpy
 	memcpy(${1:ptr *}, ${2:const ptr *}, ${3:size} * sizeof(${4:type}));
 
+# mcp
 snippet mcp
 	memcpy(${1:ptr *}, ${2:const ptr *}, sizeof(${3:type}));
 
+# mmove
 snippet mmove
 	memmove(${1:ptr *}, ${2:const ptr *}, ${3:size} * sizeof(${4:type}));
 
+# mmov
 snippet mmov
 	memmove(${1:ptr *}, ${2:const ptr *},sizeof(${3:type}));
 
+# mcmp
 snippet mcmp
 	memcmp(${1:const ptr *}, ${2:const ptr *}, ${3:size} * sizeof(${4:type}));
 
+# mcm
 snippet mcm
 	memcmp(${1:const ptr *}, ${2:const ptr *},sizeof(${3:type}));
 
+# reserve
 snippet ma "reserve: "
 	${1:ptr *} = (${2:type}*) malloc( sizeof($2));
 
+# reserve if 
 snippet mai "reserve: if"
 	${1:ptr *} = (${2:type}*) malloc( sizeof($2));
 	if (!$1) {
@@ -509,13 +522,16 @@ snippet mai "reserve: if"
 		return ${3:-1};
 	}
 
+# mat
 snippet mat "reserve: test_assert_not_null()"
 	${1:ptr *} = (${2:type}*) malloc( sizeof($2));
 	TEST_ASSERT_NOT_NULL($1);
 
+# mal
 snippet mal "reserve: type"
 	${1:type} ${2:ptr *} = ($1*) malloc(sizeof($1));
 
+# reserve: type, if
 snippet mali "reserve: type, if"
 	${1:type} *${2:ptr *} = ($1*) malloc(sizeof($1));
 	if (!$2) {
@@ -523,13 +539,16 @@ snippet mali "reserve: type, if"
 		return ${3:-1};
 	}
 
+# malt
 snippet malt "reserve: type, if"
 	${1:type} *${2:ptr *} = ($1*) malloc(sizeof($1));
 	TEST_ASSERT_NOT_NULL($2);
 
+# mall
 snippet mall "reserve: size"
 	${1:ptr *} = (${2:type}*) malloc(${3:size} * sizeof($2));
 
+# reserve: size, if
 snippet malli "reserve: size, if"
 	${1:ptr *} = (${2:type}*) malloc(${3:size} * sizeof($2));
 	if (!$1) {
@@ -537,22 +556,28 @@ snippet malli "reserve: size, if"
 		return ${3:-1};
 	}
 
+# call
 snippet call
 	${1:ptr *} = (${2:type}*) calloc(${3:size} * sizeof($2));
 
+# real
 snippet real
 	${1:ptr *} = realloc($1, ${2:size} * sizeof(${3:type}));
 
+# cal
 snippet cal
 	${1:type} ${2:ptr *} = ($1*) calloc(${3:size} * sizeof($1));
 
+# free
 snippet fre
 	free(${1:ptr *});
 
+# reserve ptr
 snippet free "add ptr* = NULL"
 	free(${1:ptr *});
 	$1 = NULL;
 
+# fgets
 snippet fgets
 	fgets(${1:ptr *},sizeof($1),${2:fptr *})
 
@@ -566,8 +591,9 @@ snippet todo
 ## Miscellaneous
 # This is kind of convenient
 snippet .
-	[${1}]
+	->[${1}]
 
+# asm
 snippet asm
 	__asm__ __volatile__(
 	"${0}\n\t"
@@ -583,6 +609,7 @@ snippet run
     void ${1:function_name} (void);
         RUN_TEST(${1});
 
+# test
 snippet test
     #include "/home/i/tools/Unity/src/unity.h"
     #include "${0:`!p
