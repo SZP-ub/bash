@@ -1,6 +1,6 @@
 return {
 	"folke/snacks.nvim",
-	-- priority = 1000,
+	priority = 1000,
 	-- lazy = false,
 	-- event = "VeryLazy",
 	opts = {
@@ -11,7 +11,7 @@ return {
 		-- image = {
 		-- 	enabled = true, -- 启用图片预览支持
 		-- 	doc = { inline = false, float = false, max_width = 80, max_height = 40 }, -- 文档中图片显示配置：不内联、不浮动，最大宽高
-		-- 	math = { latex = { font_size = "small" } }, -- 数学公式（LaTeX）渲染字体大小
+		math = { latex = { font_size = "small" } }, -- 数学公式（LaTeX）渲染字体大小
 		-- },
 		indent = {
 			enabled = true, -- 启用缩进/作用域可视化功能

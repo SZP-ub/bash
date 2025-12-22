@@ -158,6 +158,73 @@ return {
 	},
 
 	{
+		"HiPhish/rainbow-delimiters.nvim",
+		event = "VeryLazy",
+		config = function()
+			local ok, rainbow_delimiters = pcall(require, "rainbow-delimiters")
+			if not ok then
+				return
+			end
+
+			local highlights = {
+				"RainbowDelimiterRed",
+				"RainbowDelimiterYellow",
+				"RainbowDelimiterBlue",
+				"RainbowDelimiterOrange",
+				"RainbowDelimiterGreen",
+				"RainbowDelimiterViolet",
+				"RainbowDelimiterCyan",
+			}
+
+			-- 主题优先链接 + 回退颜色（若主题没有对应组则使用 hex）
+			local theme_map = {
+				RainbowDelimiterRed = { "DiagnosticError", "#E06C75" },
+				RainbowDelimiterYellow = { "WarningMsg", "#E5C07B" },
+				RainbowDelimiterBlue = { "Type", "#61AFEF" },
+				RainbowDelimiterOrange = { "Constant", "#D19A66" },
+				RainbowDelimiterGreen = { "Identifier", "#98C379" },
+				RainbowDelimiterViolet = { "Function", "#C678DD" },
+				RainbowDelimiterCyan = { "Special", "#56B6C2" },
+			}
+
+			local function apply_theme_links()
+				for group, pair in pairs(theme_map) do
+					local target = pair[1]
+					local hex = pair[2]
+					if vim.fn.hlexists(target) == 1 then
+						vim.api.nvim_set_hl(0, group, { link = target })
+					else
+						vim.api.nvim_set_hl(0, group, { fg = hex, nocombine = true })
+					end
+				end
+			end
+
+			-- 插件全局配置（可根据需要调整 blacklist 或其他字段）
+			vim.g.rainbow_delimiters = {
+				strategy = {
+					[""] = rainbow_delimiters.strategy["global"],
+					commonlisp = rainbow_delimiters.strategy["local"],
+				},
+				query = {
+					[""] = "rainbow-delimiters",
+					latex = "rainbow-blocks",
+				},
+				highlight = highlights,
+			}
+
+			-- 立刻应用一次链接（用于当前已加载主题）
+			apply_theme_links()
+
+			-- 当切换主题时重新应用（保持与主题同步）
+			vim.api.nvim_create_autocmd("ColorScheme", {
+				callback = function()
+					apply_theme_links()
+				end,
+			})
+		end,
+	},
+
+	{
 		"sustech-data/wildfire.nvim",
 		dependencies = { "nvim-treesitter/nvim-treesitter" },
 		keys = {
