@@ -192,14 +192,6 @@ api.nvim_create_autocmd("BufReadPost", {
 })
 
 -----------------------------------------------------------------------
--- Mason 安装工具 PATH（按需启用）
------------------------------------------------------------------------
--- local mason_bin = vim.fn.stdpath("data") .. "/mason/bin"
--- if not string.find(vim.env.PATH or "", mason_bin, 1, true) then
---   vim.env.PATH = mason_bin .. ":" .. (vim.env.PATH or "")
--- end
-
------------------------------------------------------------------------
 -- vim-test / ult test：C 单元测试
 -----------------------------------------------------------------------
 g.ultest_deprecation_notice = 0
@@ -287,6 +279,5 @@ g.termdebug_config = {
 -----------------------------------------------------------------------
 -- 折叠、keymaps 与 lazy.nvim 的加载（保持你原有流程）
 -----------------------------------------------------------------------
--- 加载 keymaps 与 lazy 配置（如果 config.lazy 里使用了 ft 懒加载 markview，try_load_markview 会触发加载）
 require("keymaps")
 require("config.lazy")

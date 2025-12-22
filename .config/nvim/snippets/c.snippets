@@ -87,7 +87,7 @@ snippet nocpp
 snippet if
     if(${1:expression}) {
         ${2:${VISUAL}}
-    }$0;
+    }$0
 
 # if else
 snippet ife
@@ -113,7 +113,7 @@ snippet elif
 snippet ifelif
 	if (${1:expression}) {
         ${2:${VISUAL}}
-        } else if (${3:expression}) {
+    } else if (${3:expression}) {
         ${4:${VISUAL}}
 	}$0
 
@@ -450,8 +450,9 @@ snippet getopt
 		choice = getopt_long( argc, argv, "vh",
 					long_options, &option_index);
 
-		if (choice == -1)
-			break;
+		if (choice == -1) {
+            break;
+        }
 
 		switch( choice )		{
 			case 'v':
