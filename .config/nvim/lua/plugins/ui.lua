@@ -59,8 +59,8 @@ return {
 					char = "│", -- 若终端看不出粗体，可换为 "┃"
 				},
 				scope = {
-					enabled = true, -- 显示当前 scope
-					show_start = true, -- 显示作用域开始处的缩进线
+					-- enabled = true, -- 显示当前 scope
+					-- show_start = true, -- 显示作用域开始处的缩进线
 					highlight = { "RainbowActive" }, -- 使用上面定义的带下划线高亮
 				},
 				exclude = {
@@ -109,7 +109,8 @@ return {
 					if type(lualine.refresh) == "function" then
 						pcall(lualine.refresh)
 						return
-					elseif type(lualine.update) == "function" then
+					end
+					if type(lualine.update) == "function" then
 						pcall(lualine.update)
 						return
 					end
@@ -139,7 +140,7 @@ return {
 				pcall(vim.api.nvim_set_hl, 0, "MyBoldHL", { fg = "#ff8800", bold = true })
 			end
 
-			-- 统一应用所有需要的高亮（a/z/tabline/center）
+			-- 统一应用其他高亮（a/z/tabline/center 等）
 			local function apply_highlights()
 				set_myboldhl_from_devicons()
 
@@ -167,42 +168,54 @@ return {
 				)
 			end
 
-			-- diagnostics（使用主题默认图标/样式，保留宽度条件）
-			local diagnostics = {
+			-- 诊断组件：拆成 4 个独立组件，由 lualine 管理颜色（只设置 fg）
+			local diag_error = {
 				function()
-					local diags = vim.diagnostic.get(0)
-					local counts = { error = 0, warn = 0, info = 0, hint = 0 }
-					for _, d in ipairs(diags) do
-						if d.severity == vim.diagnostic.severity.ERROR then
-							counts.error = counts.error + 1
-						elseif d.severity == vim.diagnostic.severity.WARN then
-							counts.warn = counts.warn + 1
-						elseif d.severity == vim.diagnostic.severity.INFO then
-							counts.info = counts.info + 1
-						elseif d.severity == vim.diagnostic.severity.HINT then
-							counts.hint = counts.hint + 1
-						end
+					local d = vim.diagnostic.get(0, { severity = vim.diagnostic.severity.ERROR })
+					local n = #d
+					if n > 0 then
+						return " " .. n
 					end
-					local parts = {}
-					if counts.error > 0 then
-						table.insert(parts, " " .. counts.error)
-					end
-					if counts.warn > 0 then
-						table.insert(parts, " " .. counts.warn)
-					end
-					if counts.info > 0 then
-						table.insert(parts, " " .. counts.info)
-					end
-					if counts.hint > 0 then
-						table.insert(parts, " " .. counts.hint)
-					end
-					if #parts == 0 then
-						return ""
-					end
-					return table.concat(parts, "  ")
+					return ""
 				end,
 				cond = hide_in_width,
-				update_in_insert = false,
+				color = { fg = "#c00058" }, -- 错误前景
+			}
+			local diag_warn = {
+				function()
+					local d = vim.diagnostic.get(0, { severity = vim.diagnostic.severity.WARN })
+					local n = #d
+					if n > 0 then
+						return " " .. n
+					end
+					return ""
+				end,
+				cond = hide_in_width,
+				color = { fg = "#c00058" }, -- 警告前景（同错误）
+			}
+			local diag_info = {
+				function()
+					local d = vim.diagnostic.get(0, { severity = vim.diagnostic.severity.INFO })
+					local n = #d
+					if n > 0 then
+						return " " .. n
+					end
+					return ""
+				end,
+				cond = hide_in_width,
+				color = { fg = "#d3d3d3" }, -- 信息前景
+			}
+			local diag_hint = {
+				function()
+					local d = vim.diagnostic.get(0, { severity = vim.diagnostic.severity.HINT })
+					local n = #d
+					if n > 0 then
+						return " " .. n
+					end
+					return ""
+				end,
+				cond = hide_in_width,
+				color = { fg = "#d3d3d3" }, -- 提示前景
 			}
 
 			-- diff（使用 gitsigns 提供的数据）
@@ -239,7 +252,6 @@ return {
 					local bufnr = vim.api.nvim_get_current_buf()
 					local name = vim.fn.expand("%:t")
 					local ext = vim.fn.expand("%:e")
-
 					local cached = devicons_cache[ext]
 					if not cached then
 						if ok_devicons then
@@ -250,10 +262,8 @@ return {
 						end
 						devicons_cache[ext] = cached
 					end
-
 					local icon = cached.icon or ""
 					local hl_name = "LualineDevIconHL_" .. sanitize_hlname(ext ~= "" and ext or "none")
-
 					if not devicon_hl_cache[hl_name] then
 						local fg_hex = "#8ec07c"
 						local ext_hl = cached.hl
@@ -266,7 +276,6 @@ return {
 						pcall(vim.api.nvim_set_hl, 0, hl_name, { fg = fg_hex, bg = INACTIVE_BG, bold = false })
 						devicon_hl_cache[hl_name] = true
 					end
-
 					local text = string.format("%d %s", bufnr, name)
 					local is_active_win = (vim.api.nvim_get_current_win() == vim.fn.win_getid(vim.fn.winnr()))
 					if is_active_win then
@@ -307,10 +316,10 @@ return {
 				end,
 			})
 
-			-- 先预应用一次（setup 之前），然后通过 theme_tbl 在 setup 时再保证一次
+			-- 先预应用一次（setup 之前）
 			apply_highlights()
 
-			-- 加载/构造 theme 表并覆盖 a.bg（确保在 setup 时生效）
+			-- 构造/加载 theme_tbl 并覆盖 a.bg
 			local chosen_theme = vim.env.LUALINE_THEME or "gruvbox_light"
 			local theme_tbl = nil
 			local ok_theme, loaded = pcall(require, "lualine.themes." .. chosen_theme)
@@ -379,7 +388,15 @@ return {
 					} },
 					lualine_b = { { "branch", icon = "" }, { "filename", cond = hide_in_width } },
 					lualine_c = {},
-					lualine_x = { diagnostics, diff, { "encoding", cond = hide_in_width } },
+					-- 在 lualine_x 中按顺序放入 4 个诊断组件（颜色已在 component.color 中设置）
+					lualine_x = {
+						diag_error,
+						diag_warn,
+						diag_info,
+						diag_hint,
+						diff,
+						{ "encoding", cond = hide_in_width },
+					},
 					lualine_y = { { "location", cond = hide_in_width }, "progress" },
 					lualine_z = { bufnr_name },
 				},
@@ -391,7 +408,7 @@ return {
 							return " " .. s
 						end,
 					} },
-					lualine_b = { diagnostics },
+					lualine_b = { diag_error }, -- 你也可以在 inactive 放入其它 diag 组件
 					lualine_c = { inactive_center },
 					lualine_x = {},
 					lualine_y = { "progress" },
