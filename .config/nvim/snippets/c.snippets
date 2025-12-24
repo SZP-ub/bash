@@ -109,8 +109,8 @@ snippet elif
 		${2:${VISUAL}}
 	}$0
 
-# ifi
-snippet ifelif
+# ifif
+snippet ifif
 	if (${1:expression}) {
         ${2:${VISUAL}}
     } else if (${3:expression}) {
@@ -530,11 +530,11 @@ snippet mcm
 	memcmp(${1:const ptr *}, ${2:const ptr *},sizeof(${3:type}));$0
 
 # reserve
-snippet ma "reserve: "
+snippet ma "no: type, number, if"
 	${1:ptr *} = (${2:type}*) malloc( sizeof($2));$0
 
 # reserve if 
-snippet mai "reserve: if"
+snippet mai "no: type, number" "no: type, number, if"
 	${1:ptr *} = (${2:type}*) malloc( sizeof($2));
 	if (!$1) {
 		fprintf(stderr,"The memory allocation for ${1:name} failed\n");
@@ -542,16 +542,16 @@ snippet mai "reserve: if"
 	}$0
 
 # mat
-snippet mat "reserve: test_assert_not_null()"
+snippet mat "no: type, number"
 	${1:ptr *} = (${2:type}*) malloc( sizeof($2));
 	TEST_ASSERT_NOT_NULL($1);
 
 # mal
-snippet mal "reserve: type"
+snippet mal  "no: number, if"
 	${1:type} ${2:ptr *} = ($1*) malloc(sizeof($1));$0
 
 # reserve: type, if
-snippet mali "reserve: type, if"
+snippet mali "no: number"
 	${1:type} *${2:ptr *} = ($1*) malloc(sizeof($1));
 	if (!$2) {
 		fprintf(stderr,"The memory allocation for ${2:name} failed\n");
@@ -559,16 +559,16 @@ snippet mali "reserve: type, if"
 	}$0
 
 # malt
-snippet malt "reserve: type, if"
+snippet malt "no: number"
 	${1:type} *${2:ptr *} = ($1*) malloc(sizeof($1));
 	TEST_ASSERT_NOT_NULL($2);
 
 # mall
-snippet mall "reserve: size"
+snippet mall "no: type, if"
 	${1:ptr *} = (${2:type}*) malloc(${3:size} * sizeof($2));$0
 
 # reserve: size, if
-snippet malli "reserve: size, if"
+snippet malli "no: type "
 	${1:ptr *} = (${2:type}*) malloc(${3:size} * sizeof($2));
 	if (!$1) {
 		fprintf(stderr,"The memory allocation for ${1:name} failed\n");
@@ -576,15 +576,15 @@ snippet malli "reserve: size, if"
 	}$0
 
 # call
-snippet call
+snippet call "no: type, if"
 	${1:ptr *} = (${2:type}*) calloc(${3:size} * sizeof($2));$0
 
 # real
-snippet real
+snippet real "no: type, if"
 	${1:ptr *} = realloc($1, ${2:size} * sizeof(${3:type}));$0
 
 # cal
-snippet cal
+snippet cal "no: if"
 	${1:type} ${2:ptr *} = ($1*) calloc(${3:size} * sizeof($1));$0
 
 # free
