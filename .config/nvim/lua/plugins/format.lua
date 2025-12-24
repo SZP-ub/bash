@@ -108,7 +108,8 @@ return {
 	{
 		"mfussenegger/nvim-lint",
 		-- 写入时才真正需要 lint，延后加载
-		event = "BufWritePost",
+		-- event = "BufWritePost",
+		event = "VeryLazy",
 		config = function()
 			local ok, lint = pcall(require, "lint")
 			if not ok then
@@ -147,6 +148,7 @@ return {
 
 	{
 		"folke/trouble.nvim",
+		event = "VeryLazy",
 		keys = {
 			-- <leader>gd：文档诊断列表（Trouble diagnostics）
 			-- 显示当前 buffer 的 LSP/编译错误、警告等诊断信息

@@ -219,8 +219,6 @@ vim.keymap.set("n", "<Tab>", "gt", { noremap = true })
 
 -- ==================== ctrl组合键 ====================
 local misc_keymaps = {
-	-- 插入模式右移光标
-	-- { "i", "<C-e>", "<Right>", { noremap = true, silent = true }, "插入模式右移光标" },
 	-- 普通模式窗口大小调整
 	{ "n", "<C-Up>", ":resize +2<CR>", {}, "增加窗口高度" },
 	{ "n", "<C-Down>", ":resize -2<CR>", {}, "减少窗口高度" },

@@ -157,39 +157,39 @@ api.nvim_create_autocmd("TextYankPost", {
 -----------------------------------------------------------------------
 -- 折叠状态记忆（mkview/loadview）
 -----------------------------------------------------------------------
-o.viewoptions = o.viewoptions:match("folds") and o.viewoptions or (o.viewoptions .. ",folds")
-
-local folds_group = api.nvim_create_augroup("RememberFolds", { clear = true })
-
--- 关闭/删除 buffer 时保存视图（包含折叠）
-api.nvim_create_autocmd({ "BufDelete", "BufWipeout", "BufUnload" }, {
-	pattern = "*",
-	command = "silent! mkview",
-	group = folds_group,
-})
-
--- 打开/读取 buffer 时恢复视图（包含折叠）
-api.nvim_create_autocmd({ "BufReadPost", "BufNewFile" }, {
-	pattern = "*",
-	command = "silent! loadview",
-	group = folds_group,
-})
+-- o.viewoptions = o.viewoptions:match("folds") and o.viewoptions or (o.viewoptions .. ",folds")
+--
+-- local folds_group = api.nvim_create_augroup("RememberFolds", { clear = true })
+--
+-- -- 关闭/删除 buffer 时保存视图（包含折叠）
+-- api.nvim_create_autocmd({ "BufDelete", "BufWipeout", "BufUnload" }, {
+-- 	pattern = "*",
+-- 	command = "silent! mkview",
+-- 	group = folds_group,
+-- })
+--
+-- -- 打开/读取 buffer 时恢复视图（包含折叠）
+-- api.nvim_create_autocmd({ "BufReadPost", "BufNewFile" }, {
+-- 	pattern = "*",
+-- 	command = "silent! loadview",
+-- 	group = folds_group,
+-- })
 
 -----------------------------------------------------------------------
 -- 打开文件回到上次光标位置
 -----------------------------------------------------------------------
-local last_pos_group = api.nvim_create_augroup("LastEditPosition", { clear = true })
-api.nvim_create_autocmd("BufReadPost", {
-	group = last_pos_group,
-	callback = function()
-		local mark = api.nvim_buf_get_mark(0, '"')
-		local lcount = api.nvim_buf_line_count(0)
-		if mark[1] > 0 and mark[1] <= lcount then
-			pcall(api.nvim_win_set_cursor, 0, mark)
-			vim.cmd("normal! zz")
-		end
-	end,
-})
+-- local last_pos_group = api.nvim_create_augroup("LastEditPosition", { clear = true })
+-- api.nvim_create_autocmd("BufReadPost", {
+-- 	group = last_pos_group,
+-- 	callback = function()
+-- 		local mark = api.nvim_buf_get_mark(0, '"')
+-- 		local lcount = api.nvim_buf_line_count(0)
+-- 		if mark[1] > 0 and mark[1] <= lcount then
+-- 			pcall(api.nvim_win_set_cursor, 0, mark)
+-- 			vim.cmd("normal! zz")
+-- 		end
+-- 	end,
+-- })
 
 -----------------------------------------------------------------------
 -- vim-test / ult test：C 单元测试

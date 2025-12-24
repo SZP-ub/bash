@@ -77,7 +77,25 @@ return {
 					map("gi", vim.lsp.buf.implementation, "[G]oto [I]mplementation") -- 跳转到实现
 					map("grt", vim.lsp.buf.type_definition, "Type [D]efinition") -- 跳转到类型定义
 
-					map("K", vim.lsp.buf.hover, "Hover Documentation") -- 悬浮文档（光标处符号说明）
+					-- map("K", vim.lsp.buf.hover, "Hover Documentation") -- 悬浮文档（光标处符号说明）
+
+					-- 替换原来的 K 映射：
+					map("K", function()
+						-- 安全加载 ufo（避免 ufo 未安装时报错）
+						local ok_ufo, ufo = pcall(require, "ufo")
+						if ok_ufo and ufo then
+							-- 尝试打开 peek 窗口（pcall 避免内部出错导致脚本中断）
+							local ok_peek, winid = pcall(ufo.peekFoldedLinesUnderCursor)
+							if ok_peek and winid and winid ~= 0 then
+								-- 成功打开 peek 窗口，直接返回（不再执行 hover）
+								return
+							end
+						end
+
+						-- 回退到 LSP 的 hover（同样用 pcall 保护）
+						pcall(vim.lsp.buf.hover)
+					end, "Peek fold or show hover")
+
 					map("grn", vim.lsp.buf.rename, "[R]e[n]ame") -- 重命名符号
 					map("gra", vim.lsp.buf.code_action, "[C]ode [A]ction", { "n", "x" }) -- 代码操作（修复、重构等）
 					map("grd", vim.lsp.buf.declaration, "[G]oto [D]eclaration") -- 跳转到声明
@@ -157,10 +175,11 @@ return {
 				signs = {
 					-- 左侧 signcolumn 图标
 					text = {
-						[vim.diagnostic.severity.ERROR] = " 󰅚",
-						[vim.diagnostic.severity.WARN] = " 󰀪",
-						[vim.diagnostic.severity.INFO] = " 󰋽",
-						[vim.diagnostic.severity.HINT] = " 󰌶",
+						-- [vim.diagnostic.severity.ERROR] = "󰅚 ",
+						[vim.diagnostic.severity.ERROR] = " ",
+						[vim.diagnostic.severity.WARN] = " ",
+						[vim.diagnostic.severity.INFO] = " ",
+						[vim.diagnostic.severity.HINT] = "󰌶",
 					},
 				},
 				virtual_text = {
@@ -370,13 +389,15 @@ return {
 				Constructor = "",
 				Field = "󰜢",
 				Variable = "󰀫",
-				Class = "󰠱",
+				-- Class = "󰌗󰠱",
+				Class = "󰌗",
 				Interface = "",
 				Module = "",
 				Property = "󰜢",
 				Unit = "",
 				Value = "󰎠",
-				Enum = "",
+				-- Enum = "",
+				Enum = "󰕘",
 				Keyword = "󰌋",
 				Snippet = "",
 				Color = "󰏘",
@@ -389,6 +410,16 @@ return {
 				Event = "",
 				Operator = "󰆕",
 				TypeParameter = "󰊄",
+
+				Namespace = "󰌗",
+				Package = "",
+				String = "󰀬",
+				Number = "󰎠",
+				Boolean = "◩",
+				Array = "󰅪",
+				Object = "󰅩",
+				Key = "󰌋",
+				Null = "󰟢",
 			}
 
 			-- 插入模式主配置

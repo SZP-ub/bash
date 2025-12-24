@@ -577,7 +577,7 @@ snippet malli "no: type "
 
 # call
 snippet call "no: type, if"
-	${1:ptr *} = (${2:type}*) calloc(${3:size} * sizeof($2));$0
+	${1:ptr *} = (${2:type}*) calloc(${3:size}, sizeof($2));$0
 
 # real
 snippet real "no: type, if"
@@ -585,8 +585,15 @@ snippet real "no: type, if"
 
 # cal
 snippet cal "no: if"
-	${1:type} ${2:ptr *} = ($1*) calloc(${3:size} * sizeof($1));$0
+	${1:type} *${2:ptr *} = ($1*) calloc(${3:size}, sizeof($1));$0
 
+# cal
+snippet cal "no: if"
+	${1:type} *${2:ptr *} = ($1*) calloc(${3:size}, sizeof($1));$0
+	if (!$2) {
+		fprintf(stderr,"The memory allocation for ${2:name} failed\n");
+		return ${4:-1};
+	}$0
 # free
 snippet fre
 	free(${1:ptr *});$0

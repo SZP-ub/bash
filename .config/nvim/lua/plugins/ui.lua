@@ -210,7 +210,8 @@ return {
 					local d = vim.diagnostic.get(0, { severity = vim.diagnostic.severity.HINT })
 					local n = #d
 					if n > 0 then
-						return " " .. n
+						-- return " " .. n
+						return "󰌶 " .. n
 					end
 					return ""
 				end,
