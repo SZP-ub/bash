@@ -272,19 +272,19 @@ return {
 			})
 
 			-- Keymaps（使用 pcall / 安全包装，避免函数不存在时报错）
-			vim.keymap.set("n", "zR", function()
-				-- 全部展开折叠
-				if ufo and ufo.openAllFolds then
-					pcall(ufo.openAllFolds)
-				end
-			end, { desc = "UFO: open all folds" })
+			-- vim.keymap.set("n", "zR", function()
+			-- 	-- 全部展开折叠
+			-- 	if ufo and ufo.openAllFolds then
+			-- 		pcall(ufo.openAllFolds)
+			-- 	end
+			-- end, { desc = "UFO: open all folds" })
 
-			vim.keymap.set("n", "zM", function()
-				-- 全部关闭折叠
-				if ufo and ufo.closeAllFolds then
-					pcall(ufo.closeAllFolds)
-				end
-			end, { desc = "UFO: close all folds" })
+			-- vim.keymap.set("n", "zM", function()
+			-- 	-- 全部关闭折叠
+			-- 	if ufo and ufo.closeAllFolds then
+			-- 		pcall(ufo.closeAllFolds)
+			-- 	end
+			-- end, { desc = "UFO: close all folds" })
 
 			-- vim.keymap.set("n", "zr", function()
 			-- 	-- 打开除指定 kinds 之外的折叠（按配置器决定行为）

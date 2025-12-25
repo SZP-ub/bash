@@ -539,10 +539,6 @@ return {
 				pumblend = 0,
 			}))
 			wilder.set_option("renderer", renderer)
-
-			-- 若你希望自定义 accept 行为或额外键位，可在此补充
-			-- 说明：通过 set_option("next_key"/"previous_key") 已能使 Tab/S-Tab 在有候选时切换，
-			-- 不再需要在 CmdlineEnter 时动态设置 cnoremap，从而避免重复映射/覆盖。
 		end,
 	},
 

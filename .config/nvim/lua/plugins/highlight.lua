@@ -8,6 +8,11 @@ return {
 		main = "nvim-treesitter.configs",
 		opts = {
 			auto_install = false,
+			highlight = {
+				enable = true,
+				disable = { "latex" }, -- 禁止 treesitter 为 latex 提供高亮
+				additional_vim_regex_highlighting = false,
+			},
 			ensure_installed = {
 				"cmake",
 				"bash",
@@ -26,10 +31,7 @@ return {
 				"markdown",
 			},
 			sync_install = false,
-			highlight = {
-				enable = true,
-				additional_vim_regex_highlighting = false,
-			},
+
 			indent = { enable = true },
 		},
 		opts_extend = { "ensure_installed" },

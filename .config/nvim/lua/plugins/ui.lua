@@ -56,7 +56,8 @@ return {
 			require("ibl").setup({
 				indent = {
 					highlight = highlight, -- 多色普通缩进线
-					char = "│", -- 若终端看不出粗体，可换为 "┃"
+					-- char = "║│", -- 若终端看不出粗体，可换为 "┃"
+					char = "║", -- 若终端看不出粗体，可换为 "┃"
 				},
 				scope = {
 					-- enabled = true, -- 显示当前 scope
@@ -210,8 +211,8 @@ return {
 					local d = vim.diagnostic.get(0, { severity = vim.diagnostic.severity.HINT })
 					local n = #d
 					if n > 0 then
-						-- return " " .. n
-						return "󰌶 " .. n
+						return " " .. n
+						-- return "󰌶 " .. n
 					end
 					return ""
 				end,
