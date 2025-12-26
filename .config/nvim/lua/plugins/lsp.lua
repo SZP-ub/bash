@@ -175,8 +175,8 @@ return {
 				signs = {
 					-- 左侧 signcolumn 图标
 					text = {
-						-- [vim.diagnostic.severity.ERROR] = "󰅚 ",
-						[vim.diagnostic.severity.ERROR] = " ",
+						[vim.diagnostic.severity.ERROR] = " ",
+						-- [vim.diagnostic.severity.ERROR] = " ",
 						[vim.diagnostic.severity.WARN] = " ",
 						[vim.diagnostic.severity.INFO] = " ",
 						-- [vim.diagnostic.severity.HINT] = "󰌶",
@@ -386,7 +386,8 @@ return {
 			local kind_icons = {
 				Text = "󰉿",
 				Method = "󰆧",
-				Function = "󰊕",
+				-- Function = " 󰊕",
+				Function = "",
 				Constructor = "",
 				Field = "󰜢",
 				Variable = "󰀫",
@@ -402,7 +403,8 @@ return {
 				Keyword = "󰌋",
 				Snippet = "",
 				Color = "󰏘",
-				File = "󰈙",
+				-- File = " 󰈙",
+				File = "",
 				Reference = "",
 				Folder = "󰉋",
 				EnumMember = "",
@@ -419,7 +421,7 @@ return {
 				Number = "󰎠",
 				Boolean = "◩",
 				Array = "󰅪",
-				Object = "󰅩",
+				Object = "",
 				Key = "󰌋",
 				Null = "󰟢",
 			}

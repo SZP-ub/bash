@@ -189,6 +189,7 @@ return {
 					local n = #d
 					if n > 0 then
 						return " " .. n
+						-- return " " .. n
 					end
 					return ""
 				end,
