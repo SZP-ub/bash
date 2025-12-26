@@ -189,7 +189,7 @@ return {
 			local handler = function(virtText, lnum, endLnum, width, truncate)
 				local newVirtText = {}
 				-- 后缀，显示折叠的行数（endLnum - lnum）
-				local suffix = (" 󰁂 %d "):format(endLnum - lnum)
+				local suffix = (" 󰁂 %d "):format(endLnum - lnum + 1)
 				local sufWidth = vim.fn.strdisplaywidth(suffix)
 				-- 目标宽度是整行宽度减去后缀宽度
 				local targetWidth = width - sufWidth
@@ -238,7 +238,7 @@ return {
 				open_fold_hl_timeout = 150, -- 展开折叠时高亮超时时间（毫秒）
 				-- 针对不同文件类型关闭某些折叠 kind 的示例配置
 				close_fold_kinds_for_ft = {
-					default = { "imports", "comment" }, -- 默认关闭 imports/comment 类型的折叠
+					-- default = { "imports", "comment" }, -- 默认关闭 imports/comment 类型的折叠
 					json = { "array" }, -- json 默认关闭 array 类型折叠
 					c = { "comment", "region" }, -- c 文件关闭 comment 和 region
 					-- c = { "region" }, -- c 文件关闭 comment 和 region
