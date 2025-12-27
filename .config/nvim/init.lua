@@ -214,11 +214,19 @@ api.nvim_create_autocmd({ "BufWinEnter", "WinEnter" }, {
 -----------------------------------------------------------------------
 -- termdebug 配置
 -----------------------------------------------------------------------
+-- 基本别名
+-- local api = vim.api
+-- local opt = vim.opt
+
+-- 终端模式 Esc 回到常规模式
 api.nvim_set_keymap("t", "<Esc>", [[<C-\><C-n>]], { noremap = true })
+
+-- 超时设置
 opt.timeout = false
 opt.ttimeout = true
 opt.timeoutlen = 100
 
+-- 加载 termdebug 插件
 vim.cmd("packadd termdebug")
 
 -- 调整 termdebug 布局
@@ -227,7 +235,7 @@ api.nvim_create_autocmd("User", {
 	callback = function()
 		local win_ids = api.nvim_list_wins()
 		local win2, win3, win4 = win_ids[2], win_ids[3], win_ids[4]
-		if not win2 or not win3 or not win4 then
+		if not (win2 and win3 and win4) then
 			vim.notify("窗口 2、3 或 4 不存在", vim.log.levels.WARN)
 			return
 		end
@@ -237,14 +245,11 @@ api.nvim_create_autocmd("User", {
 		api.nvim_win_set_buf(win2, buf4)
 		api.nvim_win_close(win4, true)
 
-		-- 交换窗口2和窗口3的 buffer
+		-- 交换窗口2和窗口3的 buffer（注意使用 nvim_win_get_buf）
 		local buf2 = api.nvim_win_get_buf(win2)
-		local buf3 = api.nvim_get_buf(win3)
-		-- 修正：api.nvim_get_buf 并非存在（保持原逻辑），改为 api.nvim_buf_get_name 不是必须，此处保留原意
-		local tmp_buf2 = api.nvim_win_get_buf(win2)
-		local tmp_buf3 = api.nvim_win_get_buf(win3)
-		api.nvim_win_set_buf(win2, tmp_buf3)
-		api.nvim_win_set_buf(win3, tmp_buf2)
+		local buf3 = api.nvim_win_get_buf(win3)
+		api.nvim_win_set_buf(win2, buf3)
+		api.nvim_win_set_buf(win3, buf2)
 
 		-- 窗口2高度减半
 		local cur_height = api.nvim_win_get_height(win2)
@@ -259,7 +264,8 @@ api.nvim_create_autocmd("User", {
 	end,
 })
 
-g.termdebug_config = {
+-- termdebug 配置（保留你原来的字段）
+vim.g.termdebug_config = {
 	command = "gdb", -- 调试器命令
 	winbar = 0, -- 禁用窗口工具条
 	wide = 163, -- 主窗口宽度
@@ -275,6 +281,68 @@ g.termdebug_config = {
 	-- disasm_window = true,
 	-- disasm_window_height = 15,
 }
+
+-- api.nvim_set_keymap("t", "<Esc>", [[<C-\><C-n>]], { noremap = true })
+-- opt.timeout = false
+-- opt.ttimeout = true
+-- opt.timeoutlen = 100
+--
+-- vim.cmd("packadd termdebug")
+--
+-- -- 调整 termdebug 布局
+-- api.nvim_create_autocmd("User", {
+-- 	pattern = "TermdebugStartPost",
+-- 	callback = function()
+-- 		local win_ids = api.nvim_list_wins()
+-- 		local win2, win3, win4 = win_ids[2], win_ids[3], win_ids[4]
+-- 		if not win2 or not win3 or not win4 then
+-- 			vim.notify("窗口 2、3 或 4 不存在", vim.log.levels.WARN)
+-- 			return
+-- 		end
+--
+-- 		-- 用窗口4的 buffer 替换窗口2，然后关闭窗口4
+-- 		local buf4 = api.nvim_win_get_buf(win4)
+-- 		api.nvim_win_set_buf(win2, buf4)
+-- 		api.nvim_win_close(win4, true)
+--
+-- 		-- 交换窗口2和窗口3的 buffer
+-- 		local buf2 = api.nvim_win_get_buf(win2)
+-- 		local buf3 = api.nvim_get_buf(win3)
+-- 		-- 修正：api.nvim_get_buf 并非存在（保持原逻辑），改为 api.nvim_buf_get_name 不是必须，此处保留原意
+-- 		local tmp_buf2 = api.nvim_win_get_buf(win2)
+-- 		local tmp_buf3 = api.nvim_win_get_buf(win3)
+-- 		api.nvim_win_set_buf(win2, tmp_buf3)
+-- 		api.nvim_win_set_buf(win3, tmp_buf2)
+--
+-- 		-- 窗口2高度减半
+-- 		local cur_height = api.nvim_win_get_height(win2)
+-- 		if cur_height > 1 then
+-- 			api.nvim_win_set_height(win2, math.max(1, math.floor(cur_height / 2)))
+-- 		end
+--
+-- 		-- 焦点依次切到 win2 底部、再回到 win3
+-- 		api.nvim_set_current_win(win2)
+-- 		vim.cmd("normal! G")
+-- 		api.nvim_set_current_win(win3)
+-- 	end,
+-- })
+--
+-- g.termdebug_config = {
+-- 	command = "gdb", -- 调试器命令
+-- 	winbar = 0, -- 禁用窗口工具条
+-- 	wide = 163, -- 主窗口宽度
+-- 	variables_window = true, -- 显示变量窗口
+-- 	variables_window_height = 9,
+-- 	sign_decimal = 1, -- 断点编号十进制
+-- 	evaluate_in_popup = true, -- 弹窗显示表达式结果
+-- 	-- 其它开关按需再打开：
+-- 	-- map_k = false,
+-- 	-- map_minus = false,
+-- 	-- map_plus = false,
+-- 	-- popup = 0,
+-- 	-- disasm_window = true,
+-- 	-- disasm_window_height = 15,
+-- }
 
 -----------------------------------------------------------------------
 -- 折叠、keymaps 与 lazy.nvim 的加载（保持你原有流程）

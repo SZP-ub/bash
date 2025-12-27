@@ -191,10 +191,25 @@ return {
 						return diagnostic.message
 					end,
 				},
+				update_in_insert = true,
 			})
 
 			-- Hover 文档使用圆角边框
 			vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
+			-- 2) 兼容性的 handler（确保 LSP publishDiagnostics 支持 update_in_insert）
+			-- （这行是可选的，但在部分环境能解决不生效的问题）
+			-- vim.lsp.handlers["textDocument/publishDiagnostics"] =
+			-- vim.lsp.with(vim.lsp.handlers.publishDiagnostics, { update_in_insert = true })
+
+			-- 3) 缩短 LSP 的文本变更防抖（按需调整毫秒，默认一般较大）
+			-- 把 flags 加到你为所有 server 应用的默认配置里（你原来有 vim.lsp.config("*", { capabilities = capabilities })）
+			vim.lsp.config("*", {
+				capabilities = capabilities,
+				flags = {
+					-- 例如 150ms，默认通常是 200-500ms，越小越实时但可能更占 CPU
+					debounce_text_changes = 150,
+				},
+			})
 
 			-------------------------------------------------------------------
 			-- 2.3 把 nvim-cmp 的能力注入所有 LSP（全局默认能力）
@@ -509,12 +524,14 @@ return {
 				return
 			end
 
-			-- 启用命令行模式：: / ?
+			-- 基本 setup（命令行 / 搜索 模式）
 			wilder.setup({ modes = { ":", "/", "?" } })
 
-			-- 使用 wilder 内置键配置（Tab / S-Tab 切换候选）
-			wilder.set_option("next_key", "<Tab>")
-			wilder.set_option("previous_key", "<S-Tab>")
+			-- 禁用 wilder 内置的 next/previous/accept/reject 键（我们将用 expr 映射来在非 wilder 上下文保留 Tab 行为）
+			wilder.set_option("next_key", 0)
+			wilder.set_option("previous_key", 0)
+			wilder.set_option("accept_key", 0)
+			wilder.set_option("reject_key", 0)
 
 			-- highlighter：优先 pcre2（若可用），否则 basic
 			local highlighters = {}
@@ -523,28 +540,129 @@ return {
 			end
 			table.insert(highlighters, wilder.basic_highlighter())
 
-			-- pipeline：cmdline_pipeline（用于 :） + search_pipeline（用于 /、?）
+			-- pipeline：合并历史（空输入时显示）、命令模糊匹配、和搜索 pipeline
 			local cmdline_pl = wilder.cmdline_pipeline({
 				fuzzy = 1,
-				fuzzy_filter = wilder.lua_fzy_filter(),
+				-- 优先使用 lua_fzy_filter（若安装了 romgrk/fzy-lua-native），否则回退到 vim_fuzzy_filter
+				fuzzy_filter = (type(wilder.lua_fzy_filter) == "function" and wilder.lua_fzy_filter())
+					or wilder.vim_fuzzy_filter(),
 			})
 			local search_pl = wilder.search_pipeline()
 
-			wilder.set_option("pipeline", wilder.branch(cmdline_pl, search_pl))
+			wilder.set_option(
+				"pipeline",
+				wilder.branch(
+					-- 当输入为空时显示历史（最多 15 条）
+					{ wilder.check(function(_, x)
+						return vim.fn.empty(x) == 1
+					end), wilder.history(15) },
+					cmdline_pl,
+					search_pl
+				)
+			)
 
-			-- renderer：popupmenu（边框、devicons、scrollbar）
+			-- renderer：popupmenu + 边框 + devicons + scrollbar
 			local renderer = wilder.popupmenu_renderer(wilder.popupmenu_border_theme({
-				highlights = { border = "Normal" },
+				highlights = {
+					border = "Normal",
+					-- 自定义的 accent 高亮组可按需修改
+					accent = "WilderAccent",
+					selected_accent = "WilderSelectedAccent",
+				},
 				border = "rounded",
 				highlighter = highlighters,
-				left = { " ", wilder.popupmenu_devicons() },
+				left = { " ", wilder.popupmenu_devicons() }, -- 在候选项左侧显示图标（文件类型图标）
 				right = { " ", wilder.popupmenu_scrollbar() },
 				max_height = 15,
 				pumblend = 0,
 			}))
 			wilder.set_option("renderer", renderer)
+
+			-- 自定义高亮（调整颜色以符合你的配色主题）
+			pcall(vim.api.nvim_set_hl, 0, "WilderAccent", { fg = "#00afaf" })
+			pcall(vim.api.nvim_set_hl, 0, "WilderSelectedAccent", { fg = "#00afaf", bg = "#4e4e4e" })
+
+			-- 键映射（只在 wilder 上下文生效时使用 next/previous，否则保留原有行为）
+			-- 注意使用 expr 映射：当 wilder#in_context() 返回 true 时调用 wilder 的函数
+			vim.api.nvim_set_keymap(
+				"c",
+				"<Tab>",
+				"wilder#in_context() ? wilder#next() : '<Tab>'",
+				{ noremap = true, expr = true, silent = true }
+			)
+			vim.api.nvim_set_keymap(
+				"c",
+				"<S-Tab>",
+				"wilder#in_context() ? wilder#previous() : '<C-d>'",
+				{ noremap = true, expr = true, silent = true }
+			)
+			vim.api.nvim_set_keymap(
+				"c",
+				"<Down>",
+				"wilder#in_context() ? wilder#next() : '<Down>'",
+				{ noremap = true, expr = true, silent = true }
+			)
+			vim.api.nvim_set_keymap(
+				"c",
+				"<Up>",
+				"wilder#in_context() ? wilder#previous() : '<Up>'",
+				{ noremap = true, expr = true, silent = true }
+			)
+
+			-- 如果你使用 remote plugins（或刚装了本地编译依赖），更新 remote plugins
+			pcall(vim.cmd, "silent! UpdateRemotePlugins")
 		end,
 	},
+
+	-- {
+	-- 	"gelguy/wilder.nvim",
+	-- 	event = "CmdlineEnter",
+	-- 	dependencies = {
+	-- 		{ "romgrk/fzy-lua-native", build = "make" }, -- 建议安装以提升 fuzzy 性能
+	-- 	},
+	-- 	config = function()
+	-- 		local ok, wilder = pcall(require, "wilder")
+	-- 		if not ok then
+	-- 			vim.notify("wilder.nvim not found", vim.log.levels.WARN)
+	-- 			return
+	-- 		end
+	--
+	-- 		-- 启用命令行模式：: / ?
+	-- 		wilder.setup({ modes = { ":", "/", "?" } })
+	--
+	-- 		-- 使用 wilder 内置键配置（Tab / S-Tab 切换候选）
+	-- 		wilder.set_option("next_key", "<Tab>")
+	-- 		wilder.set_option("previous_key", "<S-Tab>")
+	--
+	-- 		-- highlighter：优先 pcre2（若可用），否则 basic
+	-- 		local highlighters = {}
+	-- 		if type(wilder.pcre2_highlighter) == "function" then
+	-- 			table.insert(highlighters, wilder.pcre2_highlighter())
+	-- 		end
+	-- 		table.insert(highlighters, wilder.basic_highlighter())
+	--
+	-- 		-- pipeline：cmdline_pipeline（用于 :） + search_pipeline（用于 /、?）
+	-- 		local cmdline_pl = wilder.cmdline_pipeline({
+	-- 			fuzzy = 1,
+	-- 			fuzzy_filter = wilder.lua_fzy_filter(),
+	-- 		})
+	-- 		local search_pl = wilder.search_pipeline()
+	--
+	-- 		wilder.set_option("pipeline", wilder.branch(cmdline_pl, search_pl))
+	--
+	-- 		-- renderer：popupmenu（边框、devicons、scrollbar）
+	-- 		local renderer = wilder.popupmenu_renderer(wilder.popupmenu_border_theme({
+	-- 			highlights = { border = "Normal" },
+	-- 			border = "rounded",
+	-- 			highlighter = highlighters,
+	-- 			left = { " ", wilder.popupmenu_devicons() },
+	-- 			right = { " ", wilder.popupmenu_scrollbar() },
+	-- 			max_height = 15,
+	-- 			pumblend = 0,
+	-- 		}))
+	-- 		wilder.set_option("renderer", renderer)
+	-- 	end,
+	-- },
 
 	-- {
 	-- 	"hrsh7th/nvim-cmp",
