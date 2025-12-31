@@ -1,0 +1,67 @@
+# Alacritty 基本配置示例（含中文注释）
+
+[window]
+opacity = 1.0                          # 窗口透明度（0.0~1.0，1为不透明）
+
+[font]
+normal = { family = "Maple Mono NF CN SemiBold", style = "SemiBold Italic" }
+bold = { family = "Maple Mono NF CN SemiBold", style = "SemiBold Italic" }
+# normal = { family = "Maple Mono NF CN Medium", style = "Medium Italic" }
+# bold = { family = "Maple Mono NF CN Medium", style = "Medium Italic" }
+italic = { family = "Maple Mono NF CN SemiBold", style = "Italic" }
+size = 24                            # 字体大小
+# features = "liga"
+
+# Offset 是每个字符周围的额外空白。offset.y 可以理解为调整行间距，offset.x 可以理解为调整字间距。
+[font.offset]
+x = 0
+y = 8
+
+# draw_bold_text_with_bright_colors = true  # 粗体文本使用亮色
+
+# 配色方案
+[colors.primary]
+background = "#ffffdd"   # 浅黄色背景
+foreground = "#000000"   # 黑色字体
+
+[cursor]
+style = "block"           # 光标样式为竖线（Beam）
+unfocused_hollow = true
+
+[colors.cursor]
+text = "#1e1e1e"         # 光标上的文本颜色
+cursor = "#d4d4d4"       # 光标颜色
+
+[colors.selection]
+text = "#1e1e1e"         # 选中文本颜色
+background = "#c0c0c0"   # 选中背景色
+
+[colors.normal]
+black = "#1e1e1e"
+red = "#d16969"
+green = "#608b4e"
+yellow = "#d7ba7d"
+blue = "#569cd6"
+magenta = "#c586c0"
+cyan = "#4ec9b0"
+white = "#d4d4d4"
+
+[colors.bright]
+black = "#262626"
+red = "#e06c75"
+green = "#98c379"
+yellow = "#e5c07b"
+blue = "#61afef"
+magenta = "#c678dd"
+cyan = "#56b6c2"
+white = "#ffffff"
+
+[scrolling]
+history = 10000           # 滚动历史行数
+multiplier = 3            # 滚轮滚动速度
+
+[selection]
+save_to_clipboard = true  # 复制时自动选中到系统剪贴板
+
+[mouse]
+hide_when_typing = true   # 输入时自动隐藏鼠标指针

@@ -1,0 +1,42 @@
+[user]
+    name = SZP-ub                  # 用户名
+    email = SZP0629@outlook.com    # 邮箱
+
+[core]
+    editor = nvim                  # 默认编辑器设置为 nvim
+    compression = 9                # 最高压缩级别，加快推送/拉取速度
+    ; whitespace = error           # 检查空白错误（已注释）
+    ; preloadindex = true          # 加速索引预加载（已注释）
+
+[branch]
+    sort = -committerdate          # 分支按最后提交时间倒序排列
+
+[tag]
+    sort = -taggerdate             # 标签按打标签时间倒序排列
+
+[diff]
+    tool = nvimdiff               # 设置 nvimdiff 为默认的 diff 工具
+
+[merge]
+    tool = nvimdiff               # 设置 nvimdiff 为默认的合并工具
+
+; [push]
+;     autoSetupRemote = true       # 推送时自动设置远程（已注释）
+;     default = current            # 默认推送当前分支（已注释）
+
+; [pull]
+;     default = current            # 默认拉取当前分支（已注释）
+;     rebase = true                # 拉取时自动 rebase（已注释）
+
+; [rebase]
+;     autoStash = true             # rebase 前自动 stash（已注释）
+;     missingCommitsCheck = warn   # 检查丢失提交并警告（已注释）
+
+; [log]
+;     abbrevCommit = true          # 日志显示简短 commit（已注释）
+
+[url "git@github.com:SZP-ub/nvim-config.git/"]
+    insteadOf = "nvim"               # 使用 nvim 作为该仓库的简写
+
+[url "git@github.com:SZP-ub/bash.git"]
+    insteadOf = "bash"               # 使用 bash 作为该仓库的简写

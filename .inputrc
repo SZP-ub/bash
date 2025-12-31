@@ -1,0 +1,43 @@
+# 打开终端
+"\C-\M-t": "alacritty\C-m"
+
+# 大小写不敏感的Tab补全
+set completion-ignore-case On
+
+# 显示所有可用的补全项
+set show-all-if-ambiguous on
+
+# 设置菜单补全时显示前缀（已注释）
+set menu-complete-display-prefix on
+TAB:menu-complete
+
+# 标记符号链接的目录
+set mark-symlinked-directories on
+
+# bash中的vim模式（已注释）
+# set show-mode-in-prompt on
+# set vi-ins-mode-string ""
+# set vi-cmd-mode-string ""
+
+# 常用快捷键绑定
+Control-l:clear-screen   # Ctrl+l 清屏
+
+# 用nvim打开文件（已注释）
+# Control-v:"v \C-t"
+
+# 退格直到斜杠或空白字符
+Control-g: unix-filename-rubout
+
+# Alt+左/右方向键在bash提示符中按单词前后移动
+# "\e[1;3D": backward-word
+# "\e[1;3C": forward-word
+
+# Alt+h 和 Alt+l 在bash提示符中按单词前后移动
+# "\eh": backward-word
+# "\el": forward-word
+
+# Alt+j 和 Alt+k 在历史记录中前后移动
+# Control-p:history-search-backward 
+# Control-n:history-search-forward
+# "\e[A":history-search-backward 
+# "\e[B":history-search-forward
