@@ -381,7 +381,7 @@ return {
 			"L3MON4D3/LuaSnip", -- snippet engine
 			-- "f3fora/cmp-spell", -- spell source
 			-- "onsails/lspkind-nvim", -- 可选：图标支持
-			"octaltree/cmp-look", -- look source（英语词库）
+			-- "octaltree/cmp-look", -- look source（英语词库）
 		},
 		config = function()
 			local cmp = safe_require("cmp")

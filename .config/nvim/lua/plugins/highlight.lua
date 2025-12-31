@@ -5,38 +5,73 @@ return {
 		"nvim-treesitter/nvim-treesitter",
 		event = "VeryLazy",
 		build = ":TSUpdate",
-		-- main = "nvim-treesitter.configs",
-		main = "nvim-treesitter.config",
-		opts = {
-			auto_install = false,
-			highlight = {
-				enable = true,
-				disable = { "latex" }, -- 禁止 treesitter 为 latex 提供高亮
-				additional_vim_regex_highlighting = false,
-			},
-			ensure_installed = {
-				"cmake",
-				"bash",
-				"diff",
-				"c",
-				"cpp",
-				"lua",
-				"vim",
-				"vimdoc",
-				"query",
-				"elixir",
-				"heex",
-				"javascript",
-				"html",
-				"json",
-				"markdown",
-			},
-			sync_install = false,
-
-			indent = { enable = true },
-		},
-		opts_extend = { "ensure_installed" },
+		config = function()
+			require("nvim-treesitter.config").setup({
+				auto_install = false,
+				highlight = {
+					enable = true,
+					disable = { "latex" }, -- 禁止 treesitter 为 latex 提供高亮
+					additional_vim_regex_highlighting = false,
+				},
+				ensure_installed = {
+					"cmake",
+					"bash",
+					"diff",
+					"c",
+					"cpp",
+					"lua",
+					"vim",
+					"vimdoc",
+					"query",
+					"elixir",
+					"heex",
+					"javascript",
+					"html",
+					"json",
+					"markdown",
+				},
+				sync_install = false,
+				indent = { enable = true },
+			})
+		end,
 	},
+
+	-- {
+	-- 	"nvim-treesitter/nvim-treesitter",
+	-- 	event = "VeryLazy",
+	-- 	build = ":TSUpdate",
+	-- 	-- main = "nvim-treesitter.configs",
+	-- 	-- main = "nvim-treesitter.config",
+	-- 	opts = {
+	-- 		auto_install = false,
+	-- 		highlight = {
+	-- 			enable = true,
+	-- 			disable = { "latex" }, -- 禁止 treesitter 为 latex 提供高亮
+	-- 			additional_vim_regex_highlighting = false,
+	-- 		},
+	-- 		ensure_installed = {
+	-- 			"cmake",
+	-- 			"bash",
+	-- 			"diff",
+	-- 			"c",
+	-- 			"cpp",
+	-- 			"lua",
+	-- 			"vim",
+	-- 			"vimdoc",
+	-- 			"query",
+	-- 			"elixir",
+	-- 			"heex",
+	-- 			"javascript",
+	-- 			"html",
+	-- 			"json",
+	-- 			"markdown",
+	-- 		},
+	-- 		sync_install = false,
+	--
+	-- 		indent = { enable = true },
+	-- 	},
+	-- 	opts_extend = { "ensure_installed" },
+	-- },
 
 	---------------------------------------------------------------------------
 	-- 4. nvim-treesitter-textobjects：
@@ -77,7 +112,7 @@ return {
 		},
 
 		config = function()
-			require("nvim-treesitter.configs").setup({
+			require("nvim-treesitter.config").setup({
 				-- 自动安装 / 启用的解析器
 				ensure_installed = { "lua", "python", "javascript", "typescript", "c", "cpp", "java" },
 				highlight = { enable = true }, -- 语法高亮
