@@ -68,8 +68,7 @@ snippet mark
 
 # header include guard
 snippet once
-	#ifndef ${1:`toupper(vim_snippets#Filename('$1_H', 'UNTITLED_H'))`}
-
+	#ifndef ${1:__INCLUDE_H__}
 	#define $1
 
 	${0:VISUAL}

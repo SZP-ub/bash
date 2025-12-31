@@ -85,6 +85,16 @@ api.nvim_create_autocmd({ "FileType", "BufReadPost", "BufWinEnter" }, {
 })
 
 -----------------------------------------------------------------------
+-- set *.h filetype = c
+-----------------------------------------------------------------------
+vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+	pattern = "*.h",
+	callback = function()
+		vim.bo.filetype = "c"
+	end,
+})
+
+-----------------------------------------------------------------------
 -- 文件类型/插件兼容
 -----------------------------------------------------------------------
 g.markdown_recommended_style = 0 -- 使用自定义 markdown 样式
