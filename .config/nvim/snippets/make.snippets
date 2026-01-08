@@ -1,8 +1,11 @@
 # base
 snippet base
+    vpath %.h include
+    vpath %.c src
+
 	.PHONY: clean, mrproper
 	CC = gcc
-	CFLAGS = -g -Wall
+	CFLAGS = -g -Wall -std=c17 -O0
 
 	all: $1
 
@@ -13,7 +16,7 @@ snippet base
 		$(CC) $(CFLAGS) -o $@ $+
 
 	clean:
-		rm -f *.o core.*
+		rm -f *.o *.core
 
 	mrproper: clean
 		rm -f $1

@@ -40,3 +40,5 @@
 
 [url "git@github.com:SZP-ub/bash.git"]
     insteadOf = "bash"               # 使用 bash 作为该仓库的简写
+[safe]
+	directory = /mnt/hgfs/VsCode/zhishidian

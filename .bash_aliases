@@ -43,7 +43,7 @@ alias gcl='git clone'
 alias grv='git remote -v'
 
 # pandoc 快捷键
-alias pandocpdf='pandoc --pdf-engine=xelatex -V mainfont="Maple Mono NF Medium Italic" -V monofont="Maple Mono NF Medium Italic" -V CJKmainfont="Maple Mono NF CN Medium" -V CJKmonofont="Maple Mono NF CN Medium"'
+alias pandocpdf='pandoc --pdf-engine=xelatex -V mainfont="Maple Mono NF CN Medium Italic" -V monofont="Maple Mono NF CN Medium Italic" -V CJKmainfont="Maple Mono NF CN Medium" -V CJKmonofont="Maple Mono NF CN Medium"'
 
 # batcat 增强
 alias cat='batcat --style=numbers'
