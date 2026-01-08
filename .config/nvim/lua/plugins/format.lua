@@ -79,11 +79,21 @@ return {
 					typescript = { "prettier" },
 					javascriptreact = { "prettier" },
 					typescriptreact = { "prettier" },
+
+					make = { "mbake" },
+					mk = { "mbake" },
+					makefile = { "mbake" },
 				},
 				formatters = {
 					prettier = {
 						-- 4 空格缩进
 						prepend_args = { "--tab-width", "4" },
+					},
+					mbake = {
+						-- 用完整路径更稳妥（避免 PATH 问题）
+						command = vim.fn.stdpath("data") .. "/mason/bin/mbake",
+						args = { "format", "--stdin" }, -- mbake 需要 "format <file>"
+						stdin = true, -- 通过文件路径传入，而不是 stdin
 					},
 				},
 				-- 不启用全局 format_on_save，完全由快捷键 <space>w 控制

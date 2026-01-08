@@ -315,6 +315,7 @@ return {
 						workspace = { checkThirdParty = false }, -- 不自动弹出第三方库提示
 						hint = { enable = true }, -- 开启内联提示（需配合 inlay hints）
 						diagnostics = { globals = { "vim" } }, -- 避免在 Neovim 配置中提示 vim 未定义
+						-- format = { enable = true },
 					},
 				},
 			})

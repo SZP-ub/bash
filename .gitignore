@@ -19,6 +19,7 @@
 .config/xed/
 .config/xfce4/
 .dmrc
+.lesshst
 .gtkrc-2.0
 .gtkrc-xfce
 .linuxmint/

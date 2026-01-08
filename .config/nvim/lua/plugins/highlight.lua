@@ -4,9 +4,10 @@ return {
 	{
 		"nvim-treesitter/nvim-treesitter",
 		event = "VeryLazy",
+		branch = "master",
 		build = ":TSUpdate",
 		config = function()
-			require("nvim-treesitter.config").setup({
+			require("nvim-treesitter.configs").setup({
 				auto_install = false,
 				highlight = {
 					enable = true,
@@ -112,7 +113,7 @@ return {
 		},
 
 		config = function()
-			require("nvim-treesitter.config").setup({
+			require("nvim-treesitter.configs").setup({
 				-- 自动安装 / 启用的解析器
 				ensure_installed = { "lua", "python", "javascript", "typescript", "c", "cpp", "java" },
 				highlight = { enable = true }, -- 语法高亮
