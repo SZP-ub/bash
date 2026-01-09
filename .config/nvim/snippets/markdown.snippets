@@ -42,27 +42,24 @@ snippet link "Link to something"
 snippet img "Image"
     ![${1:pic alt}](${2:path}${3/.+/ "/}${3:opt title}${3/.+/"/})$0
 
-snippet ilc "Inline Code"
-    `${1:${VISUAL}}`$0
-
-# Markdown
-
-# Includes octopress (http://octopress.org/) snippets
-
-# The suffix `c` stands for "Clipboard".
-
 snippet [
 	[${1:text}](${2:address})
+
 snippet [*
 	[${1:link}](${2:`@*`})
+
 snippet [c
 	[${1:link}](${2:`@+`})
+
 snippet ["
 	[${1:text}](https://${2:address} "${3:title}")
+
 snippet ["*
 	[${1:link}](${2:`@*`} "${3:title}")
+
 snippet ["c
 	[${1:link}](${2:`@+`} "${3:title}")
+
 snippet [:
 	[${1:id}]: https://${2:url}
 
@@ -83,16 +80,22 @@ snippet [:"c
 
 snippet ![
 	![${1:alttext}](${2:/images/image.jpg})
+
 snippet ![*
 	![${1:alt}](${2:`@*`})
+
 snippet ![c
 	![${1:alt}](${2:`@+`})
+
 snippet !["
 	![${1:alttext}](${2:/images/image.jpg} "${3:title}")
+
 snippet !["*
 	![${1:alt}](${2:`@*`} "${3:title}")
+
 snippet !["c
 	![${1:alt}](${2:`@+`} "${3:title}")
+
 snippet ![:
 	![${1:id}]: ${2:url}
 
@@ -110,14 +113,16 @@ snippet ![:"c
 
 snippet <
 	<http://${1:url}>
+
 snippet <*
 	<`@*`>
+
 snippet <c
 	<`@+`>
-snippet ** Bold
-	**$0**
+
 snippet __ Bold
 	__$0__
+
 snippet --- Front matter
 	---
 	$0
@@ -126,12 +131,15 @@ snippet ====
 	`repeat('=', strlen(getline(line('.') - 3)))`
 
 	${0}
+
 snippet -
 	-   ${0}
+
 snippet ----
 	`repeat('-', strlen(getline(line('.') - 3)))`
 
 	${0}
+
 snippet blockquote
 	{% blockquote %}
 	${0:quote}
@@ -193,6 +201,7 @@ snippet pullquote
 snippet : Definition list
 	$1
 	: $0
+
 snippet :: Alternate definition list
 	$1
 	  - $0
