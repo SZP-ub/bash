@@ -1,22 +1,5 @@
 ---@diagnostic disable: undefined-global
 
---[[ 
-  优化后的 Neovim 插件配置（mason + mason-lspconfig + nvim-cmp + wilder）
-  说明：
-    - 该文件为 plugin 配置表，适用于 lazy.nvim、packer 等插件管理器中作为插件清单使用。
-    - 目标：稳定、性能友好、可读性高、易于按需调整。
-    - 重点关注：LSP 启动与能力配置（capabilities）、自动安装（mason）、插入模式补全（nvim-cmp）与命令行补全（wilder）。
---]]
-
--- 优化说明（简要）：
--- 1) 提前准备并复用 capabilities，避免使用顺序错误。
--- 2) 对可选依赖使用安全加载（safe_require / pcall），避免部分插件缺失导致整套配置失败。
--- 3) 合并与精简重复配置，统一把公共能力与 flags 设为全局默认。
--- 4) lua-language-server 尽量使用 PATH 上的可执行文件，若未安装给出提示（便于容器 / CI 场景调整）。
--- 5) 对 documentHighlight 添加文件大小保护（避免打开大文件时代码卡顿）。
--- 6) 保留并优化了 nvim-cmp（插入模式）与 wilder（命令行）之间的职责分离，避免冲突。
--- 7) 全文件均以中文注释解释每段意图与可调整选项，方便长期维护。
-
 -- 小工具：安全 require（统一封装 pcall(require, ...)）
 -- 返回模块或 nil（失败时不抛错）
 local function safe_require(name)

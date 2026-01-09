@@ -17,12 +17,11 @@ size = 24                            # 字体大小
 x = 0
 y = 8
 
-# draw_bold_text_with_bright_colors = true  # 粗体文本使用亮色
-
 # 配色方案
 [colors.primary]
-background = "#ffffdd"   # 浅黄色背景
-foreground = "#000000"   # 黑色字体
+# background = "#ffffdd"   # 浅黄色背景
+# foreground="#80cbc4"
+foreground="#ffaa33"
 
 [cursor]
 style = "block"           # 光标样式为竖线（Beam）

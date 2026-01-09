@@ -79,7 +79,7 @@ return {
 				},
 				exclude = {
 					filetypes = {
-						-- "markdown",
+						"markdown",
 						"help",
 						"startify",
 						"dashboard",

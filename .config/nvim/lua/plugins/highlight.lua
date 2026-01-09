@@ -30,9 +30,12 @@ return {
 					"html",
 					"json",
 					"markdown",
+					"markdown_inline",
 				},
 				sync_install = false,
 				indent = { enable = true },
+				incremental_selection = { enable = true },
+				playground = { enable = false },
 			})
 		end,
 	},
