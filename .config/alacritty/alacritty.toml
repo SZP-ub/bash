@@ -19,9 +19,9 @@ y = 8
 
 # 配色方案
 [colors.primary]
-# background = "#ffffdd"   # 浅黄色背景
-# foreground="#80cbc4"
-foreground="#ffaa33"
+background = "#ffffdd"   # 浅黄色背景
+foreground="#80cbc4"
+# foreground="#ffaa33"
 
 [cursor]
 style = "block"           # 光标样式为竖线（Beam）

@@ -46,7 +46,7 @@ alias grv='git remote -v'
 alias pandocpdf='pandoc --pdf-engine=xelatex -V mainfont="Maple Mono NF CN Medium Italic" -V monofont="Maple Mono NF CN Medium Italic" -V CJKmainfont="Maple Mono NF CN Medium" -V CJKmonofont="Maple Mono NF CN Medium"'
 
 # batcat 增强
-alias cat='batcat --style=numbers'
+alias cat='batcat --style=numbers,changes --theme=base16-256'
 
 # core 文件生成
 coredump() {

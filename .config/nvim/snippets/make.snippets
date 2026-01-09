@@ -1,27 +1,73 @@
 # base
 snippet base
-    .PHONY: clean mrproper
     CC = gcc
-    CFLAGS = -g -Wall -std=c17 -O0
+    CFLAGS = -std=c17 -O0 -g -Wall
 
     all: $1
 
     %.o: %.c
-        $(CC) $(CFLAGS) -c -o $@ $<
+        $(CC) $(CFLAGS) -c $< -o $@
 
     ${1:out}: $1.o
-        $(CC) $(CFLAGS) -o $@ $+
+        $(CC) $(CFLAGS) $+ -o $@
 
+    .PHONY: clean mrproper
     clean:
         rm -f *.o *.core
 
     mrproper: clean
         rm -f $1
 
+# $^
+snippet ^
+    $^
+
+# $<
+snippet <
+    $<
+
+# $+
+snippet +
+    $+
+
+# $?
+snippet ?
+    $?
+
+# $@
+snippet @
+    $@
+
+# $|
+snippet |
+    $|
+
+# $*
+snippet *
+    $*
+
+# $%
+snippet %
+    $%
+
 # add
 snippet add
 	${1:out}: $1.o
-		$(CC) $(CFLAGS) -o $@ $+
+		$(CC) $(CFLAGS) $+ -o $@
+
+# out
+snippet out
+    ${1:VISUAL}: ${2:VISUAL}
+        $(CC) $(CFLAGS) $^ -o $1.out
+
+# wildcard
+snippet wild
+    $(wildcard $1)
+
+# patsubst
+snippet patsubst
+     $(patsubst ${1:VISUAL}, ${2:VISUAL}, ${3:VISUAL})
+
 
 # $()
 snippet 4
@@ -59,4 +105,3 @@ snippet help
 	help: ## Prints help for targets with comments
 		@cat $(MAKEFILE_LIST) | grep -E '^[a-zA-Z_-]+:.*?## .*$$' | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $\$1, $\$2}'
 	${0}
-

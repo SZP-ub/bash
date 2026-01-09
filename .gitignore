@@ -36,6 +36,10 @@
 .xsession-errors
 .xsession-errors.old
 zara-backports.list
+.config/fcitx5/conf/classicui.conf
+.config/fcitx5/conf/keyboard.conf
+.config/fcitx5/conf/table.conf
+.config/fcitx5/conf/xim.conf
 .pki/
 下载
 公共
