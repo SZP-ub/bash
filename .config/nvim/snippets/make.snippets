@@ -72,6 +72,14 @@ snippet patsubst
 snippet 4
     $($1)$0
 
+# VPATH
+snippet PATH
+    VPATH = ${1:dir1}:${2:dir2}
+
+# vpath
+snippet path
+    vpath = ${1:pattern} ${2:directories}
+
 # print
 snippet print
 	print-%: ; @echo $*=$($*)

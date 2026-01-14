@@ -1,5 +1,6 @@
 ---@diagnostic disable: undefined-global
 
+-- vim.g.python3_host_prog = os.getenv("HOME") .. "/.local/share/nvim-venv/bin/python"
 local opt = vim.opt
 local o = vim.o
 local g = vim.g

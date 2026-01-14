@@ -362,7 +362,7 @@ return {
 			"saadparwaiz1/cmp_luasnip", -- luasnip source
 			"hrsh7th/cmp-buffer", -- buffer source
 			"hrsh7th/cmp-path", -- path source
-			"L3MON4D3/LuaSnip", -- snippet engine
+			{ "L3MON4D3/LuaSnip", version = "v2.*" }, -- snippet engine
 			-- "f3fora/cmp-spell", -- spell source
 			-- "onsails/lspkind-nvim", -- 可选：图标支持
 			-- "octaltree/cmp-look", -- look source（英语词库）
