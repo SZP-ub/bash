@@ -364,7 +364,7 @@ return {
 			"hrsh7th/cmp-path", -- path source
 			{ "L3MON4D3/LuaSnip", version = "v2.*" }, -- snippet engine
 			"lukas-reineke/cmp-rg",
-			{ "kdheepak/cmp-latex-symbols", ft = { "latex" } },
+			{ "kdheepak/cmp-latex-symbols", ft = { "latex", "markdown", "markdown_inline" } },
 			"rasulomaroff/cmp-bufname",
 
 			-- "delphinus/cmp-ctags",
