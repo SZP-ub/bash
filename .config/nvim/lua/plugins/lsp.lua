@@ -363,6 +363,11 @@ return {
 			"hrsh7th/cmp-buffer", -- buffer source
 			"hrsh7th/cmp-path", -- path source
 			{ "L3MON4D3/LuaSnip", version = "v2.*" }, -- snippet engine
+			"lukas-reineke/cmp-rg",
+			{ "kdheepak/cmp-latex-symbols", ft = { "latex" } },
+			"rasulomaroff/cmp-bufname",
+
+			-- "delphinus/cmp-ctags",
 			-- "f3fora/cmp-spell", -- spell source
 			-- "onsails/lspkind-nvim", -- 可选：图标支持
 			-- "octaltree/cmp-look", -- look source（英语词库）
@@ -523,15 +528,15 @@ return {
 						},
 					},
 					{ name = "nvim_lsp" },
-					{
-						name = "look",
-						keyword_length = 3,
-						option = {
-							convert_case = true,
-							loud = true,
-							--dict = '/usr/share/dict/words'
-						},
-					},
+					-- {
+					-- 	name = "look",
+					-- 	keyword_length = 3,
+					-- 	option = {
+					-- 		convert_case = true,
+					-- 		loud = true,
+					-- 		--dict = '/usr/share/dict/words'
+					-- 	},
+					-- },
 					-- {
 					-- 	name = "spell",
 					-- 	option = {
@@ -543,6 +548,53 @@ return {
 					-- 	},
 					-- },
 					{ name = "path" },
+					{
+						name = "rg",
+						keyword_length = 3,
+						option = { -- 配置项表
+							additional_arguments = "--hidden --max-depth 2", -- 额外传递给 ripgrep 的命令参数
+							pattern = "[a-zA-Z_]+", -- 用于 ripgrep 匹配的正则表达式
+							-- cwd = "~/projects", -- 指定 ripgrep 搜索的根目录
+							debounce = 500, -- 启动新 ripgrep 搜索前的防抖延迟（毫秒）
+							context_before = 2, -- 补全文档窗口显示匹配项前的上下文行数
+							context_after = 4, -- 补全文档窗口显示匹配项后的上下文行数
+							-- debug = true, -- 输出 ripgrep stderr 进行调试
+						},
+					},
+					{
+						name = "latex_symbols",
+						option = {
+							strategy = 0, -- mixed
+						},
+					},
+					{
+						name = "bufname",
+						option = {
+							-- use only current buffer for filename exractions
+							current_buf_only = false,
+
+							-- allows to configure what buffers to extract a filename from
+							bufs = function()
+								return vim.api.nvim_list_bufs()
+							end,
+
+							-- configure which entries you want to include in your completion:
+							-- - you have to return a table of entries
+							-- - empty string means skip that particular entry
+							extractor = function(filename, full_path)
+								return { filename:match("[^.]*") }
+							end,
+						},
+					},
+					-- {
+					-- 	name = "ctags",
+					-- 	-- default values
+					-- 	option = {
+					-- 		executable = "ctags",
+					-- 		trigger_characters = { "." },
+					-- 		trigger_characters_ft = {},
+					-- 	},
+					-- },
 				}),
 
 				-- 实验性功能：ghost_text（在文本后显示预测文本）
