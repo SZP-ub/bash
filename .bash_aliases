@@ -61,3 +61,6 @@ alias gtest='gcc -fsanitize=address -std=c17 /home/i/tools/Unity/src/unity.c'
 
 # cdecl 解释说明变量定义
 alias cdecl='cdecl explain'
+
+# more 增强
+alias more='more -d -s'

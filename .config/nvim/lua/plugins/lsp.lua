@@ -1,5 +1,3 @@
----@diagnostic disable: undefined-global
-
 -- 小工具：安全 require（统一封装 pcall(require, ...)）
 -- 返回模块或 nil（失败时不抛错）
 local function safe_require(name)
@@ -495,7 +493,10 @@ return {
 				formatting = {
 					fields = { "kind", "abbr", "menu" },
 					format = function(entry, vim_item)
-						vim_item.kind = (kind_icons[vim_item.kind] or "") .. " " .. vim_item.kind
+						-- 关键改动：
+						-- 仅显示图标作为 kind（不再拼接文字 "Text" 等），避免与候选文本重复出现
+						vim_item.kind = (kind_icons[vim_item.kind] or "") -- 仅图标
+						-- menu 用来显示来源简短标签（保持原样）
 						vim_item.menu = ({
 							luasnip = "[Snip]",
 							buffer = "[Buf]",
@@ -512,11 +513,6 @@ return {
 					{
 						name = "buffer",
 						option = {
-							-- 		-- 默认只从当前 buffer 获取补全，改为从所有 buffer 获取以提高跨文件补全
-							-- 		get_bufnrs = function()
-							-- 			return vim.api.nvim_list_bufs()
-							-- 		end,
-
 							-- Visible buffer
 							get_bufnrs = function()
 								local bufs = {}
@@ -528,25 +524,6 @@ return {
 						},
 					},
 					{ name = "nvim_lsp" },
-					-- {
-					-- 	name = "look",
-					-- 	keyword_length = 3,
-					-- 	option = {
-					-- 		convert_case = true,
-					-- 		loud = true,
-					-- 		--dict = '/usr/share/dict/words'
-					-- 	},
-					-- },
-					-- {
-					-- 	name = "spell",
-					-- 	option = {
-					-- 		keep_all_entries = false,
-					-- 		enable_in_context = function()
-					-- 			return true
-					-- 		end,
-					-- 		preselect_correct_word = true,
-					-- 	},
-					-- },
 					{ name = "path" },
 					{
 						name = "rg",
@@ -586,15 +563,6 @@ return {
 							end,
 						},
 					},
-					-- {
-					-- 	name = "ctags",
-					-- 	-- default values
-					-- 	option = {
-					-- 		executable = "ctags",
-					-- 		trigger_characters = { "." },
-					-- 		trigger_characters_ft = {},
-					-- 	},
-					-- },
 				}),
 
 				-- 实验性功能：ghost_text（在文本后显示预测文本）

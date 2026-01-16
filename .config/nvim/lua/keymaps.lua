@@ -163,7 +163,7 @@ vim.keymap.set("n", "<space>bn", "<C-^>", { noremap = true, desc = "切换到上
 vim.keymap.set("n", "<Space>vw", ":vnew<CR>", { silent = true, desc = "新建垂直窗口" })
 vim.keymap.set("n", "<space>nw", ':vnew<CR>:normal! "*p<CR>', { noremap = true, desc = "新建窗口并粘贴" })
 vim.keymap.set("n", "<Space>br", "<C-w>r", { silent = true, desc = "窗口旋转" })
-vim.keymap.set("n", "<Space>brr", "<C-w>R", { silent = true, desc = "窗口反向旋转" })
+-- vim.keymap.set("n", "<Space>brr", "<C-w>R", { silent = true, desc = "窗口反向旋转" })
 vim.keymap.set("n", "<space>df", ":diffthis<CR>", { noremap = true, desc = "当前窗口加入diff" })
 
 -- ==================== 智能关闭窗口或缓冲区 ====================
@@ -215,6 +215,7 @@ vim.keymap.set("n", "gf", "gF", { desc = "跳转到文件并定位行" })
 vim.keymap.set("n", "J", "gJ", { desc = "连接行（软换行）" })
 vim.keymap.set("n", "H", "^", { desc = "行首" })
 vim.keymap.set("n", "L", "g_", { desc = "行尾（软换行）" })
+vim.keymap.set("n", "<space><space>", "<C-f>", { desc = "向下翻页" })
 vim.keymap.set("n", "<Tab>", "gt", { noremap = true })
 
 -- ==================== ctrl组合键 ====================
