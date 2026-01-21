@@ -74,48 +74,20 @@ return {
 		end,
 	},
 
-	-- {
-	-- 	"echasnovski/mini.pairs",
-	-- 	event = "InsertEnter",
-	-- 	config = function()
-	-- 		local pairs = require("mini.pairs")
-	--
-	-- 		-- 使用基本默认配置即可，mappings 保持常见括号/引号补全
-	-- 		pairs.setup({
-	-- 			mappings = {
-	-- 				-- 开括号：在输入 ( [ { 时自动补上对应闭合符号
-	-- 				["("] = { action = "open", pair = "()", neigh_pattern = "[^\\].", register = { cr = false } },
-	-- 				["["] = { action = "open", pair = "[]", neigh_pattern = "[^\\].", register = { cr = false } },
-	-- 				["{"] = { action = "open", pair = "{}", neigh_pattern = "[^\\].", register = { cr = false } },
-	--
-	-- 				-- 关括号：在输入 ) ] } 时处理关闭行为（通常用于跳过或正确处理闭合）
-	-- 				[")"] = { action = "close", pair = "()", neigh_pattern = "[^\\]." },
-	-- 				["]"] = { action = "close", pair = "[]", neigh_pattern = "[^\\]." },
-	-- 				["}"] = { action = "close", pair = "{}", neigh_pattern = "[^\\]." },
-	--
-	-- 				-- 引号：使用 closeopen 模式，使得在插入引号时能够在双引号/单引号/反引号间智能切换
-	-- 				['"'] = { action = "closeopen", pair = '""', neigh_pattern = "[^\\].", register = { cr = false } },
-	-- 				["'"] = { action = "closeopen", pair = "''", neigh_pattern = "[^\\].", register = { cr = false } },
-	-- 				["`"] = { action = "closeopen", pair = "``", neigh_pattern = "[^\\].", register = { cr = false } },
-	-- 			},
-	-- 		})
-	-- 	end,
-	-- },
-
 	-- =========================
 	-- tpope/vim-repeat：让 . 可以重复更多 plugin 操作
 	-- =========================
-	{
-		"tpope/vim-repeat",
-		lazy = true,
-	},
+	-- {
+	-- 	"tpope/vim-repeat",
+	-- 	lazy = true,
+	-- },
 
 	-- =========================
 	-- mini.surround：替代 nvim-surround 的 surround 功能（添加/删除/替换环绕）
 	-- =========================
 	{
 		"echasnovski/mini.surround",
-		dependencies = { "tpope/vim-repeat" }, -- 保持与原 plugin 的 repeat 行为，以支持 . 重复
+		-- dependencies = { "tpope/vim-repeat" }, -- 保持与原 plugin 的 repeat 行为，以支持 . 重复
 		keys = {
 			{ "ys", mode = { "n", "x" }, desc = "添加包裹" }, -- operator-pending（n）和 visual（x）
 			{ "ds", mode = "n", desc = "删除包裹" },

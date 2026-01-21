@@ -364,6 +364,7 @@ return {
 			"lukas-reineke/cmp-rg",
 			{ "kdheepak/cmp-latex-symbols", ft = { "latex", "markdown", "markdown_inline" } },
 			"rasulomaroff/cmp-bufname",
+			-- "ray-x/cmp-treesitter",
 
 			-- "delphinus/cmp-ctags",
 			-- "f3fora/cmp-spell", -- spell source
@@ -509,7 +510,9 @@ return {
 
 				-- 补全来源配置（按优先级排列）
 				sources = cmp.config.sources({
+					-- { name = "nvim_insert_text_lsp" },
 					{ name = "luasnip" },
+					-- { name = "treesitter" },
 					{
 						name = "buffer",
 						option = {
