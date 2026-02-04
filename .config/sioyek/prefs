@@ -1,0 +1,270 @@
+# 更多信息请参见文档：https://sioyek-documentation.readthedocs.io/
+
+# （可为0或1）如果设置，则在启动时显示新版本可用的通知
+check_for_updates_on_startup	1
+
+# 使用旧的按键绑定解析方法（仅用于兼容旧版本）
+use_legacy_keybinds 0
+
+# 清除屏幕后渲染PDF时使用的颜色（这是应用程序的背景色，不是PDF文件的背景色）
+background_color    0.97 0.97 0.97
+dark_mode_background_color    0.0 0.0 0.0
+
+# 在黑色背景下显示纯白色文字可能会刺眼，可以通过对比度选项稍微降低白色亮度
+dark_mode_contrast			0.8
+
+# 使用鼠标选择文本时的高亮颜色
+text_highlight_color    1.0 1.0 0.0
+
+# 右键按下时显示的高亮标尺颜色
+visual_mark_color    0.0 0.0 0.0 0.1
+
+# 搜索匹配文本时的高亮颜色
+search_highlight_color  0.0 1.0 0.0
+
+# PDF链接的高亮颜色（默认关闭高亮，仅在执行toggle_highlight命令后可见，详见keys.config）
+link_highlight_color    0.0 0.0 1.0
+
+# synctex正向搜索高亮的颜色
+synctex_highlight_color    1.0 0.0 1.0
+
+# 执行external_search命令时使用的网址
+search_url_s	https://scholar.google.com/scholar?q=
+search_url_g	https://www.google.com/search?q=
+
+# 中键点击或Shift中键点击文本时选择哪个搜索网址（值为对应search_url_*的字母）
+# 例如设置为middle_click_search_engine	s，则使用search_url_s对应的网址进行中键搜索
+middle_click_search_engine			s
+shift_middle_click_search_engine	l
+
+# 执行zoom_in或zoom_out时缩放的倍数
+zoom_inc_factor         1.2
+
+# 执行move_*命令时垂直/水平移动的英寸数
+vertical_move_amount    1.0
+horizontal_move_amount    1.0
+
+# 执行screen_down/screen_up时通常不会移动整屏，以避免丢失上下文
+# 此处指定执行这些命令时移动的屏幕宽度比例
+move_screen_ratio      0.5
+
+# 如果为0，目录以树状结构显示，否则以扁平列表显示（适用于极大目录可提升性能）
+flat_toc                            0
+
+# 如果为1，检测到多显示器时自动在第二个显示器上打开辅助窗口
+should_use_multiple_monitors        1
+
+# 如果最后打开的文档为空，则加载教程PDF
+should_load_tutorial_when_no_other_file	1
+
+# （已弃用，建议使用should_launch_new_window）如果为0，则打开新文件时复用之前的sioyek实例
+# 否则每次打开新文件都启动新实例
+should_launch_new_instance				1
+
+# 如果设置，则打开新文件时会新建一个sioyek窗口，否则在原窗口打开文件
+should_launch_new_window				1
+
+# 用于LaTeX文档反向搜索的命令。取消注释并填写自己的命令。
+# %1为文件名，%2为行号
+inverse_search_command 		"nvr --remote-silent +%2 %1"
+
+# 可为26种不同高亮类型分别指定高亮颜色
+
+# 使用视觉标记移动到下一行时，设置标记距离屏幕顶部的比例（屏幕中心为0，顶部为1）
+visual_mark_next_page_fraction	0.75
+
+# 使用视觉标记移动到下一行时，设置屏幕移动的阈值（屏幕中心为1，底部为0）
+visual_mark_next_page_threshold	0.25
+
+# 如果设置，则为未渲染页面显示棋盘格图案（默认不显示）
+should_draw_unrendered_pages	0
+
+# 如果为0，概览窗口使用之前的渲染，可能会模糊
+# 如果为1，则以正确分辨率重新渲染概览窗口，效果更好但可能增加耗电
+rerender_overview 1
+
+## 概览窗口的大小（1为窗口最大，有效范围[0, 1]）
+# overview_size 0.5 0.5
+
+## 概览窗口中心的偏移量（(0,0)为屏幕中心，有效范围[-1, 1]）
+# overview_offset 0.5 0.5
+
+# 使用线性纹理过滤代替最近邻过滤
+# 可提升高分辨率屏幕显示效果
+# linear_filter 1
+
+# 默认使用深色模式（已弃用，建议在startup_commands中添加toggle_dark_mode）
+default_dark_mode	0
+
+# 如果设置，则按位置排序书签，否则按创建时间排序
+sort_bookmarks_by_location	1
+
+## shared.db数据库文件路径。如果未设置，则使用默认路径。
+## 可设置为同步文件夹中的文件（如Dropbox），实现多台电脑自动同步
+#shared_database_path    /some/path/shared.db
+
+## UI文本使用的字体名称
+#ui_font Some Font Name
+## UI字体大小
+#font_size 20
+
+## sioyek启动时要执行的命令（用分号分隔）
+#startup_commands    toggle_visual_scroll;toggle_dark_mode
+
+## 执行toggle_custom_color时使用的背景色
+custom_background_color 0.180 0.204 0.251
+## 执行toggle_custom_color时使用的文本颜色
+custom_text_color 0.847 0.871 0.914
+
+# 鼠标滚轮通常以屏幕中心为缩放点，设置为1则以光标位置为缩放点
+wheel_zoom_on_cursor 0
+
+## 状态栏背景颜色
+#status_bar_color 0 0 0
+## 状态栏文字颜色
+#status_bar_text_color 1 1 1
+## 状态栏文字字体大小
+#status_bar_font_size 20
+
+## 辅助窗口关闭时主窗口默认大小
+#single_main_window_size 800 600
+#single_main_window_move 100 100
+
+## 打开辅助窗口时主/辅助窗口的默认大小和偏移。可用copy_window_size_config命令复制此配置
+#main_window_size 800 600
+#main_window_move 100 100
+#helper_window_size 800 600
+#helper_window_move 100 100
+
+## 触控板/滚轮灵敏度
+#touchpad_sensitivity 1.0
+
+## 页面分隔线外观设置
+#page_separator_width 2
+#page_separator_color	0.9 0.9 0.9
+
+# fit_to_page_width_ratio命令使用的页面宽度比例
+fit_to_page_width_ratio 0.75
+
+# 如果设置，则初始折叠目录条目
+collapsed_toc 0
+
+# 如果设置，则在visual_scroll_mode下高亮当前行并遮罩上下行
+# 未设置时只遮罩当前行下方
+ruler_mode 1
+
+# 额外标尺内边距
+ruler_padding 1.0
+ruler_x_padding 5.0
+
+## visual mark使用mupdf判断文本行，但图片文档有自定义算法
+## 如果force_custom_line_algorithm为1，则所有文档都用自定义算法
+#force_custom_line_algorithm 0
+
+# sioyek会监视此目录的新论文。如果在创建portal时有新论文加入，
+# 新论文会自动作为portal目标文档
+#paper_folder_path /some/path
+
+# 启用实验性功能，可能不稳定
+#enable_experimental_features 0
+
+# 如果文档没有目录则自动创建
+create_table_of_contents_if_not_exists 1
+
+# 创建目录的最大条目数限制
+max_created_toc_size 5000
+
+# 仅在同一文件内重定义按键时在命令行警告。设置为1时，重定义其他文件的按键也会警告
+should_warn_about_user_key_override 1
+
+# 双击选中整个单词，单击选中字符
+single_click_selects_words 0
+
+# 列表项前缀（如书签列表）
+#item_list_prefix >
+
+## 演示模式下，判断页面大小时忽略空白
+#ignore_whitespace_in_presentation_mode 0
+
+## 最近文档列表中显示完整路径而非仅文件名
+#show_doc_path 0
+
+# 菜单项过长时分多行显示而不是截断字符串，适用于超大列表但可能影响性能
+multiline_menus 1
+
+# 演示模式下预渲染下一页以避免闪烁
+prerender_next_page_presentation 1
+
+## 按下修饰键点击或右键点击时运行的自定义命令
+## 命令可以是内置sioyek命令（如overview_under_cursor）或用户自定义命令
+## 使用new_command定义
+# shift_click_command some_command
+# control_click_command some_command
+# alt_click_command some_command
+# shift_right_click_command some_command
+# control_right_click_command some_command
+# alt_right_click_command some_command
+
+# 选中文本且无预览时中键点击高亮
+#highlight_middle_click 1
+
+# 使用超快索引进行搜索，替代mupdf实现
+#super_fast_search 1
+
+# 使用不区分大小写的搜索
+#case_sensitive_search 0
+
+#紫水晶
+highlight_color_a	0.94 0.64 1.00
+#蓝色
+highlight_color_b	0.00 0.46 0.86
+#焦糖
+highlight_color_c	0.60 0.25 0.00
+#李子
+highlight_color_d	0.30 0.00 0.36
+#乌木
+highlight_color_e	0.10 0.10 0.10
+#森林
+highlight_color_f	0.00 0.36 0.19
+#绿色
+highlight_color_g	0.17 0.81 0.28
+#蜜露
+highlight_color_h	1.00 0.80 0.60
+#铁灰
+highlight_color_i	0.50 0.50 0.50
+#翡翠
+highlight_color_j	0.58 1.00 0.71
+#卡其
+highlight_color_k	0.56 0.49 0.00
+#柠檬
+highlight_color_l	0.62 0.80 0.00
+#锦葵
+highlight_color_m	0.76 0.00 0.53
+#海军蓝
+highlight_color_n	0.00 0.20 0.50
+#雌黄
+highlight_color_o	1.00 0.64 0.02
+#粉色
+highlight_color_p	1.00 0.66 0.73
+#沼泽
+highlight_color_q	0.26 0.40 0.00
+#红色
+highlight_color_r	1.00 0.00 0.06
+#天空
+highlight_color_s	0.37 0.95 0.95
+#青绿
+highlight_color_t	0.00 0.60 0.56
+#铀绿
+highlight_color_u	0.88 1.00 0.40
+#紫罗兰
+highlight_color_v	0.45 0.04 1.00
+#酒红
+highlight_color_w	0.60 0.00 0.00
+#黄素
+highlight_color_x	1.00 1.00 0.50
+#黄色
+highlight_color_y	1.00 1.00 0.00
+#百日菊
+highlight_color_z	1.00 0.31 0.02
+
+

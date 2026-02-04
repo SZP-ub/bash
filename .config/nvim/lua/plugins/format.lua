@@ -83,6 +83,7 @@ return {
 					make = { "mbake" },
 					mk = { "mbake" },
 					makefile = { "mbake" },
+					tex = { "tex-fmt" },
 				},
 				formatters = {
 					prettier = {
@@ -95,6 +96,22 @@ return {
 						args = { "format", "--stdin" }, -- mbake 需要 "format <file>"
 						stdin = true, -- 通过文件路径传入，而不是 stdin
 					},
+					["tex-fmt"] = (function()
+						-- 优先使用系统上可执行的绝对路径（更稳妥）
+						local cmd = vim.fn.exepath("latexindent")
+						if cmd == "" then
+							-- 如果找不到 latexindent，保持为 "latexindent" 让系统按 PATH 查找（或改成你本机绝对路径）
+							cmd = "latexindent"
+						end
+
+						return {
+							command = cmd,
+							-- 通过 -y 直接传入缩进配置（defaultIndent 使用四个空格）
+							-- 注意 YAML 里字符串需用单引号包裹空格，外层 Lua 字符串用双引号
+							args = { "-y=defaultIndent: '    '", "-l", "-" },
+							stdin = true,
+						}
+					end)(),
 				},
 				-- 不启用全局 format_on_save，完全由快捷键 <space>w 控制
 			})
