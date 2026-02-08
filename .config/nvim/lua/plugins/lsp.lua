@@ -337,48 +337,48 @@ return {
 			})
 
 			-- texlab（LaTeX）
-			vim.lsp.config("texlab", {
-				name = "texlab",
-				cmd = { "texlab" }, -- 若 texlab 不在 PATH，改为绝对路径，例如 "/usr/local/bin/texlab"
-				filetypes = { "tex", "bib" },
-				-- 根目录检测：常见的 latex 项目标识文件
-				root_dir = root_with({ ".latexmkrc", "latexmkrc", "texlab.json", ".git" }),
-				-- 保持与其它 server 一致的 capabilities（例如 completion 等）
-				capabilities = vim.tbl_deep_extend("force", capabilities, {}),
-				settings = {
-					texlab = {
-						-- build 配置：默认使用 latexmk，打开 synctex，使用 xelatex（如需 pdflatex 改参数）
-						build = {
-							executable = "latexmk", -- 若 latexmk 不在 PATH，请填写绝对路径
-							args = { "-xelatex", "-file-line-error", "-synctex=1", "-interaction=nonstopmode", "%f" },
-							onSave = true, -- 保存时自动构建；若不需要自��构建改为 false
-							forwardSearchAfter = true, -- 构建后尝试触发 forward search
-						},
-						-- forwardSearch：与查看器配合（示例为 Sioyek）
-						forwardSearch = {
-							executable = "sioyek", -- 若使用其它查看器（zathura/okular），改为相应命令并调整 args
-							args = { "--forward-search-file", "%f", "--forward-search-line", "%l", "%p" },
-						},
-						-- chktex（行级 lint）与其它 lint/format 选项
-						chktex = { onOpen = false, onEdit = false, onSave = true, onType = false },
-						lint = { onChange = false }, -- 关闭实时 lint（按需开启）
-						-- formatting / latexindent：如果系统安装了 latexindent，可启用格式化
-						-- 注意：不同版本 texlab 对字段名略有差异，这里给出常见组合
-						formatter = {
-							latexindent = {
-								modifyLineBreaks = true,
-							},
-						},
-						latexindent = {
-							-- 如果你在特定路径安装 latexindent，请写明 path 字段
-							-- path = "/usr/bin/latexindent",
-							modifyLineBreaks = true,
-						},
-						-- 若需要把中间文件放到一个 aux 目录（避免污染源码目录），可以启用下面字段并配合 latexmkrc
-						-- auxDirectory = "aux", -- 需要在 latexmkrc / 编译参数中一并配置
-					},
-				},
-			})
+			-- vim.lsp.config("texlab", {
+			-- 	name = "texlab",
+			-- 	cmd = { "texlab" }, -- 若 texlab 不在 PATH，改为绝对路径，例如 "/usr/local/bin/texlab"
+			-- 	filetypes = { "tex", "bib" },
+			-- 	-- 根目录检测：常见的 latex 项目标识文件
+			-- 	root_dir = root_with({ ".latexmkrc", "latexmkrc", "texlab.json", ".git" }),
+			-- 	-- 保持与其它 server 一致的 capabilities（例如 completion 等）
+			-- 	capabilities = vim.tbl_deep_extend("force", capabilities, {}),
+			-- 	settings = {
+			-- 		texlab = {
+			-- 			-- build 配置：默认使用 latexmk，打开 synctex，使用 xelatex（如需 pdflatex 改参数）
+			-- 			build = {
+			-- 				executable = "latexmk", -- 若 latexmk 不在 PATH，请填写绝对路径
+			-- 				args = { "-xelatex", "-file-line-error", "-synctex=1", "-interaction=nonstopmode", "%f" },
+			-- 				onSave = false, -- 保存时自动构建；若不需要自��构建改为 false
+			-- 				forwardSearchAfter = true, -- 构建后尝试触发 forward search
+			-- 			},
+			-- 			-- forwardSearch：与查看器配合（示例为 Sioyek）
+			-- 			forwardSearch = {
+			-- 				executable = "zathura", -- 若使用其它查看器（zathura/okular），改为相应命令并调整 args
+			-- 				args = { "--forward-search-file", "%f", "--forward-search-line", "%l", "%p" },
+			-- 			},
+			-- 			-- chktex（行级 lint）与其它 lint/format 选项
+			-- 			chktex = { onOpen = false, onEdit = false, onSave = true, onType = false },
+			-- 			lint = { onChange = false }, -- 关闭实时 lint（按需开启）
+			-- 			-- formatting / latexindent：如果系统安装了 latexindent，可启用格式化
+			-- 			-- 注意：不同版本 texlab 对字段名略有差异，这里给出常见组合
+			-- 			formatter = {
+			-- 				latexindent = {
+			-- 					modifyLineBreaks = true,
+			-- 				},
+			-- 			},
+			-- 			latexindent = {
+			-- 				-- 如果你在特定路径安装 latexindent，请写明 path 字段
+			-- 				-- path = "/usr/bin/latexindent",
+			-- 				modifyLineBreaks = true,
+			-- 			},
+			-- 			-- 若需要把中间文件放到一个 aux 目录（避免污染源码目录），可以启用下面字段并配合 latexmkrc
+			-- 			-- auxDirectory = "aux", -- 需要在 latexmkrc / 编译参数中一并配置
+			-- 		},
+			-- 	},
+			-- })
 
 			-------------------------------------------------------------------
 			-- 8) 启用列出的 server（会在对应 filetype 打开时自动 attach）
