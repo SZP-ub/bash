@@ -66,6 +66,10 @@ return {
 					local opts = { buffer = 0, noremap = true, silent = true }
 					vim.keymap.set("n", "<space>lv", "<plug>(vimtex-view)", opts)
 					vim.keymap.set("n", "<space>ll", "<plug>(vimtex-compile)", opts)
+					vim.keymap.set("n", "<space>le", "<plug>(vimtex-errors)", opts)
+					vim.keymap.set("n", "<space>lc", "<plug>(vimtex-clean)", opts)
+					vim.keymap.set("n", "<space>lt", "<plug>(vimtex-toc-open)", opts)
+					vim.keymap.set("n", "<space>li", "<plug>(vimtex-info)", opts)
 				end,
 			})
 
