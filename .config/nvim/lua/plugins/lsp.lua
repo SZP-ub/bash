@@ -407,6 +407,8 @@ return {
 			{ "L3MON4D3/LuaSnip", version = "v2.*" }, -- snippet engine
 			"lukas-reineke/cmp-rg",
 			{ "kdheepak/cmp-latex-symbols", ft = { "latex", "markdown", "markdown_inline" } },
+			{ "micangl/cmp-vimtex", ft = { "latex", "markdown", "markdown_inline" } },
+			{ "hrsh7th/cmp-omni", ft = { "tex" } },
 			"rasulomaroff/cmp-bufname",
 			-- "ray-x/cmp-treesitter",
 
@@ -547,6 +549,9 @@ return {
 							buffer = "[Buf]",
 							path = "[Path]",
 							nvim_lsp = "[LSP]",
+							vimtex = "[Vimtex]",
+							omni = (vim.inspect(vim_item.menu):gsub('%"', "")),
+							-- vimtex = vim_item.menu,
 						})[entry.source.name] or ""
 						return vim_item
 					end,
@@ -578,7 +583,8 @@ return {
 						option = { -- 配置项表
 							additional_arguments = "--hidden --max-depth 2", -- 额外传递给 ripgrep 的命令参数
 							pattern = "[a-zA-Z_]+", -- 用于 ripgrep 匹配的正则表达式
-							-- cwd = "~/projects", -- 指定 ripgrep 搜索的根目录
+							-- cwd = "..", -- 指定 ripgrep 搜索的根目录 父目录
+							cwd = ".", -- 当前目录
 							debounce = 500, -- 启动新 ripgrep 搜索前的防抖延迟（毫秒）
 							context_before = 2, -- 补全文档窗口显示匹配项前的上下文行数
 							context_after = 4, -- 补全文档窗口显示匹配项后的上下文行数
@@ -591,6 +597,10 @@ return {
 							strategy = 0, -- mixed
 						},
 					},
+					{
+						name = "vimtex",
+					},
+					{ name = "omni", trigger_characters = { "{", "\\" } },
 					{
 						name = "bufname",
 						option = {

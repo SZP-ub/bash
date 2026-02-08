@@ -31,6 +31,7 @@ return {
 					"json",
 					"markdown",
 					"markdown_inline",
+					-- "latex",
 				},
 				sync_install = false,
 				indent = { enable = true },
