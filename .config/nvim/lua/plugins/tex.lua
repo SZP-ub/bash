@@ -33,8 +33,8 @@ return {
 				styles = 0,
 			}
 
-			-- vim.g.vimtex_compiler_autostart = 1
-			-- vim.g.vimtex_compiler_start_on_save = 1
+			vim.g.vimtex_compiler_autostart = 1
+			vim.g.vimtex_compiler_start_on_save = 1
 			vim.g.vimtex_compiler_latexmk = {
 				executable = "latexmk",
 				options = { "-xelatex", "-file-line-error", "-synctex=1", "-interaction=nonstopmode" },
