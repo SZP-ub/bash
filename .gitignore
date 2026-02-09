@@ -1,6 +1,7 @@
 .ICEauthority
 .bash_history
 .bash_logout
+git-backups/
 .cache/
 .config/Thunar/
 .config/caja/
